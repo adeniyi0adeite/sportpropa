@@ -1,0 +1,40 @@
+<!-- admin/player_update.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Player</title>
+</head>
+<body>
+    <h1>Update Player</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ player.name }}"><br>
+        <label for="nationality">Nationality:</label>
+        <input type="text" id="nationality" name="nationality" value="{{ player.nationality }}"><br>
+        <label for="picture">Picture:</label>
+        <input type="file" id="picture" name="picture"><br>
+        <label for="team">Team:</label>
+        <select id="team" name="team">
+            <option value="">None</option>
+            {% for team in teams %}
+                <option value="{{ team.id }}" {% if team.id == player.team_id %}selected{% endif %}>{{ team.name }}</option>
+            {% endfor %}
+        </select><br>
+        <label for="position">Position:</label>
+        <input type="text" id="position" name="position" value="{{ player.position }}"><br>
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" value="{{ player.age }}"><br>
+        <label for="weight">Weight:</label>
+        <input type="text" id="weight" name="weight" value="{{ player.weight }}"><br>
+        <label for="height">Height:</label>
+        <input type="text" id="height" name="height" value="{{ player.height }}"><br>
+        <label for="foot">Foot:</label>
+        <input type="text" id="foot" name="foot" value="{{ player.foot }}"><br>
+        <label for="biography">Biography:</label>
+        <textarea id="biography" name="biography">{{ player.biography }}</textarea><br>
+        <input type="submit" value="Update">
+    </form>
+</body>
+</html>

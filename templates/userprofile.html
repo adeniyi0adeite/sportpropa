@@ -1,0 +1,484 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% load static %}
+
+
+{% block extra_head %}
+    <!-- Include your external JavaScript file -->
+    <script src="{% static 'js/userprofile.js' %}"></script>
+{% endblock %}
+
+
+
+{% block content %}
+
+<!-- Page-->
+<div class="page animated" style="animation-duration: 500ms;">
+
+    <div class="container">
+
+        <!-- Search results-->
+        
+    
+        <section class="section section-sm bg-gray-100">
+            <div class="container">
+                <div class="row justify-content-center">
+                        <div class="col-lg-9 col-xl-8">
+                            <!-- RD Search-->
+                            <div class="rd-search-modern">
+                                <form class="rd-form rd-search rd-form-inline" action="{% url 'search_users' %}" method="GET">
+                                    <div class="form-wrap">
+                                        <label class="form-label text-center" for="rd-search-form-input">FIND USERS</label>
+                                        <input class="form-input" id="rd-search-form-input" type="text" name="q" autocomplete="off" placeholder="">
+                                    </div>
+                                    <button class="rd-search-form-submit btn btn-outline-secondary" type="submit">
+                                        <i class="icon fas fa-search"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="rd-search-results" id="rd-search-results"></div>
+                        </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <!-- Heading Component--> 
+                        <article class="heading-component">
+                            <div class="heading-component-inner">
+                                <h5 class="heading-component-title">MY PROFILE</h5>
+                            </div>
+                        </article>
+                        <!-- Player Info Corporate-->
+                        <div class="player-info-corporate col justify-content-center align-items-center">
+                            <div class="m-2">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div class="bg-gray-800 rounded-circle border border-4 border-pry text-center p-4" style="width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;">
+                                        <label for="new_picture" style="width: 100%; height: 100%; cursor: pointer;">
+                                            {% if login_user.picture %}
+                                            <div class="player-img" style="background-image: url('{{ login_user.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                            </div>
+                                            {% else %}
+                                            <!-- FontAwesome icon as default profile picture -->
+                                            <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                <span class="fas fa-user" style="color: #000000; font-size: 5em;"></span> <!-- Adjust the size and color as needed -->
+                                            </div>
+                                            {% endif %}
+                                        </label>
+                                    </div>
+                                </div>
+                        
+                                {% if request.user.username == login_user.user.username %}
+                                <div class="w-100 text-center" style="display: none;">
+                                    <form class="" action="{% url 'change_profile_picture' login_user.user.username %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <!-- This input is hidden -->
+                                        <input class="form-control" type="file" id="new_picture" name="new_picture" required style="display: none;">
+                                        <button class="btn btn-sm btn-primary btn-sm" type="submit">Upload</button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="player-info-main m-2">
+                                <div class="w-100 mx-2 align-items-center mx-auto text-center">
+                                    <h4 class="player-info-title text-center">{{ login_user.user.username }}</h4>
+                                    <!-- Only display the follow/unfollow button if the profile does not belong to the logged-in user -->
+                                    {% if login_user.user.username != request.user.username %}
+                                        {% if is_followed %}
+                                        <form action="{% url 'follow_unfollow_user' login_user.user.username %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="button button-primary button-xs">Unfollow</button>
+                                        </form>
+                                        {% else %}
+                                        <form action="{% url 'follow_unfollow_user' login_user.user.username %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="button button-primary button-xs text-muted">Follow</button>
+                                        </form>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <hr>
+                                <div class="player-info-table">
+                                    <div class="table-custom-wrap">
+                                        <table class="table-custom">
+                                        <tbody><tr>
+                                            <th>Posts</th>
+                                            <th>{{ num_posts }}</th>
+                                        
+                                        </tr>
+                                        <tr>
+                                            <td>Followers</td>
+                                            <td>{{ num_followers }}</td>
+                                            <td>Following</td>
+                                            <td>{{ num_following }}</td>
+                                        </tr>
+                                        </tbody></table>
+                                    </div>
+                                    <hr>
+                                    <div class="block-player-info-content mb-2 mx-auto text-center">
+                                        <p class="block-player-info-content">{{ login_user.bio }}</p>
+                                    </div>
+                                </div>
+                                
+                                {% if user.username == login_user.user.username %}
+                                <div class="mt-3 text-center">
+                                    <!-- Trigger button for the modal -->
+                                    <a type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                        Edit Profile
+                                    </a>
+                                </div>
+                                {% endif %}
+
+                                <!-- Edit Profile Modal -->
+                                <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            
+                                            <form action="{% url 'userprofile' login_user.user.username %}" method="post">
+                                                {% csrf_token %}
+                                                <div class="modal-body">
+                                                    <div class="form-wrap">
+                                                        <label class="form-label" for="username">Username</label>
+                                                        <input type="text" class="form-input" id="username" name="username" value="{{ login_user.user.username }}">
+                                                    </div>
+                                                    <div class="form-wrap">
+                                                        <label class="form-label" for="bio">Bio</label>
+                                                        <textarea class="form-input" id="bio" name="bio">{{ login_user.bio }}</textarea>
+                                                    </div>
+                                                    <div class="form-wrap">
+                                                        <label for="favorite_team">Favorite Team</label>
+                                                        <select class="form-control" id="favorite_team" name="favorite_team">
+                                                            <option value="">None</option>
+                                                            {% for team in teams %}
+                                                            <option value="{{ team.id }}" {% if login_user.favorite_team.id == team.id %}selected{% endif %}>{{ team.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" name="update_profile" class="btn btn-primary btn-sm">Save changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+
+                    </div>
+                </div>
+                {% if user.username == login_user.user.username %}
+                <!-- Create post button for the profile owner -->
+                <div>
+                    <!-- Heading Component -->
+                    <article class="heading-component">
+                        <div class="heading-component-inner">
+                            <button type="button" class="heading-component-title btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                                Create Post
+                            </button>
+                        </div>
+                    </article>
+                </div>
+                {% else %}
+                <!-- Display "POSTS" for users who are not the profile owner -->
+                <div>
+                    <!-- Heading Component -->
+                    <article class="heading-component">
+                        <div class="heading-component-inner">
+                        <h5 class="heading-component-title">POSTS</h5>
+                        </div>
+                    </article>
+                </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col d-flex flex-wrap justify-content-center">
+                      {% for post in posts %}
+                      <div class="col-12 col-md-10 col-lg-8 mb-4">
+                        <div class="card">
+                          <div class="card-header d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                              <div class="me-2">
+                                <div class="bg-gray-800 rounded-circle border border-4 border-pry text-center p-2" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                  {% if post.author.picture %}
+                                  <div class="player-img" style="background-image: url('{{ post.author.picture.url }}'); background-position: center; background-size: cover; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;"></div>
+                                  {% else %}
+                                  <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                    <i class="fas fa-user" style="color: #000000;"></i>
+                                  </div>
+                                  {% endif %}
+                                </div>
+                              </div>
+          
+                              <a href="{% url 'userprofile' post.author.user.username %}">
+                                <p class="post-author mb-0">{{ post.author.user.username }}</p>
+                              </a>
+                              <time class="ms-2" datetime="{{ post.created_at|date:'Y-m-d' }}"><span style="font-size: 10px;">{{ post.created_at|date:"F j, Y" }}</span></time>
+
+                            </div>
+                          </div>
+                          <div class="card-body">
+                            {% if post.image %}
+                            <div class="blog-post-content">
+                              <img src="{{ post.image.url }}" class="img-fluid" alt="Post image"/>
+                            </div>
+                            {% elif post.video %}
+                            <div class="blog-post-content">
+                              <video class="img-fluid" controls>
+                                <source src="{{ post.video.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                              </video>
+                            </div>
+                            {% endif %}
+          
+                            {% if post.caption %}
+                            <div class="mt-3">
+                              <p>{{ post.caption }}</p>
+                            </div>
+                            {% endif %}
+          
+                            <div class="d-flex align-items-center mt-3 ">
+                              <a class="like-btn me-1" type="button" data-post-id="{{ post.id }}">
+                                {% if post.user_has_liked %}
+                                <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                {% else %}
+                                <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                {% endif %}
+                              </a>
+                              <span class="ms-1" style="font-size: 12px;" id="like-count-{{ post.id }}">{{ post.num_likes }}</span>
+                              <a class="ms-3" type="button">
+                                <!-- <i class="far fa-comment"></i> -->
+                                <div class="comment-reply"><span class="icon mdi mdi-comment-outline" onclick="toggleCommentBox({{ post.id }})"></span></div>
+                              </a>
+                              <span class="ms-1" style="font-size: 12px;">{{ post.num_comments }}</span>
+                              
+                              
+                              
+                            </div>
+
+          
+                            <div class="comment-box mt-3" id="comment-box-{{ post.id }}" style="display: none;">
+                              <form class="comment-box-form" method="post" action="{% url 'add_comment' post.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="redirect_to" value="{{ request.path }}">
+                                <input type="hidden" name="post_owner_username" value="{{ post.author.user.username }}">
+                                <div class="form-group">
+                                  <label class="" for="commentText-{{ post.id }}"></label>
+                                  <textarea class="form-control" id="commentText-{{ post.id }}" name="comment_text" rows="3" required></textarea>
+                                </div>
+                                <div class="form-button mt-2">
+                                  <button class="btn btn-primary btn-sm" type="submit">Submit</button>
+                                </div>
+                              </form>
+                            </div>
+          
+                            <div>
+                                {% if post.num_comments > 0 %}
+                                <a class="mt-1 text-muted" href="#collapseComments-{{ post.id }}" data-bs-toggle="collapse" role="button" style="font-size: 12px;">View comments</a>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="collapse" id="collapseComments-{{ post.id }}">
+                              <div class="row">
+                                  <div class="col-sm-12">
+                                      {% for comment in post.comments.all %}
+                                          {% if not comment.parent %}
+                                          <div class="blog-post-comments mt-2">
+                                              <!-- Post Comment-->
+                                              <div class="post-comment post-comment-parent">
+                                                  <!-- Comment Content -->
+                                                  <div class="post-comment-main">
+                                                      
+                                                      <!-- Comment Header -->
+                                                  
+                                                      <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                                          <div class="blog-post-author d-flex align-items-center">
+                                                              <div class="mx-2">
+                                                                  <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                                      {% if comment.author.picture %}
+                                                                      <div class="player-img" style="background-image: url('{{ comment.author.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                                                      </div>
+                                                                      {% else %}
+                                                                      <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                                          <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                                      </div>
+                                                                      {% endif %}
+                                                                  </div>
+                                                              </div>
+                                                              <a href="{% url 'userprofile' comment.author.user.username %}">
+                                                                  <h6 class="author-name mx-1">{{ comment.author.user.username }}</h6>
+                                                              </a>
+                                                              <time class="post-comment-time mx-2" datetime="2024">{{ comment.created_at|date:"F j, Y" }}</time>
+          
+                                                          </div>
+                                                      </div>
+                                                      <!-- Comment Text -->
+                                                      <div class="post-comment-text">
+                                                          <p>{{ comment.content }}</p>
+                                                      </div>
+                                                      <!-- Comment Footer -->
+                                                      <div class="post-comment-footer">
+                                                          <!-- Parent Comment Likes -->
+                                                          <div class="comment-like">
+                                                              <a class="like-btn" type="button" data-comment-id="{{ comment.id }}">
+                                                                  {% if comment.user_has_liked %}
+                                                                  <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                                                  {% else %}
+                                                                  <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                                                  {% endif %}
+                                                              </a>
+                                                              <span class="ms-1"  id="like-count-{{ comment.id }}">{{ comment.num_likes }}</span>
+                                                          </div>
+          
+                                                          <!-- Comment Reply Button -->
+                                                          <div class="comment-reply">
+                                                              <a class="ms-1" type="button" onclick="toggleReplyBox('{{ comment.id }}')">
+                                                                  Reply
+                                                              </a>
+                                                          </div>
+                                                          <!-- Toggle Button for Replies -->
+                                                          <a href="#collapseReplyComments-{{ comment.id }}" data-bs-toggle="collapse" role="button"><span class="" ></i>View Replies</span></a>
+                                                          <!-- Delete Comment Button -->
+                                                          {% if request.user == comment.author.user or request.user == post.author.user or request.user.is_superuser %}
+                                                              <a class="ms-3" href="{% url 'delete_comment' comment.id %}?post_owner_username={{ post.author.user.username }}"><i class="icon fas fa-trash-alt"></i></a>
+                                                          {% endif %}
+          
+          
+          
+                                                          <br>
+                                                          <!-- Comment Reply Box -->
+                                                          <div class="comment-box reply-box mt-3" id="reply-box-{{ comment.id }}" style="display: none;">
+                                                              <!-- Reply Form -->
+                                                              <form class="comment-box-form reply-form" method="post" action="{% url 'add_comment' post.id %}">
+                                                                  {% csrf_token %}
+                                                                  <input type="hidden" name="redirect_to" value="{{ request.path }}">
+                                                                  <input type="hidden" name="post_owner_username" value="{{ post.author.user.username }}">
+                                                                  <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                                                  <label type="hidden" class="form-label" for="commentText-{{ comment.id }}"></label>
+                                                                  <textarea class="form-input" id="commentText-{{ comment.id }}" name="comment_text" rows="3" placeholder="Reply to {{ comment.author.user.username }}"></textarea>
+                                                                  <div class="form-button">
+                                                                      <button class="button button-primary" type="submit">Submit</button>
+                                                                  </div>
+                                                              </form>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+          
+                                                  <!-- Collapsible Replies Section -->
+                                                  <div class="collapse" id="collapseReplyComments-{{ comment.id }}">
+                                                      <!-- Iterate over replies -->
+                                                      {% for reply in comment.replies.all %}
+                                                      <div class="post-comment post-comment-child mt-3">
+                                                          <!-- Reply Content -->
+                                                          <div class="post-comment-main">
+                                                              <!-- reply header -->
+                                                              <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                                                  <div class="blog-post-author d-flex align-items-center">
+                                                                      <div class="mx-2">
+                                                                          <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                                                              {% if reply.author.picture %}
+                                                                              <div class="player-img" style="background-image: url('{{ reply.author.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                                                              </div>
+                                                                              {% else %}
+                                                                              <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                                                  <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                                              </div>
+                                                                              {% endif %}
+                                                                          </div>
+                                                                      </div>
+                                                                      <a href="{% url 'userprofile' reply.author.user.username %}">
+                                                                          <h6 class="author-name reply-author-name">{{ reply.author.user.username }}</h6>
+                                                                      </a>
+                                                                      
+                                                                      <time class="post-comment-time mx-1" datetime="2024">{{ reply.created_at|date:"F j, Y" }}</time>
+                                                                  </div>
+                                                              </div>
+                                                              <!-- Reply Text -->
+                                                              <div class="post-comment-text reply-comment-text">
+                                                                  <p>{{ reply.content }}</p>
+                                                              </div>
+          
+                                                              <!-- Reply Footer -->
+                                                              <div class="post-comment-footer">
+                                                                  <!-- Child Comment Likes -->
+                                                                  <div class="comment-like">
+                                                                      <a class="like-btn" type="button" data-child-comment-id="{{ reply.id }}">
+                                                                          {% if reply.user_has_liked %}
+                                                                          <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                                                          {% else %}
+                                                                          <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                                                          {% endif %}
+                                                                      </a>
+                                                                      <span class="ms-2" style="font-size: 12px;" id="like-count-{{ reply.id }}">{{ reply.num_likes }}</span>
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                      {% endfor %}
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          {% endif %}
+                                      {% endfor %}
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            
+        </section>
+    
+    
+        <!-- Create Post Modal -->
+        <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createPostModalLabel">Create New Post</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <form action="{% url 'create_post' username=request.user.username %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-wrap">
+                                <label class="form" for="media">Upload Image or Video</label>
+                                <input class="form-input" type="file" id="media" name="media" accept="image/*,video/*">
+                            </div>
+                            <br>
+                            <div class="form-wrap mb-3">
+                                <label class="form-label" for="postCaption">Caption</label>
+                                <textarea class="form-input" id="postCaption" name="caption" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Post</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+      
+
+
+</div>
+
+{% endblock %}
+
+
+    

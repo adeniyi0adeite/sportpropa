@@ -1,0 +1,21 @@
+<!-- admin_panel/team_delete.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Teams</title>
+</head>
+<body>
+    <h1>Delete Teams</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="teams">Select teams to delete:</label><br>
+        <select id="teams" name="teams" multiple>
+            {% for team in teams %}
+                <option value="{{ team.id }}">{{ team.name }}</option>
+            {% endfor %}
+        </select><br>
+        <input type="submit" value="Delete Selected Teams">
+    </form>
+</body>
+</html>

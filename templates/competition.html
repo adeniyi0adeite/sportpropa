@@ -1,0 +1,1013 @@
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block extra_head %}
+    <!-- Include your external JavaScript file -->
+    <script src="{% static 'js/competition.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="page animated" style="animation-duration: 500ms;">
+
+  <!-- Section Breadcrumbs-->
+  <section class="section parallax-container breadcrumbs-wrap" data-parallax-img="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}"><div class="material-parallax parallax"><img src="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" alt="" style="display: block; transform: translate3d(-50%, 175px, 0px);"></div>
+    <div class="parallax-content breadcrumbs-custom context-dark">
+      <div class="container">
+        <h3 class="breadcrumbs-custom-title">{{ competition.name }}</h3>
+        <ul class="breadcrumbs-custom-path">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'competition' competition_id=competition.id %}">Competitions</a></li>
+          <li class="active">{{ competition.name }}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="container">
+
+    <section class="section section-sm bg-gray-100">
+      <div class="">
+        {% if next_fixture %}
+        <div class="row mb-0">
+          <!-- Game Schedule -->
+          <!-- Heading Component-->
+          <article class="heading-component">
+            <div class="heading-component-inner">
+              <h5 class="heading-component-title">Game schedule
+              </h5>
+            </div>
+          </article>
+          <!-- Game Result Bug-->
+          
+          <article class="game-result">
+            <div class="game-info game-info-modern">
+              <p class="game-info-subtitle">{{ next_fixture.competition.location }} - 
+                <time datetime="08:30"> {{ next_fixture.match_date|date:"H:i" }}</time>
+              </p>
+              <h3 class="game-info-title">{{ next_fixture.competition.name }}</h3>
+              <br>
+              {% if competition.competition_type == 'Cup' and next_fixture.group %}
+              <h6>{{ next_fixture.group.name }}</h6>
+              {% elif competition.competition_type == 'Cup' and next_fixture.match_type %}
+                <h6>{{ next_fixture.match_type }}</h6>
+              {% endif %}
+              <div class="game-info-main mt-3">
+                <div class="game-info-team game-info-team-first">
+                  <figure>
+                    {% if next_fixture.home_team.logo %}
+                      <img src="{{ next_fixture.home_team.logo.url }}" alt="" width="75" height="99"/>
+                      {% else %}
+                      <img src="{% static 'img/soccer.png' %}" alt="" width="75" height="99"/>
+                      {% endif %}
+                  </figure>
+                  <div class="game-result-team-name">{{ next_fixture.home_team }}</div>
+                  <div class="game-result-team-country">{{ next_fixture.home_team.location|default_if_none:"" }}</div>
+                </div>
+                <div class="game-info-middle game-info-middle-vertical">
+                  <time class="time-big" datetime="2024-04-17"><span class="heading-3">{{ next_fixture.match_date|date:"D d" }}</span> {{ next_fixture.match_date|date:"M Y" }}
+                  </time>
+                  <div class="game-result-divider-wrap"><span class="game-info-team-divider">VS</span></div>
+                </div>
+                <div class="game-info-team game-info-team-second">
+                  <figure>
+                    {% if next_fixture.away_team.logo %}
+                    <img src="{{ next_fixture.away_team.logo.url }}" alt="" width="75" height="99"/>
+                    {% else %}
+                    <img src="{% static 'img/soccer.png' %}" alt="" width="75" height="99"/>
+                    {% endif %}
+                  </figure>
+                  <div class="game-result-team-name">{{ next_fixture.away_team }}</div>
+                  <div class="game-result-team-country">{{ next_fixture.away_team.location|default_if_none:"" }}</div>
+                </div>
+              </div>
+              
+            </div>
+          </article>
+          
+        </div>
+        {% endif %}
+
+        <!-- Results -->
+        {% if results %}
+        <div class="row">
+          
+          <div class="col-12 mt-1 mb-0 owl-carousel-outer-navigation-result">
+            <!-- Heading Component -->
+            <article class="heading-component mb-0 align-items-center">
+              <div class="heading-component-inner">
+                <h5 class="heading-component-title" style="font-size: 12px;">Latest Results</h5>
+                <div class="owl-carousel-arrows-outline">
+                  <div class="owl-nav">
+                    <button class="owl-arrow owl-arrow-prev"></button>
+                    <button class="owl-arrow owl-arrow-next"></button>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <!-- Game results -->
+            <div class="row mb-0 mt-0">
+              <div class="col d-flex flex-wrap g-3 mb-0 mt-0">
+                <div class="owl-carousel owl-spacing-results mt-0" data-items="1" data-dots="false" data-nav="true" data-autoplay="false" data-autoplay-speed="20000" data-stage-padding="0" data-loop="true" data-margin="30" data-mouse-drag="false" data-animation-in="fadeIn" data-animation-out="fadeOut" data-nav-custom=".owl-carousel-outer-navigation-results">
+                  {% for result in results %}
+
+
+                  <article class="game-result game-result-classic w-100" style="padding-top: 10px; padding-bottom: 10px;">
+                    
+                      <!-- <h6 style="font-size: 10px;" class="">{{ result.competition.name }}</h6> -->
+                      
+                      {% if result.competition.competition_type == 'Cup' and result.group %}
+                          <h6 class="text-primary" style="font-size: 15px;">{{ result.group.name }}</h6>
+                      {% elif result.competition.competition_type == 'Cup' and result.match_type %}
+                          <h6 class="text-primary mb-0" style="font-size: 15px;">{{ result.match_type }}</h6>
+                      {% endif %}
+                      <div class="game-result-main mt-2" style="padding-top: 1px; padding-bottom: 5px;">
+
+                        <!-- Home team -->
+                        <div class="game-result-team game-result-team-first" style="">
+                          <figure class="game-result-team-figure game-result-team-figure-big" style="width: 40px; height: 44px;">
+                              {% if result.home_team.logo %}
+                                  <img src="{{ result.home_team.logo.url }}" alt="" width="30" height=""/>
+                              {% else %}
+                                  <img src="{% static 'img/soccer.png' %}" alt="" width="30" height=""/>
+                              {% endif %}
+                          </figure>
+                          <div class="game-result-team-name" style="font-size: 10px;">{{ result.home_team.name }}</div>
+                          <div class="game-result-team-country">{{ result.home_team.location|default_if_none:"" }}</div>
+                        </div>
+
+                        <!-- Score -->
+                        <div class="game-result-middle" style="width: 100%; margin: 1px;">
+                          <div class="w-100 align-items-center " >
+                              <div class="w-100 game-result-score-wrap  justify-content-between align-items-center">
+                                <div class="w-100 text-end mx-2 game-result-score {% if result.details.home_team_score > result.details.away_team_score %}game-result-team-win{% endif %}">
+                                  {{ result.details.home_team_score }}
+                                  {% if result.details.home_team_score > result.details.away_team_score %}
+                                      <span class="game-result-team-label game-result-team-label-top" style="font-size: 8px; margin-top: 10px;">Win</span>
+                                  {% endif %}
+                                </div>
+                                <div class="game-result-score-divider ">
+                                  <svg x="0px" y="0px" width="7px" height="21px" viewBox="0 0 7 21" enable-background="new 0 0 7 21" xml:space="preserve">
+                                      <g>
+                                          <circle cx="3.5" cy="3.5" r="3"></circle>
+                                          <path d="M3.5,1C4.879,1,6,2.122,6,3.5S4.879,6,3.5,6S1,4.878,1,3.5S2.122,1,3.5,1 M3.5,0C1.567,0,0,1.567,0,3.5S1.567,7,3.5,7 S7,5.433,7,3.5S5.433,0,3.5,0L3.5,0z"></path>
+                                      </g>
+                                      <g>
+                                          <circle cx="3.695" cy="17.5" r="3"></circle>
+                                          <path d="M3.695,15c1.378,0,2.5,1.122,2.5,2.5S5.073,20,3.695,20s-2.5-1.122-2.5-2.5S2.316,15,3.695,15 M3.695,14 c-1.933,0-3.5,1.567-3.5,3.5s1.567,3.5,3.5,3.5s3.5-1.567,3.5-3.5S5.628,14,3.695,14L3.695,14z"></path>
+                                      </g>
+                                  </svg>
+                                </div>
+                                <div class="w-100 text-start mx-2 game-result-score {% if result.details.away_team_score > result.details.home_team_score %}game-result-team-win{% endif %}">
+                                  {{ result.details.away_team_score }}
+                                  {% if result.details.away_team_score > result.details.home_team_score %}
+                                      <span class="game-result-team-label game-result-team-label-top" style="font-size: 8px; margin-top: 10px;">Win</span>
+                                  {% endif %}
+                                </div>
+                              </div>
+                              
+                              {% if result.penalty_data %}
+                              <div class="table-game-info-wrap justify-content-center align-items-center" style="">
+                                  <div class="game-info-middle text-center">
+                                      <span class="table-game-info-title text-center" style="font-size: 8px;">PEN</span>
+                                      <div class="game-result-score-wrap d-flex justify-content-center align-items-center">
+                                          <div class="game-info-score {% if result.penalty_data.home_team_score > result.penalty_data.away_team_score %}game-result-team-win{% endif %}" 
+                                              style="font-size: 12px; font-weight: 600;">
+                                              {{ result.penalty_data.home_team_score }}
+                                          </div>
+                                          <div class="me-2">-</div>
+                                          <div class="game-info-score {% if result.penalty_data.away_team_score > result.penalty_data.home_team_score %}game-result-team-win{% endif %}" 
+                                              style="font-size: 12px; font-weight: 600;">
+                                              {{ result.penalty_data.away_team_score }}
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                              {% endif %}
+
+                              
+                          </div>
+                          
+                        </div>
+
+                        <!-- Away team -->
+                        <div class="game-result-team game-result-team-second" style="">
+                          <figure class="game-result-team-figure game-result-team-figure-big" style="width: 40px; height: 44px;">
+                              {% if result.away_team.logo %}
+                                  <img src="{{ result.away_team.logo.url }}" alt="" width="30" height=""/>
+                              {% else %}
+                                  <img src="{% static 'img/soccer.png' %}" alt="" width="30" height=""/>
+                              {% endif %}
+                          </figure>
+                          <div class="game-result-team-name" style="font-size: 10px;">{{ result.away_team.name }}</div>
+                          <div class="game-result-team-country">{{ result.away_team.location|default_if_none:"" }}</div>
+                        </div>
+                      </div>
+
+
+                      <!-- Scorers -->
+                      <div class="row row-cols-2 mt-2 mx-auto justify-content-between" style="width: 80%; color: #000000 !important;">
+                        <!-- Home Team Goals -->
+                        <div class="col text-end" style="">
+                            {% for goal in result.goals.all %}
+                                {% if goal.scoring_team == result.home_team %}
+                                    <div class="d-flex mb-0 justify-content-between align-items-center text-end w-100">
+                                        
+                                        <span class="me-2" style="font-size: 8px;">{{ goal.minute }}'</span>
+                                        <span style="font-size: 8px;">{{ goal.scorer.name.get_full_name }}</span>
+                                        <span style="font-size: 8px;" class="ms-1 icon icon-xxs 
+                                                      {% if goal.is_own_goal %}
+                                                          icon-red-2
+                                                      {% elif goal.is_penalty %}
+                                                          icon-blue-boston icon-penalty
+                                                      {% else %}
+                                                          icon-primary
+                                                      {% endif %} 
+                                                      fa fa-futbol-o">
+                                            {% if goal.is_penalty %}
+                                                <span class="penalty-label">P</span>
+                                            {% endif %}
+                                        </span>
+
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Away Team Goals -->
+                        <div class="col text-start">
+                            {% for goal in result.goals.all %}
+                                {% if goal.scoring_team == result.away_team %}
+                                    <div class="d-flex mb-0 justify-content-between align-items-center w-100">
+                                        <span style="font-size: 8px;" class="me-1 icon icon-xxs 
+                                                    {% if goal.is_own_goal %}
+                                                        icon-red-2
+                                                    {% elif goal.is_penalty %}
+                                                        icon-blue-boston icon-penalty
+                                                    {% else %}
+                                                        icon-primary
+                                                    {% endif %} 
+                                                    fa fa-futbol-o">
+                                            {% if goal.is_penalty %}
+                                                <span class="penalty-label">P</span>
+                                            {% endif %}
+                                        </span>
+                                        <span style="font-size: 8px;">{{ goal.scorer.name.get_full_name }}</span>
+                                        <span class="ms-2" style="font-size: 8px;">{{ goal.minute }}'</span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                      </div>
+
+
+                      <!-- Buttons for Match Stats, Standings, Comments -->
+                      <div class="container mb-3 d-none" style="margin-top: 1px;">
+                          <div class="row cols-2 justify-content-center" >
+                              <div class="col-auto">
+                                  <a class="button button-xs button-primary" href="{% url 'matchresultdetails' match_id=result.id %}" style="font-size: 8px;">Match Stats</a>
+                              </div>
+                              <div class="col-auto">
+                                  <a class="button button-xs button-primary" href="{% url 'competition_info' competition_id=result.competition.id %}" style="font-size: 8px;">Standings</a>
+                              </div>
+                              <div class="col-auto">
+                                  <a class="button button-xs button-primary" href="{% url 'competition' competition_id=result.competition.id %}#competition-comments-section" style="font-size: 8px;">Comments</a>
+                              </div>
+                          </div>
+                      </div>
+
+                      <!-- Footer -->
+                      <div class="game-result-footer mt-2" style="font-size: 8px; padding: 1px;">
+                        <ul class="game-result-details mt-2 ">
+                            <li class="text-primary">{{ result.competition.location }}</li>
+                            <li>
+                                <time datetime="{{ result.match_date|date:'Y-m-d' }}" class="text-primary">{{ result.match_date|date:"F d, Y" }}</time>
+                            </li>
+                        </ul>
+                      </div>
+                    
+                  </article>
+
+                  {% endfor %}
+                </div>
+              
+              </div>
+            </div>
+          </div>
+          <div class="mx-auto text-center mt-0" style="width: 100%;">
+            <a class="button button-xs button-primary w-100" href="{% url 'competition_info' competition_id=competition.id %}" >See All Results</a>
+          </div>
+
+        </div>
+        {% endif %}
+
+
+        <!-- Fixtures -->
+        {% if fixtures %}
+        <div class="row mb-0">
+          <div class="col">
+            <!-- Heading Component-->
+            <article class="heading-component mb-0">
+              <div class="heading-component-inner">
+                <h5 class="heading-component-title">Fixtures
+                </h5>
+              </div>
+            </article>
+            
+            <div class="row mt-0">
+              <div class="col d-flex flex-wrap g-3" id="fixtures-container">
+                {% for fixture in page_obj %}
+                <!-- Game Result Creative-->
+                <article class="game-result game-result-creative flex-fill ms-3 mb-1">
+                  <br>
+                  {% if competition.competition_type == 'Cup' and fixture.group %}
+                    <h6>{{ fixture.group.name }}</h6>
+                  {% elif competition.competition_type == 'Cup' and fixture.match_type %}
+                    <h6>{{ fixture.match_type }}</h6>
+                  {% endif %}
+                  <div class="game-result-main-vertical">
+                    <div class="game-result-team game-result-team-horizontal game-result-team-first">
+                      <figure>
+                        {% if fixture.home_team.logo %}
+                        <img src="{{ fixture.home_team.logo.url }}" alt="" width="45" height="79"/>
+                        {% else %}
+                        <img src="{% static 'img/soccer.png' %}" alt="" width="45" height="79"/>
+                        {% endif %}
+                      </figure>
+                      <div class="game-result-team-title">
+                        <div class="game-result-team-name">{{ fixture.home_team.name }}</div>
+                        <div class="game-result-team-country">{{ fixture.home_team.location|default_if_none:"" }}</div>
+                      </div>
+                    </div>
+                    <span class="game-result-team-divider">VS</span>
+                    <br>
+                    <div class="game-result-team game-result-team-horizontal game-result-team-second">
+                      <figure>
+                        {% if fixture.away_team.logo %}
+                        <img src="{{ fixture.away_team.logo.url }}" alt="" width="45" height="79"/>
+                        {% else %}
+                        <img src="{% static 'img/soccer.png' %}" alt="" width="45" height="79"/>
+                        {% endif %}
+                      </figure>
+                      <div class="game-result-team-title">
+                        <div class="game-result-team-name">{{ fixture.away_team.name }}</div>
+                        <div class="game-result-team-country">{{ fixture.away_team.location|default_if_none:"" }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="game-result-footer">
+                    <ul class="game-result-details">
+                      <li>{{ fixture.competition.location }}</li>
+                      <li>
+                        <time datetime="2024-04-14">{{ fixture.match_date|date:"D, M d, Y" }} </time>
+                      </li>
+                      <li><b>{{ fixture.match_date|date:"H:i" }}</b></li>
+                    </ul>
+                  </div>
+                </article>
+                <br>
+                {% endfor %}
+              </div>
+            </div>
+            <!-- Pagination -->
+            <div class="row pagination mt-3">
+              <div class="col text-start">
+                {% if num_fixtures > 3 %}
+                <a class="button button-xs button-primary" href="?num_fixtures={{ num_fixtures|add:"-3" }}">Load Less</a>
+                {% endif %}
+              </div>
+              <div class="col text-end">
+                {% if page_obj.has_next %}
+                <a class="button button-xs button-primary" href="?num_fixtures={{ num_fixtures|add:"3" }}">Load More</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <a class="button button-xs button-primary mt-0" href="{% url 'competition_info' competition_id=competition.id %}">All Fixtures</a>
+        {% endif %}
+
+        {% if fixtures or results %}
+
+        <!-- Standings -->
+        <div class="row">
+          {% if groups %}
+            <div class="col-12">
+              <!-- Heading Component-->
+              <article class="heading-component mb-0">
+                <div class="heading-component-inner">
+                  <h5 class="heading-component-title" style="font-size: 12px;">Standings
+                  </h5>
+                  <div class="heading-component-aside">
+                    <ul class="list-inline list-inline-xs list-inline-middle">
+                      <li>
+                        <select id="group-select" class="select" data-placeholder="{{ competition.name }}" data-container-class="select-minimal-xl" onchange="showGroup(this.value)">
+                          <option label="placeholder"></option>
+                          {% for group in groups %}
+                            <option value="{{ group.id }}" {% if group == first_group %}selected{% endif %}>{{ group.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+
+              {% for group, group_standings in standings.items %}
+                <div class="col mt-1 mb-3" id="group-{{ group.id }}" style="{% if group != first_group %}display: none;{% endif %}">
+                  <div class="card-standing card-group-custom card-standing-index" id="accordion1" role="tablist" aria-multiselectable="false">
+                    <div class="card-standing-caption" style="font-size: 10px;">
+                      <div class="card-standing-position">Pos</div>
+                      <div class="card-standing-caption-aside">
+                        <div class="card-standing-team">Team</div>
+                        <div class="card-standing-number">W</div>
+                        <div class="card-standing-number">L</div>
+                        <div class="card-standing-number">D</div>
+                        <div class="card-standing-diff">DIFF</div>
+                        <div class="card-standing-points">PTS</div>
+                      </div>
+                    </div>
+                    
+                    {% for standing in group_standings %}
+                      <!-- Bootstrap card-->
+                      <article class="card card-custom">
+                        <div class="card-standing-position card-standing-counter"></div>
+                        <div class="card-header" id="accordion1Heading1" role="tab">
+                          <div class="card-standing-team-item">
+                            <div class="card-standing-team">
+                              <div class="card-standing-team-figure">
+                                {% if standing.team.logo %}
+                                  <img src="{{ standing.team.logo.url }}" alt="" width="21" height=""/>
+                                {% else %}
+                                  <img src="{% static 'img/soccer.png' %}" alt="" width="21" height=""/>
+                                {% endif %}
+                              </div>
+                              <div class="card-standing-team-title">
+                                <div class="card-standing-team-name"><a class="rd-nav-link" href="{% url 'team' team_id=standing.team.id %}" style="font-size: 10px;">{{ standing.team.name }}</a></div>
+                                <div class="card-standing-team-country" style="font-size: 8px;">{{ standing.team.location|default_if_none:"" }}</div>
+                              </div>
+                            </div>
+                            <div class="card-standing-number">{{ standing.wins }}</div>
+                            <div class="card-standing-number">{{ standing.losses }}</div>
+                            <div class="card-standing-number">{{ standing.draws }}</div>
+                            <div class="card-standing-points">{{ standing.goal_difference }}</div>
+                            <div class="card-standing-diff">{{ standing.points }}</div>
+                          </div>
+                        </div>
+                      </article>
+                    {% endfor %}
+
+                  </div>
+                </div>
+              {% endfor %}
+
+            </div>
+          {% else %}
+            <div class="col mt-5">
+              <!-- Heading Component-->
+              <article class="heading-component">
+                <div class="heading-component-inner">
+                  <h5 class="heading-component-title" style="font-size: 12px;">Standings</h5>
+                </div>
+              </article>
+              <div class="card-standing card-group-custom card-standing-index" id="accordion1" role="tablist" aria-multiselectable="false">
+                <div class="card-standing-caption" style="font-size: 10px;">
+                  <div class="card-standing-position">Pos</div>
+                  <div class="card-standing-caption-aside">
+                    <div class="card-standing-team">Team</div>
+                    <div class="card-standing-number">W</div>
+                    <div class="card-standing-number">L</div>
+                    <div class="card-standing-number">D</div>
+                    <div class="card-standing-diff">DIFF</div>
+                    <div class="card-standing-points">PTS</div>
+                  </div>
+                </div>
+
+                {% for standing in standings %}
+                  <!-- Bootstrap card-->
+                  <article class="card card-custom">
+                    <div class="card-standing-position card-standing-counter"></div>
+                    <div class="card-header" id="accordion1Heading1" role="tab">
+                      <div class="card-standing-team-item">
+                        <div class="card-standing-team">
+                          <div class="card-standing-team-figure">
+                            {% if standing.team.logo %}
+                              <img src="{{ standing.team.logo.url }}" alt="" width="21" height=""/>
+                            {% else %}
+                              <img src="{% static 'img/team-sportland-75x99.png' %}" alt="" width="21" height=""/>
+                            {% endif %}
+                          </div>
+                          <div class="card-standing-team-title">
+                            <div class="card-standing-team-name"><a class="rd-nav-link" href="{% url 'team' team_name=standing.team.name %}" style="font-size: 10px;">{{ standing.team.name }}</a></div>
+                            <div class="card-standing-team-country" style="font-size: 8px;">{{ standing.team.location|default_if_none:"" }}</div>
+                          </div>
+                        </div>
+                        <div class="card-standing-number">{{ standing.wins }}</div>
+                        <div class="card-standing-number">{{ standing.losses }}</div>
+                        <div class="card-standing-number">{{ standing.draws }}</div>
+                        <div class="card-standing-points">{{ standing.goal_difference }}</div>
+                        <div class="card-standing-diff">{{ standing.points }}</div>
+                      </div>
+                    </div>
+                  </article>
+                {% endfor %}
+
+                <a class="button button-xs button-primary" href="{% url 'competition_info' competition_id=competition.id %}">All Standings</a>
+
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+      
+        {% endif %} 
+
+        <br>
+        {% if fixtures or results %}
+          {% if player_goals.Cup %}
+          <!-- Heading Component-->
+          <article class="heading-component mb-0">
+            <div class="heading-component-inner">
+              <h5 class="heading-component-title" style="font-size: 12px;">RANKING
+              </h5>
+            </div>
+          </article>
+          <div class="row mt-1" >
+            
+            <!-- Goal Rankings -->
+            <div class="col mt-1">
+              <!-- Table Roster-->
+              <div class="table-custom-responsive">
+                <table class="table-custom table-roster">
+                  <thead>
+                    <tr >
+                      <th colspan="3" style="font-size: 12px; height: 45px; padding-left: 30px;">GOALS</th>
+                    </tr>
+                  </thead>
+                  
+                  <tbody >
+                    <tr style="font-size: .7rem;">
+                      <td>POS</td>
+                      <td>Player</td>
+                      <td class="text-center">Stat</td>
+                    </tr>
+                    {% for player in player_goals.Cup %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td><a class="rd-nav-link" href="{% url 'player' player_id=player.scorer__id %}" style="font-size: .7rem;"> {{ player.scorer__name__first_name }} {{ player.scorer__name__last_name }} <br> <span class="text-muted" style="font-size: .5rem;">({{ player.scoring_team__name }})</span></a></td>
+                      <td class="text-center">{{ player.total_goals }}</td>
+                    </tr>
+                    {% endfor%}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Assist Rankings -->
+            <div class="col mt-1">
+                
+              <!-- Table Roster-->
+              <div class="table-custom-responsive">
+                <table class="table-custom table-roster">
+                  <thead>
+                    <tr>
+                      <th colspan="3" style="font-size: 12px; height: 45px; padding-left: 30px;">ASSISTS</th>
+                    </tr>
+                  </thead>
+                  
+                  <tbody>
+                    <tr style="font-size: .7rem;">
+                      <td>POS</td>
+                      <td>Player</td>
+                      <td class="text-center">Stat</td>
+                    </tr>
+                    {% for player in player_assists.Cup %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td><a class="rd-nav-link" href="{% url 'player' player_id=player.assist__id %}" style="font-size: .7rem;">{{ player.assist__name__first_name }} {{ player.assist__name__last_name }} <br> <span class="text-muted" style="font-size: .5rem;">({{ player.assist__registrations__team__name }})</span></a></td>
+                      <td class="text-center">{{ player.total_assists }}</td>
+                    </tr>
+                    {% endfor%}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {% else %}
+          <!-- Heading Component-->
+          <article class="heading-component">
+            <div class="heading-component-inner">
+              <h5 class="heading-component-title" style="font-size: 12px;">RANKING
+              </h5>
+            </div>
+          </article>
+          <div class="row">
+            <!-- Goal Rankings -->
+            <div class="col mt-1">
+              <!-- Table Roster-->
+              <div class="table-custom-responsive">
+                <table class="table-custom table-roster">
+                  <thead>
+                    <tr>
+                      <th colspan="3" style="font-size: 12px; height: 45px; padding-left: 30px;">GOALS</th>
+                    </tr>
+                  </thead>
+                  
+                  <tbody>
+                    <tr style="font-size: .7rem;">
+                      <td>POS</td>
+                      <td>Player</td>
+                      <td class="text-center">Stat</td>
+                    </tr>
+                    {% for player in player_goals.League %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td><a class="rd-nav-link" href="{% url 'player' player_name=player.scorer__name__username %}" style="font-size: .7rem;">{{ player.scorer__name__first_name }} {{ player.scorer__name__last_name }} <br> <span class="text-muted" style="font-size: .5rem;"></span>({{ player.scoring_team__name }})</a></td>
+                      <td class="text-center">{{ player.total_goals }}</td>
+                    </tr>
+                    {% endfor%}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- Assist Rankings -->
+            <div class="col mt-2">
+                
+              <!-- Table Roster-->
+              <div class="table-custom-responsive">
+                <table class="table-custom table-roster">
+                  <thead>
+                    <tr>
+                      <th colspan="3" style="font-size: 12px; height: 45px; padding-left: 30px;">ASSISTS</th>
+                    </tr>
+                  </thead>
+                  
+                  <tbody>
+                    <tr style="font-size: .7rem;">
+                      <td>POS</td>
+                      <td>Player</td>
+                      <td class="text-center">Stat</td>
+                    </tr>
+                    {% for player in player_assists.League %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <!-- <td>{{ player.assist__registrations__player_number }}</td> -->
+                      <td><a class="rd-nav-link" href="{% url 'player' player_name=player.assist__name__username %}" style="font-size: .7rem;">{{ player.assist__name__first_name }} {{ player.assist__name__last_name }} <br> <span class="text-muted" style="font-size: .5rem;">({{ player.assist__registrations__team__name }})</span></a></td>
+                      <td class="text-center">{{ player.total_assists }}</td>
+                    </tr>
+                    {% endfor%}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          {% endif %}
+        {% endif %}
+        <!-- Teams -->
+        <div class="row g-3">
+          <!-- TEAMS -->
+          <div class="col">
+            <!-- Heading Component-->
+            <article class="heading-component mb-0">
+              <div class="heading-component-inner">
+                <h5 class="heading-component-title" style="font-size: 12px;">TEAMS
+                </h5>
+              </div>
+            </article>
+            
+            <div class="col mt-3">
+              <div class="row justify-content-center">
+                {% for team in registered_teams %}
+                <div class="col d-flex flex-column align-items-center justify-content-center">
+                    <a class="rd-nav-link mb-4" href="{% url 'team' team_id=team.id %}" style="text-decoration: none;">
+                        <div class="text-center">
+                            <div class="card-standing-team-figure">
+                                {% if team.logo %}
+                                <img src="{{ team.logo.url }}" alt="" width="31" height="41"/>
+                                {% else %}
+                                <img src="{% static 'img/soccer.png' %}" alt="" width="31" height="41"/>
+                                {% endif %}
+                            </div>
+                            <div class="mt-1">
+                                <div class="card-standing-team-name" style="font-size: .7rem;">{{ team.name }}</div>
+                                <div class="card-standing-team-country" style="font-size: .5rem;">{{ team.location|default_if_none:"" }}</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+              </div>
+              
+            </div>
+          </div>
+          
+          
+        </div>
+
+        <!-- Awards -->
+        {% if awards %}
+        <div class="row">
+          <div class="col">
+            <!-- Heading Component-->
+            <article class="heading-component">
+              <div class="heading-component-inner">
+                <h5 class="heading-component-title">Awards
+                </h5>
+              </div>
+            </article>
+            <!-- Owl Carousel-->
+            <div class="owl-carousel owl-carousel-dots-modern awards-carousel" data-items="1" data-autoplay="true" data-autoplay-speed="4000" data-dots="true" data-nav="false" data-stage-padding="0" data-loop="true" data-margin="0" data-mouse-drag="true">
+                            <!-- Awards Item-->
+                            <div class="awards-item"> 
+                              <div class="awards-item-main">
+                                <h4 class="awards-item-title"><span class="text-accent">World</span>Champions
+                                </h4>
+                                <div class="divider"></div>
+                                <h5 class="awards-item-time">December 2014</h5>
+                              </div>
+                              <div class="awards-item-aside"> <img src="{% static 'img/thumbnail-minimal-1-67x147.png' %}" alt="" width="67" height="147"/>
+                              </div>
+                            </div>
+                            <!-- Awards Item-->
+                            <div class="awards-item"> 
+                              <div class="awards-item-main">
+                                <h4 class="awards-item-title"><span class="text-accent">Best</span>Forward
+                                </h4>
+                                <div class="divider"></div>
+                                <h5 class="awards-item-time">June 2015</h5>
+                              </div>
+                              <div class="awards-item-aside"> <img src="{% static 'img/thumbnail-minimal-2-68x126.png' %}" alt="" width="68" height="126"/>
+                              </div>
+                            </div>
+                            <!-- Awards Item-->
+                            <div class="awards-item"> 
+                              <div class="awards-item-main">
+                                <h4 class="awards-item-title"><span class="text-accent">Best</span>Coach
+                                </h4>
+                                <div class="divider"></div>
+                                <h5 class="awards-item-time">November 2016</h5>
+                              </div>
+                              <div class="awards-item-aside"> <img src="{% static 'img/thumbnail-minimal-3-73x135.png' %}" alt="" width="73" height="135"/>
+                              </div>
+                            </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+
+        {% if user.is_authenticated %}
+
+        <div class="container w-100 text-center mx-auto mt-5">
+          <h6 class="mb-3 text-center">Share your thoughts about this competition with others</h6>
+        </div>
+
+
+        <!-- Competition Likes -->
+        <!-- <a class="like-btn me-1" type="button" data-competition-id="{{ competition.id }}">
+          {% if competition.user_has_liked %}
+              <i class="fas fa-thumbs-up text-danger"></i>
+          {% else %}
+              <i class="fas fa-thumbs-up"></i>
+          {% endif %}
+        </a>
+        <span class="ms-1" style="font-size: 12px;" id="like-count-{{ competition.id }}">{{ num_likes }}</span> -->
+        
+
+
+
+
+        <div class="row" id="competition-comments-section">
+          <div class="comment-box mt-5">
+            <div class="comment-box-aside">
+                <!-- <img class="img-circle" src="images/user-7-69x69.jpg" alt="" width="69" height="69"/> -->
+                <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    {% if login_user.picture %}
+                    <div class="player-img" style="background-image: url('{{ login_user.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                    </div>
+                    {% else %}
+                    <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                        <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="comment-box-main">
+              <h5 class="comment-box-name mb-2">{{ login_user.user.username }}</h5>
+              <!-- comment form-->
+              <form method="post" action="{% url 'competition_comment' competition.id %}">
+                {% csrf_token %}
+                <div class="form-wrap">
+                  <label class="form-label" for="comment-message">Your comment</label>
+                  <textarea class="form-input" id="comment-message" name="message"></textarea>
+                </div>
+                <div class="form-button">
+                  <button class="button button-primary" type="submit">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <article class="heading-component mt-3">
+            <div class="heading-component-inner">
+                <h5 class="heading-component-title">{{ num_comments }} comments
+                </h5>
+            </div>
+          </article>
+          <a href="#collapseComments-{{ competition.id }}" class="text-muted my-1" data-bs-toggle="collapse" role="button" style="font-size: 16px;">View comments</a>
+          <!-- Comments -->
+          <div class="collapse" id="collapseComments-{{ competition.id }}">
+                
+            <div class="row">
+                <div class="col-sm-12">
+                    
+                    {% for comment in competition.competition_comments.all %}
+                        {% if not comment.parent %}
+                        <div class="blog-post-comments mb-2">
+                            <!-- Post Comment-->
+                            <div class="post-comment post-comment-parent">
+                                
+                                <div class="post-comment-main">
+
+                                    <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                        <div class="blog-post-author d-flex align-items-center">
+                                            <div class="mx-2">
+                                                <!-- <img class="img-circle" src="images/user-6-69x69.jpg" alt="" width="69" height="69"/> -->
+                                                <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    {% if comment.author.picture %}
+                                                    <div class="player-img" style="background-image: url('{{ comment.author.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                        <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <a href="{% url 'userprofile' comment.author.user.username %}">
+                                                <h5 class="author-name mx-1">{{ comment.author.user.username }}</h5>
+                                            </a>
+                                            <time class="post-comment-time mx-2" datetime="2024">{{ comment.created_at|date:"F j, Y" }}</time>
+                                        </div>
+                                    </div>
+
+                                    <div class="post-comment-text">
+                                        <p>{{ comment.content }}</p>
+                                    </div>
+                                    <div class="post-comment-footer">
+                                        <!-- Parent Comment Likes -->
+                                        <div class="comment-like">
+                                          <a class="like-btn" type="button" data-comment-id="{{ comment.id }}">
+                                              {% if comment.user_has_liked %}
+                                              <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                              {% else %}
+                                              <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                              {% endif %}
+                                          </a>
+                                          <span class="ms-1" id="like-count-{{ comment.id }}">{{ comment.num_likes }}</span>
+                                        </div>
+                                      
+
+                                        
+                                        <!-- Comment Reply Button -->
+                                        <div class="comment-reply">
+                                            <a class="ms-1" type="button" onclick="toggleReplyBox('{{ comment.id }}')">
+                                                Reply
+                                                <i class="icon fas fa-reply"></i>
+                                            </a>
+                                        </div>
+                                        <!-- Toggle Button for Replies -->
+                                        <a href="#collapseReplyComments-{{ comment.id }}" data-bs-toggle="collapse" role="button"><span class="" ></i>{{ comment.num_replies }} Replies</span></a>
+                                        {% if request.user == comment.author.user %}
+                                        <a class="ms-3" href="{% url 'delete_competition_comment' comment.id %}"><i class="icon fas fa-trash-alt"></i></a>
+                                        {% endif %}
+                                        <!-- Reply box -->
+                                        <div class="comment-box reply-box" id="reply-box-{{ comment.id }}" style="display: none;">
+                                            <div class="comment-box-main">
+                                                <!-- RD Mailform-->
+                                                <form class="comment-box-form" method="post" action="{% url 'competition_comment' competition.id %}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="redirect_to" value="{{ request.path }}">
+                                                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                                    <label class="form-label" for="comment-message-{{ comment.id }}"></label>
+                                                    <textarea class="form-input" id="comment-message-{{ comment.id }}" name="message" placeholder="Reply to {{ comment.author.user.username }}"></textarea>
+                                                    <div class="form-button">
+                                                        <button class="btn btn-primary btn-sm" type="submit">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    <!-- Collapsible Replies Section -->
+                                    <div class="collapse" id="collapseReplyComments-{{ comment.id }}">
+                                        {% for reply in comment.competition_replies.all %}
+                                        <div class="post-comment post-comment-child mt-3">
+                                            <div class="post-comment-main">
+                                                <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                                    <div class="blog-post-author d-flex align-items-center">
+                                                        <div class="mx-2">
+                                                            <!-- <img class="img-circle" src="images/user-6-69x69.jpg" alt="" width="69" height="69"/> -->
+                                                            <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                                {% if reply.author.picture %}
+                                                                <div class="player-img" style="background-image: url('{{ reply.author.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                                                </div>
+                                                                {% else %}
+                                                                <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                                    <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                                </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <a href="{% url 'userprofile' reply.author.user.username %}">
+                                                            <h5 class="author-name">{{ reply.author.user.username }}</h5>
+                                                        </a>
+                                                        
+                                                        <time class="post-comment-time mx-1" datetime="2024">{{ reply.created_at|date:"F j, Y" }}</time>
+                                                    </div>
+                                                </div>
+                                                <div class="post-comment-text">
+                                                    <p>{{ reply.content }}</p>
+                                                </div>
+                                                <div class="post-comment-footer">
+                                                  <!-- Child Comment Likes -->
+                                                  <div class="comment-like">
+                                                    <a class="like-btn" type="button" data-child-comment-id="{{ reply.id }}">
+                                                        {% if reply.user_has_liked %}
+                                                        <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                                        {% else %}
+                                                        <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                                        {% endif %}
+                                                    </a>
+                                                    <span class="ms-2" style="font-size: 12px;" id="like-count-{{ reply.id }}">{{ reply.num_likes }}</span>
+                                                  </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+          </div>
+        </div>
+
+        {% else %}
+  
+        <div class="container w-100 text-center mx-auto mt-5" id="competition-comments-section">
+          <p class="mb-3 text-center">Login to see what people are saying about this competition.</p>
+          <a class="button button-lg button-primary" href="{% url 'loginform' %}">LOGIN</a>
+        </div>
+
+        {% endif %}
+
+      </div>
+    </section>
+
+  </div>
+
+</div>
+
+
+
+
+{% endblock %}
+
+{% block extra_script %}
+<script>
+  function showGroup(groupId) {
+    // Hide all groups
+    document.querySelectorAll('.col[id^="group-"]').forEach(group => {
+      group.style.display = 'none';
+    });
+
+    // Show the selected group
+    const selectedGroup = document.getElementById('group-' + groupId);
+    if (selectedGroup) {
+      selectedGroup.style.display = 'block';
+    }
+
+    // Update the select dropdown to reflect the currently selected group
+    const selectElement = document.getElementById('group-select');
+    if (selectElement) {
+      selectElement.value = groupId;
+    }
+  }
+</script>
+{% endblock %}
+    

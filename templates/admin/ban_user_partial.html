@@ -1,0 +1,4 @@
+<form id="banUserForm" method="post" action="{% url 'ban_user' user.user.id %}">
+    {% csrf_token %}
+    <p>Are you sure you want to ban user {{ user.user.username }}?</p>
+</form>

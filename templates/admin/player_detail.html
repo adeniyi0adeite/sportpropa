@@ -1,0 +1,23 @@
+<!-- admin/player_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Player Details</title>
+</head>
+<body>
+    <h1>Player Details</h1>
+    <ul>
+        <li><strong>Name:</strong> {{ player.name }}</li>
+        <li><strong>Nationality:</strong> {{ player.nationality }}</li>
+        <li><strong>Picture:</strong> <img src="{{ player.picture.url }}" alt="{{ player.name }}"></li>
+        <li><strong>Team:</strong> {% if player.team %}{{ player.team.name }}{% else %}None{% endif %}</li>
+        <li><strong>Position:</strong> {{ player.position }}</li>
+        <li><strong>Age:</strong> {{ player.age }}</li>
+        <li><strong>Weight:</strong> {{ player.weight }}</li>
+        <li><strong>Height:</strong> {{ player.height }}</li>
+        <li><strong>Foot:</strong> {{ player.foot }}</li>
+        <li><strong>Biography:</strong> {{ player.biography }}</li>
+    </ul>
+</body>
+</html>

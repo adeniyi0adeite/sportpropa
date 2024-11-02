@@ -1,0 +1,174 @@
+
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<!-- Page-->
+<div class="page animated" style="animation-duration: 500ms;">
+      
+    <!-- Section Breadcrumbs-->
+    <section class="section parallax-container breadcrumbs-wrap" data-parallax-img="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}"><div class="material-parallax parallax"><img src="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" alt="" style="display: block; transform: translate3d(-50%, 175px, 0px);"></div>
+      <div class="parallax-content breadcrumbs-custom context-dark">
+        <div class="container">
+          <h3 class="breadcrumbs-custom-title">About Us</h3>
+          <ul class="breadcrumbs-custom-path">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li class="active">About Us</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-md bg-gray-100">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <!-- Heading Component-->
+              <article class="heading-component">
+                <div class="heading-component-inner">
+                  <h5 class="heading-component-title">
+                  </h5>
+                </div>
+              </article>
+              <div class="tabs-custom tabs-horizontal tabs-corporate tabs-corporate-boxed" id="tabs-1" data-nav="true">
+                <div class="nav-wrap">
+                  <button class="button button-nav button-prev" data-nav-prev=""><span class="icon mdi mdi-chevron-left"></span></button>
+                  <!-- Nav tabs-->
+                  <ul class="nav nav-tabs">
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#tabs-1-1" data-bs-toggle="tab"><span>ABOUT US</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="#tabs-1-2" data-bs-toggle="tab"><span> MISSION/VISION</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="#tabs-1-4" data-bs-toggle="tab"><span> WHAT WE OFFER</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="#tabs-1-5" data-bs-toggle="tab"><span> WHY CHOOSE US</span></a></li>
+                  </ul>
+                  <button class="button button-nav button-next" data-nav-next=""><span class="icon mdi mdi-chevron-right"></span></button>
+                </div>
+                <!-- Tab panes-->
+                <div class="tab-content">
+                  <div class="tab-pane fade show active" id="tabs-1-1">
+                    <div class="tab-content-main">
+                      <div class="row row-30">
+                        
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <h4>About US</h4>
+                                <p>Welcome to <strong>sportpropa</strong>, your ultimate destination for connecting and empowering soccer enthusiasts in rural Nigeria. Our platform is designed to support communities, schools, and individual players by providing a seamless digital experience for managing and tracking soccer performances.</p>
+                            </div>
+                            <div class="row">
+                                <h4>Our Story</h4>
+                                <p>Founded with a passion for soccer and a commitment to community development, <strong>sportpropa</strong> was born out of the need to bridge the gap between talent and opportunity in rural areas. In many parts of Nigeria, especially rural regions, access to resources and platforms that can showcase and develop local soccer talent is limited. We aim to change that by leveraging technology to bring communities closer and provide the tools needed for success.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <!-- Owl Carousel-->
+                          <div class="owl-carousel owl-carousel-dots-modern" data-items="1" data-dots="true" data-nav="false" data-stage-padding="0" data-loop="false" data-margin="0" data-mouse-drag="false"><img src="{% static 'img/about-us-1-529x350.jpg' %}" alt="" width="529" height="350"/><img src="{% static 'img/about-us-2-529x350.jpg' %}" alt="" width="529" height="350"/><img src="{% static 'img/about-us-3-529x350.jpg' %}" alt="" width="529" height="350"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="tabs-1-2">
+                    <div class="tab-content-main">
+                      <div class="row row-30">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <h4>Our Mission</h4>
+                                <p>To bridge the gap between rural soccer enthusiasts and the global sports community, providing a platform that showcases talent, fosters connections, and creates opportunities for players, teams, and fans.</p>      
+                            </div>
+                            <div class="row">
+                                <h4>Our Vision</h4>
+                                <p>To become the premier digital platform that empowers and elevates rural sport talent, connecting them with a global audience and fostering a vibrant, inclusive sport community.</p>      
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                          <!-- Owl Carousel-->
+                          <div class="owl-carousel owl-carousel-dots-modern" data-items="1" data-dots="true" data-nav="false" data-stage-padding="0" data-loop="false" data-margin="0" data-mouse-drag="false"><img src="{% static 'img/about-us-1-529x350.jpg' %}" alt="" width="529" height="350"/><img src="{% static 'img/about-us-2-529x350.jpg' %}" alt="" width="529" height="350"/><img src="{% static 'img/about-us-3-529x350.jpg' %}" alt="" width="529" height="350"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="tabs-1-4">
+                    <div class="tab-content-main">
+                      <div class="row row-30">
+                        <div class="col-lg-6">
+                          <h4>What We Offer</h4>
+                          <div class="row">
+                            <p>
+                              <strong>User Posts and Interactions:</strong>
+                              <br>
+                              Enable users to share updates, achievements, and experiences within the soccer community.
+                          </div>
+                          <div class="row">
+                            <p>
+                              <strong>Competition Profile:</strong>
+                              <br>
+                              Create detailed profiles for local and regional competitions, highlighting schedules, results, and standout performances.
+                          </div>
+                          <div class="row">
+                            <p>
+                              <strong>Team Profile:</strong>
+                              <br>
+                              Offer comprehensive profiles for teams, including history, achievements, and current rosters.
+                          </div>
+                          <div class="row">
+                            <p>
+                              <strong>Player Profile:</strong>
+                              <br>
+                              Showcase individual players with detailed profiles, stats, and highlights.
+                          </div>
+                          <div class="row">
+                            <p>
+                              <strong>Match/Game Management:</strong>
+                              <br>
+                              Provide tools for organizing, managing, and reporting on matches, making it easier for teams and organizers to handle logistics and records.
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <!-- Owl Carousel-->
+                          <div class="owl-carousel owl-carousel-dots-modern" data-items="1" data-dots="true" data-nav="false" data-stage-padding="0" data-loop="false" data-margin="0" data-mouse-drag="false"><img src="{% static 'img/about-us-1-529x350.jpg' %}" alt="" width="529" height="350"/><img src="{% static 'img/about-us-2-529x350.jpg' %}" alt="" width="529" height="350"/><img src="{% static 'img/about-us-3-529x350.jpg' %}" alt="" width="529" height="350"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="tabs-1-5">
+                    <div class="tab-content-main">
+                      <div class="row row-30">
+                        <div class="col-lg-6">
+                          <h4>Why Choose Us</h4>
+                          <p>
+                            We believe in the power of community and the potential of every player, regardless of where they come from. <strong>Sportpropa</strong>, is dedicated to providing the tools and visibility needed to turn dreams into reality, whether it's securing a spot on a professional team, gaining recognition from scouts, or simply sharing the love of the game.                             <br>
+                            We understand the unique challenges faced by rural communities and together, we can create a future where every talent is accessible and recognized, and every community is united through the beautiful game.
+                            Whether you are a player, coach, team manager, or fan, <strong>Sportpropa.com</strong> is here to support and celebrate your passion for the beautiful game.
+                          </p>
+                        </div>
+                        <div class="col-lg-6">
+                          <!-- Owl Carousel-->
+                          <div class="owl-carousel owl-carousel-dots-modern" data-items="1" data-dots="true" data-nav="false" data-stage-padding="0" data-loop="false" data-margin="0" data-mouse-drag="false"><img src="{% static 'img/about-us-1-529x350.jpg' %}" alt="" width="529" height="350"/><img src="{% static 'img/about-us-2-529x350.jpg' %}" alt="" width="529" height="350"/><img src="{% static 'img/about-us-3-529x350.jpg' %}" alt="" width="529" height="350"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+    
+    
+</div>
+
+{% endblock %}
+
+{% block extra_script %}
+
+{% endblock %}
+
+
+    

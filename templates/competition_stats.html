@@ -1,0 +1,61 @@
+<h1>Competition Statistics - {{ competition.name }}</h1>
+
+<h2>Goal Statistics</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Team</th>
+      <th>Goals</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for goal_stat in goal_stats %}
+    <tr>
+      <td>{{ goal_stat.player }}</td>
+      <td>{{ goal_stat.team }}</td>
+      <td>{{ goal_stat.goals }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Assist Statistics</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Team</th>
+      <th>Assists</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for assist_stat in assist_stats %}
+    <tr>
+      <td>{{ assist_stat.player }}</td>
+      <td>{{ assist_stat.team }}</td>
+      <td>{{ assist_stat.assists }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Own Goal Statistics</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Team</th>
+      <th>Own Goals</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for own_goal_stat in own_goal_stats %}
+    <tr>
+      <td>{{ own_goal_stat.player }}</td>
+      <td>{{ own_goal_stat.team }}</td>
+      <td>{{ own_goal_stat.own_goals }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

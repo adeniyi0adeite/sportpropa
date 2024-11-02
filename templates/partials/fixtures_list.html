@@ -1,0 +1,54 @@
+{% load static %}
+
+
+<!-- your_app/templates/your_app/fixtures_list.html -->
+{% for fixture in page_obj %}
+<!-- Game Result Creative-->
+<article class="game-result game-result-creative flex-fill ms-3">
+    {% if competition.competition_type == 'Cup' and fixture.group %}
+    <div class="mt-3">
+        <!-- <h6>{{ fixture.competition.name }}</h6> -->
+        <h>{{ fixture.group.name }}</h>
+    </div>
+    {% endif %}
+    <div class="game-result-main-vertical">
+        <div class="game-result-team game-result-team-horizontal game-result-team-first">
+            <figure>
+                {% if fixture.home_team.logo %}
+                <img src="{{ fixture.home_team.logo.url }}" alt="" width="45" height="79"/>
+                {% else %}
+                <img src="{% static 'img/soccer.png' %}" alt="" width="45" height="79"/>
+                {% endif %}
+            </figure>
+            <div class="game-result-team-title">
+                <div class="game-result-team-name">{{ fixture.home_team.name }}</div>
+                <div class="game-result-team-country">{{ fixture.home_team.location }}</div>
+            </div>
+        </div>
+        <span class="game-result-team-divider">VS</span>
+        <br>
+        <div class="game-result-team game-result-team-horizontal game-result-team-second">
+            <figure>
+                {% if fixture.away_team.logo %}
+                <img src="{{ fixture.away_team.logo.url }}" alt="" width="45" height="79"/>
+                {% else %}
+                <img src="{% static 'img/soccer.png' %}" alt="" width="45" height="79"/>
+                {% endif %}
+            </figure>
+            <div class="game-result-team-title">
+                <div class="game-result-team-name">{{ fixture.away_team.name }}</div>
+                <div class="game-result-team-country">{{ fixture.away_team.location }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="game-result-footer">
+        <ul class="game-result-details">
+            <li>{{ fixture.competition.location }}</li>
+            <li>
+                <time datetime="2024-04-14">{{ fixture.match_date|date:"D, M d, Y" }} </time>
+            </li>
+            <li><b>{{ fixture.match_date|date:"H:i" }}</b></li>
+        </ul>
+    </div>
+</article>
+{% endfor %}

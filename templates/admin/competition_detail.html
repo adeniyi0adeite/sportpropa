@@ -1,0 +1,25 @@
+<!-- competition_detail.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ competition.name }} Details</title>
+</head>
+<body>
+    <h1>{{ competition.name }} Details</h1>
+    <ul>
+        <li><strong>Start Date:</strong> {{ competition.start_date }}</li>
+        <li><strong>End Date:</strong> {{ competition.end_date }}</li>
+        <li><strong>Organizer:</strong> {{ competition.organizer }}</li>
+        <li><strong>Location:</strong> {{ competition.location }}</li>
+        <li><strong>Description:</strong> {{ competition.description }}</li>
+        <li><strong>Prize:</strong> {{ competition.prize }}</li>
+        <li><strong>Registration Open:</strong> {% if competition.registration_open %}Yes{% else %}No{% endif %}</li>
+        {% if competition.logo %}
+        <li><strong>Logo:</strong> <img src="{{ competition.logo.url }}" alt="{{ competition.name }} Logo" width="100"></li>
+        {% endif %}
+    </ul>
+    <a href="{% url 'competition_update' competition.pk %}">Update</a>
+</body>
+</html>

@@ -1,0 +1,476 @@
+
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block extra_head %}
+    <!-- Include your external JavaScript file -->
+    <script src="{% static 'js/competition_info.js' %}"></script>
+{% endblock %}
+{% block content %}
+
+<!-- Page-->
+<div class="page animated" style="animation-duration: 500ms;">
+      
+    <!-- Section Breadcrumbs-->
+    <section class="section parallax-container breadcrumbs-wrap" data-parallax-img="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}"><div class="material-parallax parallax"><img src="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" alt="" style="display: block; transform: translate3d(-50%, 175px, 0px);"></div>
+      <div class="parallax-content breadcrumbs-custom context-dark">
+        <div class="container">
+          <h3 class="breadcrumbs-custom-title">{{competition.name}}</h3>
+          <ul class="breadcrumbs-custom-path">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li class="active">Features</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-md bg-gray-100">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <!-- Heading Component-->
+              <article class="heading-component">
+                <div class="heading-component-inner">
+                  <h5 class="heading-component-title">
+                  </h5>
+                </div>
+              </article>
+              <div class="tabs-custom tabs-horizontal tabs-corporate tabs-corporate-boxed" id="tabs-1" data-nav="true">
+                <div class="nav-wrap">
+                  <!-- <button class="button button-nav button-prev" data-nav-prev=""><span class="icon mdi mdi-chevron-left"></span></button> -->
+                  <!-- Nav tabs-->
+                  <ul class="nav">
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#tabs-1-1" data-bs-toggle="tab"><span>RESULTS</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="#tabs-1-2" data-bs-toggle="tab"><span> FIXTURES</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="#tabs-1-3" data-bs-toggle="tab"><span> STANDINGS</span></a></li>
+                    
+                  </ul>
+                  <!-- <button class="button button-nav button-next" data-nav-next=""><span class="icon mdi mdi-chevron-right"></span></button> -->
+                </div>
+                <!-- Tab panes-->
+                <div class="tab-content">
+
+                  <div class="tab-pane fade show active" id="tabs-1-1">
+                    <div class="tab-content-main">
+                      <div class="row row-30">
+                        
+                        <div class="col">
+                            <!-- Results -->
+                            {% if results %}
+                            <div class="row">
+                                <div class="col">
+                                    <!-- Heading Component-->
+                                    <article class="heading-component">
+                                        <div class="heading-component-inner">
+                                            <h5 class="heading-component-title">Latest games results
+                                            </h5>
+                                        </div>
+                                    </article>
+                                    <!-- Game results -->
+                                    <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3">
+                                        {% for result in results %}
+                                        <div class="mb-3">
+                                            <!-- Your result display code here -->
+                                            <a href="{% url 'matchresultdetails' match_id=result.match.id %}" class="game-result-link flex-fill ms-3">
+                                                <article class="game-result game-result-classic p-1">
+                                                {% if competition.competition_type == 'Cup' and result.match.group %}
+                                                    <h6>{{ result.match.group.name }}</h6>
+                                                {% elif competition.competition_type == 'Cup' and result.match.match_type %}
+                                                    <h6>{{ result.match.match_type }}</h6>
+                                                {% endif %}
+                                
+                                                <div class="game-result-main">
+                                                    <!-- Home Team -->
+                                                    <div class="game-result-team game-result-team-first">
+                                                    <figure>
+                                                        {% if result.match.home_team.logo %}
+                                                        <img src="{{ result.match.home_team.logo.url }}" alt="" width="75" height="99"/>
+                                                        {% else %}
+                                                        <img src="{% static 'img/soccer.png' %}" alt="" width="75" height="99"/>
+                                                        {% endif %}
+                                                    </figure>
+                                                    <div class="game-result-team-name">{{ result.match.home_team }}</div>
+                                                    <div class="game-result-team-country">{{ result.match.home_team.location|default_if_none:"" }}</div>
+                                                    </div>
+                                                    <!-- Score Section -->
+                                                    <div class="game-result-middle">
+                                                    <div class="game-result-score-wrap">
+                                                        <div class="game-result-score {% if result.home_team_score > result.away_team_score %}game-result-team-win{% endif %}">
+                                                        {{ result.home_team_score }}
+                                                        {% if result.home_team_score > result.away_team_score %}
+                                                        <span class="game-result-team-label game-result-team-label-top">Win</span>
+                                                        {% endif %}
+                                                        </div>
+                                                        <div class="game-result-score-divider">
+                                                        
+                                                        <!-- Conditionally display "Draw" if scores are equal -->
+                                                        {% if result.home_team_score == result.away_team_score %}
+                                                        <span class="game-result-draw game-result-team-label-top">Draw</span>
+                                                        {% endif %}
+                                                        
+                                                        <div class="game-result-score-divider">
+                                                            <svg x="0px" y="0px" width="7px" height="21px" viewbox="0 0 7 21" enable-background="new 0 0 7 21" xml:space="preserve">
+                                                            <g>
+                                                                <circle cx="3.5" cy="3.5" r="3"></circle>
+                                                                <path d="M3.5,1C4.879,1,6,2.122,6,3.5S4.879,6,3.5,6S1,4.878,1,3.5S2.122,1,3.5,1 M3.5,0C1.567,0,0,1.567,0,3.5S1.567,7,3.5,7      S7,5.433,7,3.5S5.433,0,3.5,0L3.5,0z"></path>
+                                                            </g>
+                                                            <g>
+                                                                <circle cx="3.695" cy="17.5" r="3"></circle>
+                                                                <path d="M3.695,15c1.378,0,2.5,1.122,2.5,2.5S5.073,20,3.695,20s-2.5-1.122-2.5-2.5S2.316,15,3.695,15 M3.695,14      c-1.933,0-3.5,1.567-3.5,3.5s1.567,3.5,3.5,3.5s3.5-1.567,3.5-3.5S5.628,14,3.695,14L3.695,14z"></path>
+                                                            </g>
+                                                            </svg>
+                                                        </div>
+                                                        </div>
+                                                        <div class="game-result-score {% if result.away_team_score > result.home_team_score %}game-result-team-win{% endif %}">
+                                                        {{ result.away_team_score }}
+                                                        {% if result.away_team_score > result.home_team_score %}
+                                                        <span class="game-result-team-label game-result-team-label-top">Win</span>
+                                                        {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <!-- <div class="game-results-status">Home</div> -->
+                                                    </div>
+                                                    <!-- Away Team -->
+                                                    <div class="game-result-team game-result-team-second">
+                                                    <figure>
+                                                        {% if result.match.away_team.logo %}
+                                                        <img src="{{ result.match.away_team.logo.url }}" alt="" width="75" height="99"/>
+                                                        {% else %}
+                                                        <img src="{% static 'img/soccer.png' %}" alt="" width="75" height="99"/>
+                                                        {% endif %}
+                                                    </figure>
+                                                    <div class="game-result-team-name">{{ result.match.away_team }}</div>
+                                                    <div class="game-result-team-country">{{ result.match.away_team.location|default_if_none:"" }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="game-result-footer">
+                                                    <ul class="game-result-details">
+                                                    <li>{{ result.match.location }}</li>
+                                                    <li>
+                                                        <time datetime="2022-04-14">{{ result.match.match_date|date:"F d, Y" }}</time>
+                                                    </li>
+                                                    </ul>
+                                                </div>
+                                                </article>
+                                            </a>
+                                            
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="tab-pane fade" id="tabs-1-2">
+                    <div class="tab-content-main">
+                      <div class="row row-30">
+                        <div class="col">
+                            <!-- Fixtures -->
+                            {% if fixtures %}
+                            <div class="row">
+                                <div class="col">
+                                    <!-- Heading Component-->
+                                    <article class="heading-component">
+                                    <div class="heading-component-inner">
+                                        <h5 class="heading-component-title">Fixtures
+                                        </h5>
+                                    </div>
+                                    </article>
+                                    
+                                    <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3">
+                                        {% for fixture in fixtures %}
+                                        <div class="mb-3" id="fixtures-container">
+                                            
+                                            <!-- Game Result Creative-->
+                                            <article class="game-result game-result-creative flex-fill ms-3 mb-1">
+                                                <br>
+                                                {% if competition.competition_type == 'Cup' and fixture.group %}
+                                                    <h6>{{ fixture.group.name }}</h6>
+                                                {% elif competition.competition_type == 'Cup' and fixture.match_type %}
+                                                    <h6>{{ fixture.match_type }}</h6>
+                                                {% endif %}
+                                                <div class="game-result-main-vertical">
+                                                    <div class="game-result-team game-result-team-horizontal game-result-team-first">
+                                                        <figure>
+                                                            {% if fixture.home_team.logo %}
+                                                            <img src="{{ fixture.home_team.logo.url }}" alt="" width="45" height="79"/>
+                                                            {% else %}
+                                                            <img src="{% static 'img/soccer.png' %}" alt="" width="45" height="79"/>
+                                                            {% endif %}
+                                                        </figure>
+                                                        <div class="game-result-team-title">
+                                                            <div class="game-result-team-name">{{ fixture.home_team.name }}</div>
+                                                            <div class="game-result-team-country">{{ fixture.home_team.location|default_if_none:"" }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <span class="game-result-team-divider">VS</span>
+                                                    <br>
+                                                    <div class="game-result-team game-result-team-horizontal game-result-team-second">
+                                                        <figure>
+                                                            {% if fixture.away_team.logo %}
+                                                            <img src="{{ fixture.away_team.logo.url }}" alt="" width="45" height="79"/>
+                                                            {% else %}
+                                                            <img src="{% static 'img/soccer.png' %}" alt="" width="45" height="79"/>
+                                                            {% endif %}
+                                                        </figure>
+                                                        <div class="game-result-team-title">
+                                                            <div class="game-result-team-name">{{ fixture.away_team.name }}</div>
+                                                            <div class="game-result-team-country">{{ fixture.away_team.location|default_if_none:"" }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="game-result-footer">
+                                                    <ul class="game-result-details">
+                                                        <li>{{ fixture.competition.location }}</li>
+                                                        <li>
+                                                            <time datetime="2024-04-14">{{ fixture.match_date|date:"D, M d, Y" }} </time>
+                                                        </li>
+                                                        <li><b>{{ fixture.match_date|date:"H:i" }}</b></li>
+                                                    </ul>
+                                                </div>
+                                            </article>
+                                            <br>
+                                            
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="tab-pane fade" id="tabs-1-3">
+                    <div class="tab-content-main">
+                      <div class="row row-30">
+                        <div class="col">
+                            <!-- Standings -->
+                            <div class="row">
+                                {% if groups %}
+
+                                <div class="col">
+                                    <!-- Heading Component-->
+                                    <article class="heading-component">
+                                        <div class="heading-component-inner">
+                                            <h5 class="heading-component-title">Standings
+                                            </h5>
+                                            
+                                        </div>
+                                    </article>
+
+                                    <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3">
+                                        {% for group, group_standings in standings.items %}
+                                        <div class="mb-3">
+                                            <!-- Heading Component-->
+                                            <article class="heading-component">
+                                                <div class="heading-component-inner">
+                                                    <div class="heading-component-aside">
+                                                    <ul class="list-inline list-inline-xs list-inline-middle">
+                                                        <li>
+                                                        <select class="select" data-placeholder="{{competition.name}}" data-container-class="select-minimal-xl">
+                                                            <option label="placeholder"></option>
+                                                            <option value="{{competition.name}}" selected="">{{group.name}}</option>
+                                                        </select>
+                                                        </li>
+                                                    </ul>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                            
+                                            <div class="card-standing card-group-custom card-standing-index" id="accordion1" role="tablist" aria-multiselectable="false">
+                                                <div class="card-standing-caption">
+                                                    <div class="card-standing-position">Pos</div>
+                                                    <div class="card-standing-caption-aside">
+                                                    <div class="card-standing-team">Team</div>
+                                                    <div class="card-standing-number">W</div>
+                                                    <div class="card-standing-number">L</div>
+                                                    <div class="card-standing-number">D</div>
+                                                    <div class="card-standing-diff">DIFF</div>
+                                                    <div class="card-standing-points">PTS</div>
+                                                    </div>
+                                                </div>
+                                                
+                                                {% for standing in group_standings %}
+                                                <!-- Bootstrap card-->
+                                                <article class="card card-custom">
+                                                    <div class="card-standing-position card-standing-counter"></div>
+                                                    <div class="card-header" id="accordion1Heading1" role="tab">
+                                                        <div class="card-standing-team-item">
+                                                            <div class="card-standing-team">
+                                                            
+                                                                <div class="card-standing-team-figure">
+                                                                    {% if standing.team.logo %}
+                                                                    <img src="{{ standing.team.logo.url }}" alt="" width="31" height="41"/>
+                                                                    {% else %}
+                                                                    <img src="{% static 'img/soccer.png' %}" alt="" width="31" height="41"/>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="card-standing-team-title">
+                                                                    <div class="card-standing-team-name"><a class="rd-nav-link" href="{% url 'team' team_id=standing.team.id %}" >{{ standing.team.name }}</a></div>
+                                                                    <div class="card-standing-team-country">{{ standing.team.location|default_if_none:"" }}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="card-standing-number">{{ standing.wins }}</div>
+                                                            <div class="card-standing-number">{{ standing.losses }}</div>
+                                                            <div class="card-standing-number">{{ standing.draws }}</div>
+                                                            <div class="card-standing-points">{{ standing.goal_difference }}</div>
+                                                            <div class="card-standing-diff">{{ standing.points }}</div>
+                                                            <!-- <div class="card-standing-button"><a class="card-standing-toogle material-icons-remove collapsed" role="button" data-bs-toggle="collapse" data-parent="#accordion1" href="#accordion1Collapse1" aria-controls="accordion1Collapse1"></a></div> -->
+                                                        </div>
+                                                    </div>
+                                                    <!-- <div class="collapse" id="accordion1Collapse1" role="tabpanel" aria-labelledby="accordion1Heading1">
+                                                    <div class="card-body">
+                                                        <div class="card-standing-team-details">
+                                                        <div class="card-standing-game-status">Home</div>
+                                                        <div class="card-standing-number">78</div>
+                                                        <div class="card-standing-number">2</div>
+                                                        <div class="card-standing-number">1</div>
+                                                        </div>
+                                                        <div class="card-standing-divider"></div>
+                                                        <div class="card-standing-team-details">
+                                                        <div class="card-standing-game-status">Away</div>
+                                                        <div class="card-standing-number">26</div>
+                                                        <div class="card-standing-number">28</div>
+                                                        <div class="card-standing-number">1</div>
+                                                        </div>
+                                                    </div>
+                                                    </div> -->
+                                                </article>
+                                                {% endfor %}
+
+                                            </div>
+                                            
+                                            
+                                        </div>
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+                                {% else %}
+                                
+                                <div class="col">
+                                    <!-- Heading Component-->
+                                    <article class="heading-component">
+                                        <div class="heading-component-inner">
+                                            <h5 class="heading-component-title">Standings
+                                            </h5>
+                                            <div class="heading-component-aside">
+                                            <ul class="list-inline list-inline-xs list-inline-middle">
+                                                <li>
+                                                <select class="select" data-placeholder="{{competition.name}}" data-container-class="select-minimal-xl">
+                                                    <option label="placeholder"></option>
+                                                    <option value="{{competition.name}}" selected="">{{competition.name}}</option>
+                                                </select>
+                                                </li>
+                                                <!-- <li>
+                                                <select class="select" data-placeholder="2016-2024" data-container-class="select-minimal-xs">
+                                                    <option label="placeholder"></option>
+                                                    <option value="2016-2024" selected="">2016-2024</option>
+                                                    <option value="2015-2016">2015-2016</option>
+                                                    <option value="2014-2015">2014-2015</option>
+                                                </select>
+                                                </li> -->
+                                            </ul>
+                                            </div>
+                                        </div>
+                                    </article>
+                                    <div class="card-standing card-group-custom card-standing-index" id="accordion1" role="tablist" aria-multiselectable="false">
+                                        <div class="card-standing-caption">
+                                            <div class="card-standing-position">Pos</div>
+                                            <div class="card-standing-caption-aside">
+                                            <div class="card-standing-team">Team</div>
+                                            <div class="card-standing-number">W</div>
+                                            <div class="card-standing-number">L</div>
+                                            <div class="card-standing-number">D</div>
+                                            <div class="card-standing-diff">DIFF</div>
+                                            <div class="card-standing-points">PTS</div>
+                                            </div>
+                                        </div>
+
+                                    {% for standing in standings %}
+                                    <!-- Bootstrap card-->
+                                    <article class="card card-custom">
+                                        <div class="card-standing-position card-standing-counter"></div>
+                                        <div class="card-header" id="accordion1Heading1" role="tab">
+                                        <div class="card-standing-team-item">
+                                            <div class="card-standing-team">
+                                            <div class="card-standing-team-figure">
+                                                {% if standing.team.logo %}
+                                                <img src="{{ standing.team.logo.url }}" alt="" width="31" height="41"/>
+                                                {% else %}
+                                                <img src="{% static 'img/team-sportland-75x99.png' %}" alt="" width="31" height="41"/>
+                                                {% endif %}
+                                            </div>
+                                            <div class="card-standing-team-title">
+                                                <div class="card-standing-team-name"><a class="rd-nav-link" href="{% url 'team' team_id=standing.team.id %}" >{{ standing.team.name }}</a></div>
+                                                <div class="card-standing-team-country">{{ standing.team.location|default_if_none:"" }}</div>
+                                            </div>
+                                            </div>
+                                            <div class="card-standing-number">{{ standing.wins }}</div>
+                                            <div class="card-standing-number">{{ standing.losses }}</div>
+                                            <div class="card-standing-number">{{ standing.draws }}</div>
+                                            <div class="card-standing-points">{{ standing.goal_difference }}</div>
+                                            <div class="card-standing-diff">{{ standing.points }}</div>
+                                            <!-- <div class="card-standing-button"><a class="card-standing-toogle material-icons-remove collapsed" role="button" data-bs-toggle="collapse" data-parent="#accordion1" href="#accordion1Collapse1" aria-controls="accordion1Collapse1"></a></div> -->
+                                        </div>
+                                        </div>
+                                        <!-- <div class="collapse" id="accordion1Collapse1" role="tabpanel" aria-labelledby="accordion1Heading1">
+                                        <div class="card-body">
+                                            <div class="card-standing-team-details">
+                                            <div class="card-standing-game-status">Home</div>
+                                            <div class="card-standing-number">78</div>
+                                            <div class="card-standing-number">2</div>
+                                            <div class="card-standing-number">1</div>
+                                            </div>
+                                            <div class="card-standing-divider"></div>
+                                            <div class="card-standing-team-details">
+                                            <div class="card-standing-game-status">Away</div>
+                                            <div class="card-standing-number">26</div>
+                                            <div class="card-standing-number">28</div>
+                                            <div class="card-standing-number">1</div>
+                                            </div>
+                                        </div>
+                                        </div> -->
+                                    </article>
+                                    {% endfor %}
+
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+    
+    
+</div>
+
+{% endblock %}
+
+{% block extra_script %}
+
+
+{% endblock %}
+
+
+    

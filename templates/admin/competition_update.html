@@ -1,0 +1,36 @@
+<!-- admin_panel.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <h1>Admin Panel</h1>
+    
+    <h2>Update Competition</h2>
+    <form method="post" enctype="multipart/form-data" action="{% url 'competition_update' competition.pk %}">
+        {% csrf_token %}
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ competition.name }}"><br>
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ competition.start_date }}"><br>
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ competition.end_date }}"><br>
+        <label for="organizer">Organizer:</label>
+        <input type="text" id="organizer" name="organizer" value="{{ competition.organizer }}"><br>
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" value="{{ competition.location }}"><br>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description">{{ competition.description }}</textarea><br>
+        <label for="prize">Prize:</label>
+        <input type="text" id="prize" name="prize" value="{{ competition.prize }}"><br>
+        <label for="registration_open">Registration Open:</label>
+        <input type="checkbox" id="registration_open" name="registration_open" {% if competition.registration_open %}checked{% endif %}><br>
+        <label for="logo">Logo:</label>
+        <input type="file" id="logo" name="logo"><br>
+        <input type="submit" value="Update Competition">
+    </form>
+</body>
+</html>

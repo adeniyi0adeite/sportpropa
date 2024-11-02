@@ -1,0 +1,95 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="page animated" style="animation-duration: 500ms;">
+
+    <!-- Breadcrumbs -->
+    <section class="section parallax-container breadcrumbs-wrap" data-parallax-img="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}">
+      <div class="material-parallax parallax">
+        <img src="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" alt="">
+      </div>
+      <div class="parallax-content breadcrumbs-custom context-dark">
+        <div class="container">
+          <h3 class="breadcrumbs-custom-title"></h3>
+          <ul class="breadcrumbs-custom-path">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="">Vote Confirmation</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Section Login/register-->
+    <section class="section section-variant-1">
+        <div class="container">
+            <div class="row row-50 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-6">
+                    <div class="card-top-panel">
+                        <div class="card-top-panel-left">
+                            <h5 class="card-title card-title-login">Confirm Your Vote</h5>
+                        </div>
+                    </div>
+                    <!-- Display error messages -->
+                    {% if messages %}
+                        <div class="alert-container">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}" role="alert">
+                                    {{ message|safe }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="card-form ">
+                        <form id="" class="rd-form" action="{% url 'confirm_vote' %}" method="post">
+                            <!-- <div id="resend-code-message"></div> -->
+                            {% csrf_token %}
+                            <div class="form-wrap">
+                                <label class="form-label" for="verification_code">Enter your 8-digit verification code:</label>
+                                <input class="form-input" id="verification_code" type="text" name="verification_code" data-constraints="@Required">
+                            </div>
+                            <div class="col text-end">
+                                <a class="button button-xs button-primary" href="{% url 'resend_vote_code' %}">Resend code</a>
+                            </div>
+                            <button class="button button-lg button-primary button-block" type="submit">Confirm Vote</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- <h1>Confirm Your Vote</h1> -->
+    <!-- Display error messages -->
+    <!-- {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form method="post" action="{% url 'confirm_vote' %}">
+        {% csrf_token %}
+        <label for="verification_code">Enter your 8-digit verification code:</label>
+        <input type="text" id="verification_code" name="verification_code" required>
+        <button type="submit">Confirm Vote</button>
+    </form> -->
+
+</div>
+
+
+{% endblock %}
+
+{% block extra_script %}
+
+{% endblock %}

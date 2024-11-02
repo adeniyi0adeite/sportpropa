@@ -1,0 +1,24 @@
+<div>
+    <h2>{{ user.user.username }}</h2>
+    <p>Email: {{ user.user.email }}</p>
+    <p>Bio: {{ user.bio }}</p>
+    <p>Favorite Team: {{ user.favorite_team }}</p>
+    <h3>Posts</h3>
+    <ul>
+        {% for post in posts %}
+        <li>{{ post.caption }} ({{ post.created_at }})</li>
+        {% endfor %}
+    </ul>
+    <h3>Comments</h3>
+    <ul>
+        {% for comment in comments %}
+        <li>{{ comment.content }} ({{ comment.created_at }})</li>
+        {% endfor %}
+    </ul>
+    <h3>Likes</h3>
+    <ul>
+        {% for like in likes %}
+        <li>Like on {{ like.post }} or {{ like.comment }}</li>
+        {% endfor %}
+    </ul>
+</div>

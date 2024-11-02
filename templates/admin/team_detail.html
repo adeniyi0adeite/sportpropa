@@ -1,0 +1,16 @@
+<!-- admin_panel/team_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Team Detail</title>
+</head>
+<body>
+    <h1>Team Detail</h1>
+    <p>Name: {{ team.name }}</p>
+    <p>Logo: <img src="{{ team.logo.url }}" alt="{{ team.name }} Logo"></p>
+    <p>Coach: {{ team.coach.name }}</p>
+    <p>Founded Year: {{ team.founded_year }}</p>
+    <!-- Add more details as needed -->
+</body>
+</html>

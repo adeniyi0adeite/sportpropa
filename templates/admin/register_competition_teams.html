@@ -1,0 +1,49 @@
+
+{% extends 'admin/admin_base.html' %}
+
+{% load humanize %}
+
+{% load static %}
+
+
+{% block content %}
+
+<div class="page animated" style="animation-duration: 500ms;">
+
+    <section class="section section-md bg-gray-100">
+        <div class="container">
+            <h1>Register Teams for {{ competition.name }}</h1>
+
+
+            <div>
+                <h2>Already Registered Teams</h2>
+                <ul>
+                    {% for team in registered_teams %}
+                        <li>{{ team.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+            <div>
+                <form method="post" action="{% url 'register_competition_teams' competition.id %}">
+                    {% csrf_token %}
+                    <label>Select Teams:</label><br>
+                    {% for team in all_teams %}
+                    <input type="checkbox" name="teams" value="{{ team.id }}" {% if team in competition.teams.all %}disabled{% endif %}>
+                    {{ team.name }} {% if team in competition.teams.all %}(Already registered){% endif %}<br>
+                    {% endfor %}
+                    <button type="submit">Register Teams</button>
+                </form>
+                <a href="{% url 'competition'%}">Back to Competition Details</a>
+            </div>
+            <br>
+            <a href="{% url 'create_team' competition.id %}">Create team</a>
+
+
+        </div>
+    </section>
+    
+</div>
+
+{% endblock %}

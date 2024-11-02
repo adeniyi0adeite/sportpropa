@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Team</title>
+</head>
+<body>
+    <h1>Create a New Team</h1>
+    <form method="post" enctype="multipart/form-data" action="{% if competition_id %}{% url 'create_team' competition_id %}{% else %}{% url 'create_team' %}{% endif %}">
+        {% csrf_token %}
+        <label for="name">Team Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="logo">Team Logo:</label>
+        <input type="file" id="logo" name="logo"><br><br>
+
+        <label for="coach">Coach:</label>
+        <select id="coach" name="coach">
+            <option value="">Select a Coach</option>
+            {% for coach in coaches %}
+                <option value="{{ coach.id }}">{{ coach.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="founded_year">Founded Year:</label>
+        <input type="number" id="founded_year" name="founded_year"><br><br>
+
+        <button type="submit">Create Team</button>
+    </form>
+    <a href="{% if competition_id %}{% url 'register_competition_teams' competition_id %}{% else %}{% url 'team_list' %}{% endif %}">Back</a>
+</body>
+</html>
+</body>
+</html>

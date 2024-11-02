@@ -1,0 +1,1220 @@
+
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block extra_head %}
+    <!-- Include your external JavaScript file -->
+    <script src="{% static 'js/team.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="page animated" style="animation-duration: 500ms;">
+
+
+  <section class="section parallax-container breadcrumbs-wrap" data-parallax-img="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}"><div class="material-parallax parallax"><img src="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" alt="" style="display: block; transform: translate3d(-50%, 175px, 0px);"></div>
+    <div class="parallax-content breadcrumbs-custom context-dark">
+      <div class="container">
+        <h3 class="breadcrumbs-custom-title">Team Page</h3>
+        <ul class="breadcrumbs-custom-path">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="#">Team</a></li>
+          <li class="active">{{ team.name }}</li>
+        </ul>
+        {% if team.logo %}
+        <img class="mt-3" src="{{ team.logo.url }}" alt="" width="70" height="90"/>
+        {% else %}
+        <img class="mt-3" src="{% static 'img/soccer.png' %}" alt="" width="70" height="90"/>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+
+  <section class="section section-xs bg-gray-100">
+    <div class="container mb-0">
+
+      {% if next_fixture %}
+      <div class="row mt-1">
+        <!-- Next match -->
+        <div class="col-md-12">
+          <!-- Heading Component-->
+          <article class="heading-component mb-0">
+            <div class="heading-component-inner">
+              <h5 class="heading-component-title">Next match
+              </h5>
+            </div>
+          </article>
+          <div class="promo-creative unit-spacing-xs mt-1 border" >
+            <div class="unit unit-md-horizontal align-items-center align-items-md-stretch border" >
+              <div class="unit-body border m-0 p-0" style="width: 95%;">
+                <div class="promo-creative-meta" style="width: 100%;">
+                  <time class="promo-creative-time" datetime="2024-05-17"><span class="heading-1">{{ next_fixture.match_date|date:"d" }}</span><span class="heading-5 ms-1">{{ next_fixture.match_date|date:"M" }}</span></time>
+                  <div class="promo-creative-meta-description"><span class="text-primary"> {{ next_fixture.match_date|date:"H:i" }}</span><span>{{ next_fixture.match_date|date:"D" }}</span></div>
+                </div>
+                <div class="promo-creative-figure">
+                  <img style="height: 100px;" src="{% static 'img/sport-elements-1-357x321.jpg' %}" alt="" width="557" height=""/>
+                </div>
+              </div>
+              <div class="unit-right border " style="width: 95%;">
+                <div class="promo-creative-details justify-content-center" style="width: 100%;">
+                  <h6 class="promo-creative-title text-primary">{{ next_fixture.competition.name }}</h6>
+                  <p class="promo-creative-location" style="font-size: .5rem;"><span class="icon icon-gray-800 icon-xxs mdi mdi-map-marker"></span>{{ next_fixture.competition.location }}
+                  </p>
+                  <div class="promo-creative-countdown" >
+                    <div class="countdown countdown-bordered" data-type="until" data-time="{{ next_fixture.match_date|date:"d M Y H:i" }}" data-format="dhms" data-style="short" style="font-size: .8rem;"></div>
+                  </div>
+                  <div class="mt-1">
+                    {% if next_fixture.competition.competition_type == 'Cup' and next_fixture.group %}
+                      <h6 class="text-primary">{{ next_fixture.group.name }}</h6>
+                    {% elif next_fixture.competition.competition_type == 'Cup' and next_fixture.match_type %}
+                      <h6 class="text-primary">{{ next_fixture.match_type }}</h6>
+                    {% endif %}
+                  </div>
+                  <div class="promo-main promo-creative-main" >
+                    <div class="promo-team promo-creative-team align-items-center justify-content-center" style="flex-direction: column;">
+                      <figure class="promo-team-figure" >
+                        {% if next_fixture.home_team.logo %}
+                        <img src="{{ next_fixture.home_team.logo.url }}" alt="" width="34" height="34"/>
+                        {% else %}
+                        <img src="{% static 'img/soccer.png' %}" alt="" width="34" height="34"/>
+                        {% endif %}
+                      </figure>
+                      <div class="promo-team-title" style="font-size: 8px; ">
+                        <div class="promo-team-name">{{ next_fixture.home_team }}</div>
+                        <div class="promo-team-country mt-1">{{ next_fixture.home_team.location|default_if_none:"" }}</div>
+                      </div>
+                    </div>
+                    <div class="promo-creative-middle">VS</div>
+                    <div class="promo-team promo-creative-team align-items-center justify-content-center" style="flex-direction: column;">
+                      <figure class="promo-team-figure">
+                        {% if next_fixture.away_team.logo %}
+                        <img src="{{ next_fixture.away_team.logo.url }}" alt="" width="34" height="34"/>
+                        {% else %}
+                        <img src="{% static 'img/soccer.png' %}" alt="" width="34" height="34"/>
+                        {% endif %}
+                      </figure>
+                      <div class="promo-team-title" style="font-size: 8px;">
+                        <div class="promo-team-name">{{ next_fixture.away_team }}</div>
+                        <div class="promo-team-country mt-1">{{ next_fixture.away_team.location|default_if_none:"" }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="promo-creative-tickets">
+                    <div class="promo-buttons text-nowrap">
+                      <div class="group-sm">
+                        <div class="button button-sm button-share-outline">Share
+                          <ul class="game-info-share">
+                            <li class="game-info-share-item"><a class="icon fa fa-facebook" href="https://www.facebook.com"></a></li>
+                            <li class="game-info-share-item"><a class="icon fa fa-twitter" href="https://www.twitter.com"></a></li>
+                            <li class="game-info-share-item"><a class="icon fa fa-google-plus" href="https://www.google.com"></a></li>
+                            <li class="game-info-share-item"><a class="icon fa fa-instagram" href="https://www.instagram.com"></a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Match Results -->
+      {% if results %}
+        <div class="row mt-1">
+          
+          <div class="col-12 mt-1 mb-0 owl-carousel-outer-navigation-result">
+            <!-- Heading Component -->
+            <article class="heading-component mb-0 align-items-center">
+              <div class="heading-component-inner">
+                <h5 class="heading-component-title" style="font-size: 12px;">Latest Results</h5>
+                <div class="owl-carousel-arrows-outline">
+                  <div class="owl-nav">
+                    <button class="owl-arrow owl-arrow-prev"></button>
+                    <button class="owl-arrow owl-arrow-next"></button>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <!-- Game results -->
+            <div class="row mb-0 mt-0">
+              <div class="col d-flex flex-wrap g-3 mb-0 mt-0">
+                <div class="owl-carousel owl-spacing-results mt-0" data-items="1" data-dots="false" data-nav="true" data-autoplay="false" data-autoplay-speed="20000" data-stage-padding="0" data-loop="true" data-margin="30" data-mouse-drag="false" data-animation-in="fadeIn" data-animation-out="fadeOut" data-nav-custom=".owl-carousel-outer-navigation-results">
+                  {% for result in results %}
+
+
+                  <article class="game-result game-result-classic w-100" style="padding-top: 10px; padding-bottom: 10px;">
+                    
+                      <h6 style="font-size: 10px;" class="">{{ result.competition.name }}</h6>
+                      
+                      {% if result.competition.competition_type == 'Cup' and result.group %}
+                          <h6 class="text-primary" style="font-size: 15px;">{{ result.group.name }}</h6>
+                      {% elif result.competition.competition_type == 'Cup' and result.match_type %}
+                          <h6 class="text-primary mb-0" style="font-size: 15px;">{{ result.match_type }}</h6>
+                      {% endif %}
+                      <div class="game-result-main mt-2" style="padding-top: 1px; padding-bottom: 5px;">
+
+                        <!-- Home team -->
+                        <div class="game-result-team game-result-team-first" style="">
+                          <figure class="game-result-team-figure game-result-team-figure-big" style="width: 40px; height: 44px;">
+                              {% if result.home_team.logo %}
+                                  <img src="{{ result.home_team.logo.url }}" alt="" width="30" height=""/>
+                              {% else %}
+                                  <img src="{% static 'img/soccer.png' %}" alt="" width="30" height=""/>
+                              {% endif %}
+                          </figure>
+                          <div class="game-result-team-name" style="font-size: 10px;">{{ result.home_team.name }}</div>
+                          <div class="game-result-team-country">{{ result.home_team.location|default_if_none:"" }}</div>
+                        </div>
+
+                        <!-- Score -->
+                        <div class="game-result-middle" style="width: 100%; margin: 1px;">
+                          <div class="w-100 align-items-center " >
+                              <div class="w-100 game-result-score-wrap  justify-content-between align-items-center">
+                                <div class="w-100 text-end mx-2 game-result-score {% if result.details.home_team_score > result.details.away_team_score %}game-result-team-win{% endif %}">
+                                  {{ result.details.home_team_score }}
+                                  {% if result.details.home_team_score > result.details.away_team_score %}
+                                      <span class="game-result-team-label game-result-team-label-top" style="font-size: 8px; margin-top: 10px;">Win</span>
+                                  {% endif %}
+                                </div>
+                                <div class="game-result-score-divider ">
+                                  <svg x="0px" y="0px" width="7px" height="21px" viewBox="0 0 7 21" enable-background="new 0 0 7 21" xml:space="preserve">
+                                      <g>
+                                          <circle cx="3.5" cy="3.5" r="3"></circle>
+                                          <path d="M3.5,1C4.879,1,6,2.122,6,3.5S4.879,6,3.5,6S1,4.878,1,3.5S2.122,1,3.5,1 M3.5,0C1.567,0,0,1.567,0,3.5S1.567,7,3.5,7 S7,5.433,7,3.5S5.433,0,3.5,0L3.5,0z"></path>
+                                      </g>
+                                      <g>
+                                          <circle cx="3.695" cy="17.5" r="3"></circle>
+                                          <path d="M3.695,15c1.378,0,2.5,1.122,2.5,2.5S5.073,20,3.695,20s-2.5-1.122-2.5-2.5S2.316,15,3.695,15 M3.695,14 c-1.933,0-3.5,1.567-3.5,3.5s1.567,3.5,3.5,3.5s3.5-1.567,3.5-3.5S5.628,14,3.695,14L3.695,14z"></path>
+                                      </g>
+                                  </svg>
+                                </div>
+                                <div class="w-100 text-start mx-2 game-result-score {% if result.details.away_team_score > result.details.home_team_score %}game-result-team-win{% endif %}">
+                                  {{ result.details.away_team_score }}
+                                  {% if result.details.away_team_score > result.details.home_team_score %}
+                                      <span class="game-result-team-label game-result-team-label-top" style="font-size: 8px; margin-top: 10px;">Win</span>
+                                  {% endif %}
+                                </div>
+                              </div>
+                              
+                              {% if result.penalty_data %}
+                              <div class="table-game-info-wrap justify-content-center align-items-center" style="">
+                                  <div class="game-info-middle text-center">
+                                      <span class="table-game-info-title text-center" style="font-size: 8px;">PEN</span>
+                                      <div class="game-result-score-wrap d-flex justify-content-center align-items-center">
+                                          <div class="game-info-score {% if result.penalty_data.home_team_score > result.penalty_data.away_team_score %}game-result-team-win{% endif %}" 
+                                              style="font-size: 12px; font-weight: 600;">
+                                              {{ result.penalty_data.home_team_score }}
+                                          </div>
+                                          <div class="me-2">-</div>
+                                          <div class="game-info-score {% if result.penalty_data.away_team_score > result.penalty_data.home_team_score %}game-result-team-win{% endif %}" 
+                                              style="font-size: 12px; font-weight: 600;">
+                                              {{ result.penalty_data.away_team_score }}
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                              {% endif %}
+
+                              
+                          </div>
+                          
+                        </div>
+
+                        <!-- Away team -->
+                        <div class="game-result-team game-result-team-second" style="">
+                          <figure class="game-result-team-figure game-result-team-figure-big" style="width: 40px; height: 44px;">
+                              {% if result.away_team.logo %}
+                                  <img src="{{ result.away_team.logo.url }}" alt="" width="30" height=""/>
+                              {% else %}
+                                  <img src="{% static 'img/soccer.png' %}" alt="" width="30" height=""/>
+                              {% endif %}
+                          </figure>
+                          <div class="game-result-team-name" style="font-size: 10px;">{{ result.away_team.name }}</div>
+                          <div class="game-result-team-country">{{ result.away_team.location|default_if_none:"" }}</div>
+                        </div>
+                      </div>
+
+
+                      <!-- Scorers -->
+                      <div class="row row-cols-2 mt-2 mx-auto justify-content-between" style="width: 80%; color: #000000 !important;">
+                        <!-- Home Team Goals -->
+                        <div class="col text-end" style="">
+                            {% for goal in result.goals.all %}
+                                {% if goal.scoring_team == result.home_team %}
+                                    <div class="d-flex mb-0 justify-content-between align-items-center text-end w-100">
+                                        
+                                        <span class="me-2" style="font-size: 8px;">{{ goal.minute }}'</span>
+                                        <span style="font-size: 8px;">{{ goal.scorer.name.get_full_name }}</span>
+                                        <span style="font-size: 8px;" class="ms-1 icon icon-xxs 
+                                                      {% if goal.is_own_goal %}
+                                                          icon-red-2
+                                                      {% elif goal.is_penalty %}
+                                                          icon-blue-boston icon-penalty
+                                                      {% else %}
+                                                          icon-primary
+                                                      {% endif %} 
+                                                      fa fa-futbol-o">
+                                            {% if goal.is_penalty %}
+                                                <span class="penalty-label">P</span>
+                                            {% endif %}
+                                        </span>
+
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Away Team Goals -->
+                        <div class="col text-start">
+                            {% for goal in result.goals.all %}
+                                {% if goal.scoring_team == result.away_team %}
+                                    <div class="d-flex mb-0 justify-content-between align-items-center w-100">
+                                        <span style="font-size: 8px;" class="me-1 icon icon-xxs 
+                                                    {% if goal.is_own_goal %}
+                                                        icon-red-2
+                                                    {% elif goal.is_penalty %}
+                                                        icon-blue-boston icon-penalty
+                                                    {% else %}
+                                                        icon-primary
+                                                    {% endif %} 
+                                                    fa fa-futbol-o">
+                                            {% if goal.is_penalty %}
+                                                <span class="penalty-label">P</span>
+                                            {% endif %}
+                                        </span>
+                                        <span style="font-size: 8px;">{{ goal.scorer.name.get_full_name }}</span>
+                                        <span class="ms-2" style="font-size: 8px;">{{ goal.minute }}'</span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                      </div>
+
+
+                      <!-- Buttons for Match Stats, Standings, Comments -->
+                      <div class="container mb-3 d-none" style="margin-top: 1px;">
+                          <div class="row cols-2 justify-content-center" >
+                              <div class="col-auto">
+                                  <a class="button button-xs button-primary" href="{% url 'matchresultdetails' match_id=result.id %}" style="font-size: 8px;">Match Stats</a>
+                              </div>
+                              <div class="col-auto">
+                                  <a class="button button-xs button-primary" href="{% url 'competition_info' competition_id=result.competition.id %}" style="font-size: 8px;">Standings</a>
+                              </div>
+                              <div class="col-auto">
+                                  <a class="button button-xs button-primary" href="{% url 'competition' competition_id=result.competition.id %}#competition-comments-section" style="font-size: 8px;">Comments</a>
+                              </div>
+                          </div>
+                      </div>
+
+                      <!-- Footer -->
+                      <div class="game-result-footer mt-2" style="font-size: 8px; padding: 1px;">
+                        <ul class="game-result-details mt-2 ">
+                            <li class="text-primary">{{ result.competition.location }}</li>
+                            <li>
+                                <time datetime="{{ result.match_date|date:'Y-m-d' }}" class="text-primary">{{ result.match_date|date:"F d, Y" }}</time>
+                            </li>
+                        </ul>
+                      </div>
+                    
+                  </article>
+
+                  {% endfor %}
+                </div>
+              
+              </div>
+            </div>
+          </div>
+          
+
+        </div>
+      {% endif %}
+      
+
+      <!-- Fixtures -->
+      {% if fixtures %}
+      <div class="row mt-1">
+        <div class="col owl-carousel-outer-navigation-fixtures">
+          <!-- Heading Component-->
+          <article class="heading-component">
+            <div class="heading-component-inner">
+              <h5 class="heading-component-title">Fixtures
+              </h5>
+              <div class="owl-carousel-arrows-outline">
+                <div class="owl-nav">
+                  <button class="owl-arrow owl-arrow-prev"></button>
+                  <button class="owl-arrow owl-arrow-next"></button>
+                </div>
+              </div>
+            </div>
+          </article>
+          
+          <div class="row">
+            <div class="col d-flex flex-wrap">
+              <div class="owl-carousel owl-spacing-fixtures" data-items="1" data-dots="false" data-nav="true" data-autoplay="false" data-autoplay-speed="20000" data-stage-padding="0" data-loop="true" data-margin="30" data-mouse-drag="false" data-animation-in="fadeIn" data-animation-out="fadeOut" data-nav-custom=".owl-carousel-outer-navigation-fixtures">
+                {% for fixture in fixtures %}
+                <!-- Game Result Creative-->
+                <article class="game-result game-result-creative flex-fill ms-3 mb-1">
+                  <div class="mt-2 p-3">
+                    <a class="rd-nav-link btn btn-sm button-primary" href="{% url 'competition' competition_id=fixture.competition.id %}">{{ fixture.competition.name }}</a>
+                  </div>
+                  {% if fixture.competition.competition_type == 'Cup' and fixture.group %}
+                  <h6>{{ fixture.group.name }}</h6>
+                  {% elif fixture.competition.competition_type == 'Cup' and fixture.match_type %}
+                    <h6>{{ fixture.match_type }}</h6>
+                  {% endif %}
+                  <div class="game-result-main-vertical">
+                    <div class="game-result-team game-result-team-horizontal game-result-team-first">
+                      <figure class="game-result-team-figure">
+                        <!-- <img src="images/team-sportland-31x41.png" alt="" width="31" height="41"/> -->
+                        {% if fixture.home_team.logo %}
+                        <img src="{{ fixture.home_team.logo.url }}" alt="" width="41" height="55"/>
+                        {% else %}
+                        <img src="{% static 'img/soccer.png' %}" alt="" width="41" height="55"/>
+                        {% endif %}
+                      </figure>
+                      <div class="game-result-team-title">
+                        <div class="game-result-team-name">{{ fixture.home_team.name }}</div>
+                        <div class="game-result-team-country">{{ fixture.home_team.location|default_if_none:"" }}</div>
+                      </div>
+                    </div>
+                    <span class="game-result-team-divider">VS</span>
+                    <div class="game-result-team game-result-team-horizontal game-result-team-second">
+                      <figure class="game-result-team-figure">
+                        <!-- <img src="images/team-dream-team-34x34.png" alt="" width="34" height="34"/> -->
+                        {% if fixture.away_team.logo %}
+                        <img src="{{ fixture.away_team.logo.url }}" alt="" width="41" height="55"/>
+                        {% else %}
+                        <img src="{% static 'img/soccer.png' %}" alt="" width="41" height="55"/>
+                        {% endif %}
+                      </figure>
+                      <div class="game-result-team-title">
+                        <div class="game-result-team-name">{{ fixture.away_team.name }}</div>
+                        <div class="game-result-team-country">{{ fixture.away_team.location|default_if_none:"" }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="game-result-footer">
+                    <ul class="game-result-details">
+                      <li>{{ fixture.competition.location }}</li>
+                      <li>
+                        <time datetime="2024-04-14">{{ fixture.match_date|date:"Y-m-d H:i" }}</time>
+                      </li>
+                    </ul>
+                  </div>
+                </article>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      
+
+      <div class="row row-30 mt-1">
+        
+        <div class="col-md-8">
+          <!-- Standings -->
+          <div class="row">
+            <div class="col">
+              <article class="heading-component mb-0">
+                <div class="heading-component-inner">
+                  <h5 class="heading-component-title" style="font-size: 12px;">Standings
+                  </h5>
+                </div>
+              </article>
+    
+              <!-- CUP STANDINGS -->
+              {% if cup_standings %}
+              <div class="col mt-1">
+                  {% for comp_info in cup_standings %}
+                  <div class="competition-standings{% if not forloop.first %} hidden{% endif %}" id="standings-{{ comp_info.competition.id }}" data-toggle-text="Show Standings|Hide Standings">
+                    <!-- Heading Component-->
+                    <article class="heading-component mt-0 mb-0">
+                      <div class="heading-component-inner">
+                        <div class="heading-component-aside">
+                          <ul class="list-inline list-inline-xs list-inline-middle">
+                            
+                            <li>
+                              <select class="select" data-container-class="select-minimal-xl">
+    
+                                                    
+                                <option value="{{ comp_info.competition.name }}" selected>{{ comp_info.competition.name }}</option>
+                                
+                                
+                              </select>
+                            </li>
+                            
+                            
+                            <li>
+                              <select class="select" data-placeholder="2016-2024" data-container-class="select-minimal-xs">
+                                <option label="placeholder"></option>
+                                <option value="2016-2024" selected="">{{ comp_info.group.name }}</option>
+                                
+                              </select>
+                            </li>
+                          </ul>
+                        </div>
+                        
+                        
+                      </div>
+                      
+                    </article>
+    
+                    <div class="mt-0 card-standing card-group-custom card-standing-index" id="accordion{{ forloop.counter }}" role="tablist" aria-multiselectable="true">
+                    
+                    
+                      <div class="card-standing-caption" style="font-size: 10px;">
+                        <div class="card-standing-position">Pos</div>
+                        <div class="card-standing-caption-aside">
+                          <div class="card-standing-team">Team</div>
+                          <div class="card-standing-number">W</div>
+                          <div class="card-standing-number">L</div>
+                          <div class="card-standing-number">D</div>
+                          <div class="card-standing-diff">DIFF</div>
+                          <div class="card-standing-points">PTS</div>
+                        </div>
+                      </div>
+      
+      
+                      <!-- Bootstrap card-->
+                      
+                      {% for standing in comp_info.standings %}
+                      <article class="card card-custom">
+                        <div class="card-standing-position card-standing-counter"></div>
+                        <div class="card-header" id="accordion1Heading1" role="tab">
+                          <div class="card-standing-team-item">
+                            <div class="card-standing-team">
+                              <div class="card-standing-team-figure">
+                                <!-- <img src="{% static 'img/team-sportland-31x41.png' %}" alt="" width="31" height="41"/> -->
+                                {% if standing.team.logo %}
+                                <img src="{{ standing.team.logo.url }}" alt="" width="21" height=""/>
+                                {% else %}
+                                <img src="{% static 'img/soccer.png' %}" alt="" width="21" height=""/>
+                                {% endif %}
+                              </div>
+                              <div class="card-standing-team-title">
+                                <div class="card-standing-team-name">
+                                  
+                                  <a class="rd-nav-link" href="{% url 'team' team_id=standing.team.id %}" style="font-size: 10px;">{{ standing.team.name }}</a>
+                                  
+                                </div>
+                                <div class="card-standing-team-country" style="font-size: 8px;">{{ standing.team.location|default_if_none:"" }}</div>
+                              </div>
+                            </div>
+                            <div class="card-standing-number">{{ standing.wins }}</div>
+                            <div class="card-standing-number">{{ standing.losses }}</div>
+                            <div class="card-standing-number">{{ standing.draws }}</div>
+                            <div class="card-standing-points">{{ standing.goal_difference }}</div>
+                            <div class="card-standing-diff">{{ standing.points }}</div>
+                            <div class="card-standing-button"><a class="card-standing-toogle material-icons-remove collapsed" role="button" data-bs-toggle="collapse" data-parent="#accordion1" href="#accordion1Collapse-{{ standing.team.id }}" aria-controls="accordion1Collapse-{{ standing.team.id }}"></a></div>
+                          </div>
+                        </div>
+                        <div class="collapse" id="accordion1Collapse-{{ standing.team.id }}" role="tabpanel" aria-labelledby="accordion1Collapse-{{ standing.team.id }}">
+                          <div class="card-body" style="font-size: .6rem;">
+                            <div class="card-standing-team-details">
+                              <div class="card-standing-game-status">Home</div>
+                              <div class="card-standing-number">78</div>
+                              <div class="card-standing-number">2</div>
+                              <div class="card-standing-number">1</div>
+                            </div>
+                            <div class="card-standing-divider"></div>
+                            <div class="card-standing-team-details">
+                              <div class="card-standing-game-status">Away</div>
+                              <div class="card-standing-number">26</div>
+                              <div class="card-standing-number">28</div>
+                              <div class="card-standing-number">1</div>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                      {% endfor %}
+                      
+                    </div>
+                    <br>
+                  </div>
+                  
+                  {% endfor %}
+              </div>
+              {% endif %}
+    
+              <!--LEAGUE STANDINGS -->
+              {% if league_standings %}
+              <div class="col mt-1">
+                  {% for comp_info in league_standings %}
+                  <div class="competition-standings{% if not forloop.first %} hidden{% endif %}" id="standings-{{ comp_info.competition.id }}" data-toggle-text="Show Standings|Hide Standings">
+                    <!-- Heading Component-->
+                    <article class="heading-component mt-0 mb-0">
+                      
+                      <div class="heading-component-inner">
+                        <div class="heading-component-aside">
+                          <ul class="list-inline list-inline-xs list-inline-middle">
+                            
+                            <li>
+                              <select class="select" data-placeholder="Champions League" data-container-class="select-minimal-xl">
+                                
+                                <option label="placeholder"></option>
+    
+                                                    
+                                <option value="Champions League" selected="">{{ comp_info.competition.name }}</option>
+                                
+                                
+                              </select>
+                            </li>
+                            
+                            
+                            <!-- <li>
+                              <select class="select" data-placeholder="2016-2024" data-container-class="select-minimal-xs">
+                                <option label="placeholder"></option>
+                                <option value="2016-2024" selected="">2016-2024</option>
+                                <option value="2015-2016">2015-2016</option>
+                                <option value="2014-2015">2014-2015</option>
+                              </select>
+                            </li> -->
+                          </ul>
+                        </div>
+                        
+                        
+                      </div>
+                      
+                    </article>
+    
+                    <div class="card-standing card-group-custom card-standing-index" id="accordion{{ forloop.counter }}" role="tablist" aria-multiselectable="true">
+                    
+                    
+                      <div class="card-standing-caption" style="font-size: 10px;">
+                        <div class="card-standing-position">Pos</div>
+                        <div class="card-standing-caption-aside">
+                          <div class="card-standing-team">Team</div>
+                          <div class="card-standing-number">W</div>
+                          <div class="card-standing-number">L</div>
+                          <div class="card-standing-number">D</div>
+                          <div class="card-standing-diff">DIFF</div>
+                          <div class="card-standing-points">PTS</div>
+                        </div>
+                      </div>
+      
+      
+                      <!-- Bootstrap card-->
+                      
+                      {% for standing in comp_info.standings %}
+                      <article class="card card-custom">
+                        <div class="card-standing-position card-standing-counter"></div>
+                        <div class="card-header" id="accordion1Heading1" role="tab">
+                          <div class="card-standing-team-item">
+                            <div class="card-standing-team">
+                              <div class="card-standing-team-figure">
+                                <!-- <img src="{% static 'img/team-sportland-31x41.png' %}" alt="" width="31" height="41"/> -->
+                                {% if standing.team.logo %}
+                                <img src="{{ standing.team.logo.url }}" alt="" width="21" height=""/>
+                                {% else %}
+                                <img src="{% static 'img/soccer.png' %}" alt="" width="21" height=""/>
+                                {% endif %}
+                              </div>
+                              <div class="card-standing-team-title">
+                                <div class="card-standing-team-name">
+                                  
+                                  <a class="rd-nav-link" href="{% url 'team' team_id=standing.team.id %}" style="font-size: 10px;">{{ standing.team.name }}</a>
+                                  
+                                </div>
+                                <div class="card-standing-team-country" style="font-size: 8px;">{{ standing.team.location|default_if_none:"" }}</div>
+                              </div>
+                            </div>
+                            <div class="card-standing-number">{{ standing.wins }}</div>
+                            <div class="card-standing-number">{{ standing.losses }}</div>
+                            <div class="card-standing-number">{{ standing.draws }}</div>
+                            <div class="card-standing-points">{{ standing.goal_difference }}</div>
+                            <div class="card-standing-diff">{{ standing.points }}</div>
+                            <div class="card-standing-button"><a class="card-standing-toogle material-icons-remove collapsed" role="button" data-bs-toggle="collapse" data-parent="#accordion1" href="#accordion1Collapse-{{ standing.team.id }}" aria-controls="accordion1Collapse-{{ standing.team.id }}"></a></div>
+                          </div>
+                        </div>
+                        <div class="collapse" id="accordion1Collapse-{{ standing.team.id }}" role="tabpanel" aria-labelledby="accordion1Collapse-{{ standing.team.id }}">
+                          <div class="card-body" style="font-size: .6rem;">
+                            <div class="card-standing-team-details">
+                              <div class="card-standing-game-status">Home</div>
+                              <div class="card-standing-number">78</div>
+                              <div class="card-standing-number">2</div>
+                              <div class="card-standing-number">1</div>
+                            </div>
+                            <div class="card-standing-divider"></div>
+                            <div class="card-standing-team-details">
+                              <div class="card-standing-game-status">Away</div>
+                              <div class="card-standing-number">26</div>
+                              <div class="card-standing-number">28</div>
+                              <div class="card-standing-number">1</div>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                      {% endfor %}
+                      
+                    </div>
+                    <br>
+                  </div>
+                  {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Statistics -->
+          <div id="team-stats-section" class="row mt-1">
+
+            <div class="col">
+              <!-- Heading Component-->
+              <article class="heading-component mb-0">
+                <div class="heading-component-inner">
+                  <h5 class="heading-component-title" style="font-size: 12px;">Statistics
+                  </h5>
+                  <div class="heading-component-aside">
+                    <select class="select" data-placeholder="All Competitions" data-container-class="select-minimal-xl">
+                      <option label="placeholder"></option>
+                      <option value="newest first" selected="">All Competitions</option>
+                      <!-- <option value="oldest first">World Champions</option> -->
+                    </select>
+                  </div>
+                </div>
+              </article>
+              <!-- List Statistics-->
+              <ul class="list-statictics mt-1" style="font-size: .7rem;">
+                <li><a href="#">Wins</a><span class="list-statictics-counter">{{ wins }}</span></li>
+                <li><a href="#">Losses</a><span class="list-statictics-counter">{{ losses }}</span></li>
+                <li><a href="#">Draws</a><span class="list-statictics-counter">{{ draws }}</span></li>
+                <li><a href="#">goals scored</a><span class="list-statictics-counter">{{ goals_scored }}</span></li>
+                <li><a href="#">goals conceded</a><span class="list-statictics-counter">{{ goals_conceded }}</span></li>
+                <li><a href="#">Clean Sheets</a><span class="list-statictics-counter">{{ clean_sheets }}</span></li>
+                <li><a href="#">yellow cards</a><span class="list-statictics-counter">{{ yellow_cards }}</span></li>
+                <li><a href="#">red cards</a><span class="list-statictics-counter">{{ red_cards }}</span></li>
+                
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SIDE COLUMN -->
+        <div class="col-md-4">
+
+          <!-- Heading Component-->
+          <article class="heading-component mb-0">
+            <div class="heading-component-inner">
+              <h5 class="heading-component-title" style="font-size: 12px;">RANKING
+              </h5>
+            </div>
+          </article>
+          <br>
+          <!-- Goals -->
+          <div class="col mt-1">
+            <div class="table-custom-responsive">
+              <table class="table-custom table-roster">
+                <thead>
+                  <tr>
+                    <th colspan="3" style="font-size: 12px; height: 45px; padding-left: 30px;">GOALS</th>
+                  </tr>
+                </thead>
+                
+                <tbody>
+                  <tr style="font-size: .7rem;">
+                    <td>POS</td>
+                    <td>Player</td>
+                    <td class="text-center">Stat</td>
+                  </tr>
+                  {% for player in goal_ranking %}
+                  <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td><a class="rd-nav-link" href="{% url 'player' player_id=player.scorer__id %}" style="font-size: .7rem;">{{ player.scorer__name__first_name }} {{ player.scorer__name__last_name }}</a></td>
+                      <td class="text-center">{{ player.total_goals }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Assists -->
+          <div class="col mt-3">
+            
+            <div class="table-custom-responsive">
+              <table class="table-custom table-roster">
+                <thead>
+                  <tr>
+                    <th colspan="3" style="font-size: 12px; height: 45px; padding-left: 30px;">ASSISTS</th>
+                  </tr>
+                </thead>
+                
+                <tbody>
+                  <tr style="font-size: .7rem;">
+                    <td>POS</td>
+                    <td>Player</td>
+                    <td class="text-center">Stat</td>
+                  </tr>
+                  {% for player in assist_ranking %}
+                  <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td><a class="rd-nav-link" href="{% url 'player' player_id=player.assist__id %}" style="font-size: .7rem;">{{ player.assist__name__first_name }} {{ player.assist__name__last_name }}</a></td>
+                      <td class="text-center">{{ player.total_assists }} </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <hr class="mt-5">
+
+          <!-- PLAYERS -->
+          <div class="col mt-2">
+            <!-- Heading Component-->
+            <article class="heading-component mb-0">
+              <div class="heading-component-inner">
+                <h5 class="heading-component-title" style="font-size: 12px;">PLAYERS
+                </h5>
+              </div>
+            </article>
+
+            {% if register_player_to_competition and request.user.is_superuser %}
+                <button type="button" class="btn btn-primary w-100 text-center" data-bs-toggle="modal" data-bs-target="#addTeamPlayerModal">
+                    Register Player
+                </button>
+            {% endif %}
+
+            
+
+
+            <!-- Table Roster-->
+            <div class="table-custom-responsive mt-0">
+              <table class="table-custom table-roster">
+                <thead>
+                  <tr>
+                    <th colspan="3" style="font-size: 12px; height: 45px; padding-left: 30px;">{{ team.name }}</th>
+                  </tr>
+                </thead>
+                
+                <tbody>
+                  <tr style="font-size: .7rem;">
+                    <!-- <td>NBR</td> -->
+                    <td class="text-start" style="min-width: 200px;">Player name</td>
+                    <td class="text-start" style="min-width: 150px; padding-left: 34px;">Position</td>
+                  </tr>
+                  {% for registration in player_registrations %}
+                  <tr>
+                      <!-- <td>{{ registration.player_number }}</td> -->
+                      <td style="min-width: 200px;">
+                        <a {% if not registration.is_latest_team %} class="rd-nav-link text-muted"{% else %} class="rd-nav-link" {% endif %} href="{% url 'player' player_id=registration.player.id %}" style="font-size: .7rem; width: auto;">Fullname {{ registration.player.name.first_name }} {{ registration.player.name.last_name }}</a>
+                      </td>
+                      <td  class="{% if not registration.is_latest_team %} text-muted {% endif %}" style="min-width: 150px; padding-left: 34px;" >{{ registration.player.position }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+        
+      </div>
+
+      {% if awards %}
+      <div class="row g-5">
+            
+        <div class="col">
+          <div class="aside-component">
+            <!-- Heading Component-->
+            <article class="heading-component">
+              <div class="heading-component-inner">
+                <h5 class="heading-component-title">Awards
+                </h5>
+              </div>
+            </article>
+            <!-- Owl Carousel-->
+            <div class="owl-carousel owl-carousel-dots-modern awards-carousel" data-items="1" data-autoplay="true" data-autoplay-speed="4000" data-dots="true" data-nav="false" data-stage-padding="0" data-loop="true" data-margin="0" data-mouse-drag="true">
+                                <!-- Awards Item-->
+                                {% for award in awards %}
+                                  {% if award.team_award == "Best Team" %}
+                                  <div class="awards-item">
+                                    <span class="awards-item-head">{{ award.competition.name }}</span>
+                                    <div class="awards-item-main">
+                                      <h4 class="awards-item-title"><span class="text-accent">Best</span>Team
+                                      </h4>
+                                      <div class="divider"></div>
+                                      <h5 class="awards-item-time">{{ award.date_awarded|date:"F Y" }}</h5>
+                                    </div>
+                                    <div class="awards-item-aside"> <img src="{% static 'img/thumbnail-minimal-1-67x147.png' %}" alt="" width="67" height="147"/>
+                                    </div>
+                                  </div>
+
+                                  {% elif award.team_award == "Fair Play" %}
+                                  <div class="awards-item">
+                                    <span class="awards-item-head">{{ award.competition.name }}</span>
+                                    <div class="awards-item-main">
+                                      <h4 class="awards-item-title"><span class="text-accent">Best</span>Fair Play
+                                      </h4>
+                                      <div class="divider"></div>
+                                      <h5 class="awards-item-time">{{ award.date_awarded|date:"F Y" }}</h5>
+                                    </div>
+                                    <div class="awards-item-aside"> <img src="{% static 'img/thumbnail-minimal-1-67x147.png' %}" alt="" width="67" height="147"/>
+                                    </div>
+                                  </div>
+
+                                  {% endif %}
+
+                                {% endfor %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+      {% endif %}
+
+
+      {% if user.is_authenticated %}
+
+      <div class="container w-100 text-center mx-auto mt-5">
+        <h6 class="mb-1 text-center">Share your thoughts about this team with others</h6>
+      </div>
+        
+      <!-- Team Likes -->
+      <!-- <a class="like-btn me-1" type="button" data-team-id="{{ team.id }}">
+        {% if team.user_has_liked %}
+            <i class="fas fa-thumbs-up text-danger"></i>
+        {% else %}
+            <i class="fas fa-thumbs-up"></i>
+        {% endif %}
+      </a>
+      <span class="ms-1" style="font-size: 12px;" id="like-count-{{ team.id }}">{{ num_likes }}</span> -->
+      
+
+
+
+
+      <div class="row">
+        <div class="comment-box mt-1">
+          <div class="comment-box-aside">
+              <!-- <img class="img-circle" src="images/user-7-69x69.jpg" alt="" width="69" height="69"/> -->
+              <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                  {% if login_user.picture %}
+                  <div class="player-img" style="background-image: url('{{ login_user.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                  </div>
+                  {% else %}
+                  <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                      <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                  </div>
+                  {% endif %}
+              </div>
+          </div>
+          <div class="comment-box-main">
+            <h5 class="comment-box-name mb-2">{{ login_user.user.username }}</h5>
+            <!-- comment form-->
+            <form method="post" action="{% url 'team_comment' team.id %}">
+              {% csrf_token %}
+              <div class="form-wrap">
+                <label class="form-label" for="comment-message">Your comment</label>
+                <textarea class="form-input" id="comment-message" name="message"></textarea>
+              </div>
+              <div class="form-button">
+                <button class="button button-primary" type="submit">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <article class="heading-component mt-3">
+          <div class="heading-component-inner">
+              <h5 class="heading-component-title">{{ num_comments }} comments
+              </h5>
+          </div>
+        </article>
+        <a href="#collapseComments-{{ team.id }}" class="text-muted my-1" data-bs-toggle="collapse" role="button" style="font-size: 16px;">View comments</a>
+        <!-- Comments -->
+        <div class="collapse" id="collapseComments-{{ team.id }}">
+              
+          <div class="row">
+              <div class="col-sm-12">
+                  
+                  {% for comment in team.team_comments.all %}
+                      {% if not comment.parent %}
+                      <div class="blog-post-comments mb-2">
+                          <!-- Post Comment-->
+                          <div class="post-comment post-comment-parent">
+                              
+                              <div class="post-comment-main">
+
+                                  <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                      <div class="blog-post-author d-flex align-items-center">
+                                          <div class="mx-2">
+                                              <!-- <img class="img-circle" src="images/user-6-69x69.jpg" alt="" width="69" height="69"/> -->
+                                              <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                  {% if comment.author.picture %}
+                                                  <div class="player-img" style="background-image: url('{{ comment.author.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                                  </div>
+                                                  {% else %}
+                                                  <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                      <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                  </div>
+                                                  {% endif %}
+                                              </div>
+                                          </div>
+                                          <a href="{% url 'userprofile' comment.author.user.username %}">
+                                              <h5 class="author-name mx-1">{{ comment.author.user.username }}</h5>
+                                          </a>
+                                          <time class="post-comment-time mx-2" datetime="2024">{{ comment.created_at|date:"F j, Y" }}</time>
+                                      </div>
+                                  </div>
+
+                                  <div class="post-comment-text">
+                                      <p>{{ comment.content }}</p>
+                                  </div>
+                                  <div class="post-comment-footer">
+                                      <!-- Parent Comment Likes -->
+                                      <div class="comment-like">
+                                        <a class="like-btn" type="button" data-comment-id="{{ comment.id }}">
+                                            {% if comment.user_has_liked %}
+                                            <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                            {% else %}
+                                            <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                            {% endif %}
+                                        </a>
+                                        <span class="ms-1" id="like-count-{{ comment.id }}">{{ comment.num_likes }}</span>
+                                      </div>
+                                    
+
+                                      
+                                      <!-- Comment Reply Button -->
+                                      <div class="comment-reply">
+                                          <a class="ms-1" type="button" onclick="toggleReplyBox('{{ comment.id }}')">
+                                              Reply
+                                              <i class="icon fas fa-reply"></i>
+                                          </a>
+                                      </div>
+                                      <!-- Toggle Button for Replies -->
+                                      <a href="#collapseReplyComments-{{ comment.id }}" data-bs-toggle="collapse" role="button"><span class=""> {{ comment.num_replies }} Replies</span></a>
+                                     
+                                      {% if request.user == comment.author.user %}
+                                      <a class="ms-3" href="{% url 'delete_team_comment' comment.id %}"><i class="icon fas fa-trash-alt"></i></a>
+                                      {% endif %}
+                                      <!-- Reply box -->
+                                      <div class="comment-box reply-box" id="reply-box-{{ comment.id }}" style="display: none;">
+                                          <div class="comment-box-main">
+                                              <!-- RD Mailform-->
+                                              <form class="comment-box-form" method="post" action="{% url 'team_comment' team.id %}">
+                                                  {% csrf_token %}
+                                                  <input type="hidden" name="redirect_to" value="{{ request.path }}">
+                                                  <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                                  <label class="form-label" for="comment-message-{{ comment.id }}"></label>
+                                                  <textarea class="form-input" id="comment-message-{{ comment.id }}" name="message" placeholder="Reply to {{ comment.author.user.username }}"></textarea>
+                                                  <div class="form-button">
+                                                      <button class="btn btn-primary btn-sm" type="submit">Submit</button>
+                                                  </div>
+                                              </form>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  
+                                  
+                                  <!-- Collapsible Replies Section -->
+                                  <div class="collapse" id="collapseReplyComments-{{ comment.id }}">
+                                      {% for reply in comment.team_replies.all %}
+                                      <div class="post-comment post-comment-child mt-3">
+                                          <div class="post-comment-main">
+                                              <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                                  <div class="blog-post-author d-flex align-items-center">
+                                                      <div class="mx-2">
+                                                          <!-- <img class="img-circle" src="images/user-6-69x69.jpg" alt="" width="69" height="69"/> -->
+                                                          <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                              {% if reply.author.picture %}
+                                                              <div class="player-img" style="background-image: url('{{ reply.author.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                                              </div>
+                                                              {% else %}
+                                                              <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                                  <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                              </div>
+                                                              {% endif %}
+                                                          </div>
+                                                      </div>
+                                                      <a href="{% url 'userprofile' reply.author.user.username %}">
+                                                          <h5 class="author-name">{{ reply.author.user.username }}</h5>
+                                                      </a>
+                                                      
+                                                      <time class="post-comment-time mx-1" datetime="2024">{{ reply.created_at|date:"F j, Y" }}</time>
+                                                  </div>
+                                              </div>
+                                              <div class="post-comment-text">
+                                                  <p>{{ reply.content }}</p>
+                                              </div>
+                                              <div class="post-comment-footer">
+                                                <!-- Child Comment Likes -->
+                                                <div class="comment-like">
+                                                  <a class="like-btn" type="button" data-child-comment-id="{{ reply.id }}">
+                                                      {% if reply.user_has_liked %}
+                                                      <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                                      {% else %}
+                                                      <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                                      {% endif %}
+                                                  </a>
+                                                  <span class="ms-2" style="font-size: 12px;" id="like-count-{{ reply.id }}">{{ reply.num_likes }}</span>
+                                                </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      {% endfor %}
+                                  </div>
+                                  
+                              </div>
+                              
+                          </div>
+                          
+                      </div>
+                      {% endif %}
+                  {% endfor %}
+              </div>
+          </div>
+          
+        </div>
+      </div>
+
+      {% else %}
+
+      <div class="container w-100 text-center mx-auto mt-5">
+        <p class="mb-3 text-center">Login to see what people are saying about this team.</p>
+        <a class="button button-lg button-primary" href="{% url 'loginform' %}">LOGIN</a>
+      </div>
+
+      {% endif %}
+      
+
+      
+      <!-- Register Player Modal -->
+      <div class="modal fade" id="addTeamPlayerModal" tabindex="-1" aria-labelledby="addTeamPlayerLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="uploadPlayerPostLabel">REGISTER PLAYER</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              {% if messages %}
+                  {% for message in messages %}
+                      <script>
+                          alert("{{ message }}");
+                      </script>
+                  {% endfor %}
+              {% endif %}
+              {% if user_creation_failed %}
+              <script>
+                alert("Failed to create user. Please try again later.");
+              </script>
+              {% endif %}
+              <form id="addPlayerForm" action="{% url 'add_player_to_team' team_id=team.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                  <label for="competition" class="form-data">Competition:</label>
+                  <select id="competition" name="competition">
+                      {% for competition in register_player_to_competition %}
+                          <option value="{{ competition.id }}">{{ competition.name }}</option>
+                      {% endfor %}
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="first_name" class="form-data">First Name:</label>
+                  <input type="text" name="first_name" id="first_name" class="form-input" required>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="last_name" class="form-data">Last Name:</label>
+                  <input type="text" name="last_name" id="last_name" class="form-input" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="email" class="form-data">Email:</label>
+                  <input type="email" name="email" id="email" class="form-input" required>
+                </div>
+                
+                
+                <div class="mb-3">
+                  <label for="username" class="form-data">Username:</label>
+                  <input type="text" name="username" id="username" class="form-input" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="nationality" class="form-data">Nationality:</label>
+                  <input type="text" name="nationality" id="nationality" class="form-input">
+                </div>
+            
+                <div class="mb-3">
+                  <label for="picture" class="form-data">Picture:</label>
+                  <input type="file" name="picture" id="picture" class="form-input">
+                </div>
+
+               
+                <div class="mb-3">
+                  <label for="position" class="form-data">Position:</label>
+                  <select id="position" name="position">
+                    {% for code, name in player_positions %}
+                      <option value="{{ code }}">{{ name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+        
+                <div class="mb-3">
+                  <label for="age" class="form-data">Age:</label>
+                  <input type="number" name="age" id="age" class="form-input">
+                </div>
+
+                <div class="mb-3">
+                  <label for="weight" class="form-data">Weight (kg):</label>
+                  <input type="number" name="weight" id="weight" class="form-input">
+                </div>
+
+                <div class="mb-3">
+                  <label for="height" class="form-data">Height (cm):</label>
+                  <input type="number" name="height" id="height" class="form-input">
+                </div>
+
+                <div class="mb-3">
+                  <label for="foot" class="form-data">Preferred Foot:</label>
+                  <select id="foot" name="foot">
+                    <option value="Left">Left</option>
+                    <option value="Right">Right</option>
+                    <option value="Both">Both</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="biography" class="form-data">Biography:</label>
+                  <textarea type="text" name="biography" id="biography" class="form-input"></textarea>
+                </div>
+                
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+    </div>
+  </section>
+ 
+
+
+  
+    
+</div>
+
+
+{% endblock %}
+
+
+    

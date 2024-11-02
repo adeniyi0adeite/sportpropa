@@ -1,0 +1,23 @@
+<form id="editUserForm" method="POST" action="{% url 'edit_user' user.user.id %}">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" name="username" value="{{ user.user.username }}">
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{ user.user.email }}">
+    </div>
+    <div class="mb-3">
+        <label for="bio" class="form-label">Bio</label>
+        <textarea class="form-control" id="bio" name="bio">{{ user.bio }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="favorite_team" class="form-label">Favorite Team</label>
+        <select class="form-control" id="favorite_team" name="favorite_team">
+            {% for team in teams %}
+            <option value="{{ team.id }}" {% if team.id == user.favorite_team.id %}selected{% endif %}>{{ team.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>

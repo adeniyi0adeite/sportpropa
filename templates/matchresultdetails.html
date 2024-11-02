@@ -1,0 +1,1431 @@
+{% extends 'base.html' %}  
+
+
+{% load static %}
+
+{% block extra_head %}
+    
+{% endblock %}
+
+{% block content %}
+<div class="page animated container" style="animation-duration: 500ms;">
+
+    <section class="section parallax-container breadcrumbs-wrap mb-0" data-parallax-img="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" data-parallax-img="images/bg-breadcrumbs-1-1920x726.jpg"><div class="material-parallax parallax"><img src="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" alt="" style="display: block; transform: translate3d(-50%, 175px, 0px);"></div>
+        <div class="parallax-content breadcrumbs-custom context-dark">
+          <div class="container">
+            <h3 class="breadcrumbs-custom-title">Match STATISTICS</h3>
+            <ul class="breadcrumbs-custom-path">
+              <li><a href="{% url 'home' %}">Home</a></li>
+              <li><a href="#">Match</a></li>
+              <li class="active">Match Statistics</li>
+            </ul>
+          </div>
+        </div>
+    </section>
+
+
+    <section class="bg-gray-100">
+      <div class="container-fluid" style="padding: 2px 2px;">
+        <div class="row">
+          <div class="col-12">
+            <!-- Heading Component-->
+            <article class="heading-component">
+              <div class="heading-component-inner">
+                <h5 class="heading-component-title">
+                </h5>
+              </div>
+            </article>
+            
+            <div class="tabs-custom tabs-horizontal tabs-corporate mt-1" id="tabs-1" data-nav="true">
+              <div class="nav-wrap">
+                <!-- <button class="button button-nav button-prev" data-nav-prev=""><span class="icon mdi mdi-chevron-left"></span></button> -->
+                <!-- Nav tabs-->
+                <ul class="nav row">
+                  <li class="nav-item col" role="presentation"><a class="nav-link active" href="#tabs-1-1" data-bs-toggle="tab" style="font-size: 10px; padding: 5px 10px;"><span>STATS</span></a></li>
+                  <li class="nav-item col" role="presentation"><a class="nav-link" href="#tabs-1-2" data-bs-toggle="tab" style="font-size: 12px; padding: 5px 10px;"><span>HIGHLIGHTS</span></a></li>                  
+                  <li class="nav-item col" role="presentation"><a class="nav-link" href="#tabs-1-3" data-bs-toggle="tab" style="font-size: 12px; padding: 5px 10px;"><span>COMMENTS</span></a></li>                  
+                  <!-- <li class="nav-item col" role="presentation"><a class="nav-link" href="#tabs-1-4" data-bs-toggle="tab" style="font-size: 12px; padding: 5px 10px;"><span>PREDICT&WIN</span></a></li>                   -->
+                </ul>
+                <!-- <button class="button button-nav button-next" data-nav-next=""><span class="icon mdi mdi-chevron-right"></span></button> -->
+              </div>
+              <!-- Tab panels-->
+              <div class="tab-content" style="padding: 15px 10px;">
+
+                <div class="tab-pane fade show active" id="tabs-1-1">
+                  <div class="tab-content-main" style="padding: 1px 1px;">
+
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-12">
+                          <!-- Game Result Bug-->
+                          <article class="game-result" style="margin-left: -20px; margin-right: -20px;">
+                            
+                            <div class="game-info game-info-classic align-items-center" style="position: relative; padding-top: 10px; padding-bottom: 10px;">
+                              <div class="w-100 mx-auto text-center mt-1">
+                                <a class="rd-nav-link button button-xs button-primary text-center mx-auto w-100" href="{% url 'competition' competition_id=competition.id %}" style="font-size: 10px;">{{ competition.name }}</a>
+                              </div>
+                              
+                              <p class="game-info-subtitle mt-0" style="font-size: 10px;">{{ result.match.location }} - 
+                                <time datetime="2024-04-17"> {{ match.match_date }}</time>
+                              </p>
+                              <!-- <h3 class="game-info-title">{{ competition.name }}</h3> -->
+                              <div class="game-info-main">
+                                <div class="game-info-team game-info-team-first">
+                                  <figure class="game-result-team-figure " style="width: 40px; height: 44px;">
+                                    <!-- <img src="{% static 'img/team-sportland-75x99.png' %}" alt="" width="75" height="99"/> -->
+                                    {% if match.home_team.logo %}
+                                    <img src="{{ match.home_team.logo.url }}" alt="" width="30" height=""/>
+                                    {% else %}
+                                    <img src="{% static 'img/soccer.png' %}" alt="" width="30" height=""/>
+                                    {% endif %}
+                                  </figure>
+                                  <div class="game-result-team-name" style="font-size: 10px;">{{ match.home_team }}</div>
+                                  <div class="game-result-team-country" style="font-size: 8px;"></div>
+                                </div>
+                                <div class="game-info-middle ">
+                                  <div class="game-result-score-wrap">
+                                      <!-- Handle Home Team Win Conditions -->
+                                      {% if result.home_team_score > result.away_team_score %}
+                                          <div class="game-info-score game-result-team-win">{{ result.home_team_score }}</div>
+                                      {% elif result.home_team_score == result.away_team_score and home_team_penalty_score > away_team_penalty_score %}
+                                          <div class="game-info-score game-result-team-win">{{ result.home_team_score }}</div>
+                                      {% else %}
+                                          <div class="game-info-score">{{ result.home_team_score }}</div>
+                                      {% endif %}
+              
+                                      <!-- Handle Away Team Win Conditions -->
+                                      {% if result.away_team_score > result.home_team_score %}
+                                          <div class="game-info-score game-result-team-win">{{ result.away_team_score }}</div>
+                                      {% elif result.home_team_score == result.away_team_score and away_team_penalty_score > home_team_penalty_score %}
+                                          <div class="game-info-score game-result-team-win">{{ result.away_team_score }}</div>
+                                      {% else %}
+                                          <div class="game-info-score">{{ result.away_team_score }}</div>
+                                      {% endif %}
+                                  </div>
+                                  <div class="game-result-divider-wrap">
+                                      <span class="game-info-team-divider">VS</span>
+                                  </div>
+
+                                  
+                                  {%  if shootout_penalties_home and shootout_penalties_away  %}
+                                    
+                                  <div class="w-100 table-game-info-wrap justify-content-center align-items-center" style="">
+                                    <div class="game-info-middle justify-content-center align-items-center">
+                                        <span class="table-game-info-title" style="font-size: 8px;">PEN</span>
+                                
+                                        <div class="game-result-score-wrap d-flex justify-content-center align-items-center mt-0" style="position: relative;">
+                                            <div class="game-info-score {% if home_team_penalty_score > away_team_penalty_score %} game-result-team-win {% endif %}" 
+                                                style="font-size: 12px; font-weight: 600; ">
+                                                {{ home_team_penalty_score }}
+                                            </div>
+                                            
+                                            <div class="game-result-score-divider" style="margin-left: -5px;">
+                                                <svg x="0px" y="0px" width="7px" height="21px" viewBox="0 0 7 21" enable-background="new 0 0 7 21" xml:space="preserve">
+                                                    <g>
+                                                        <circle cx="3.5" cy="3.5" r="3"></circle>
+                                                        <path d="M3.5,1C4.879,1,6,2.122,6,3.5S4.879,6,3.5,6S1,4.878,1,3.5S2.122,1,3.5,1 M3.5,0C1.567,0,0,1.567,0,3.5S1.567,7,3.5,7 S7,5.433,7,3.5S5.433,0,3.5,0L3.5,0z"></path>
+                                                    </g>
+                                                    <g>
+                                                        <circle cx="3.695" cy="17.5" r="3"></circle>
+                                                        <path d="M3.695,15c1.378,0,2.5,1.122,2.5,2.5S5.073,20,3.695,20s-2.5-1.122-2.5-2.5S2.316,15,3.695,15 M3.695,14 c-1.933,0-3.5,1.567-3.5,3.5s1.567,3.5,3.5,3.5s3.5-1.567,3.5-3.5S5.628,14,3.695,14L3.695,14z"></path>
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                
+                                            <div class="game-info-score {% if away_team_penalty_score > home_team_penalty_score %} game-result-team-win {% endif %}" 
+                                                style="font-size: 12px; font-weight: 600; ">
+                                                {{ away_team_penalty_score }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>  
+                                  
+                                  {% endif %}
+                                </div>
+                                <div class="game-info-team game-info-team-second">
+                                  <figure class="game-result-team-figure " style="width: 40px; height: 44px;">
+                                    <!-- <img src="{% static 'img/team-bavaria-fc-77x99.png' %}" alt="" width="77" height="99"/> -->
+                                    {% if match.away_team.logo %}
+                                    <img src="{{ match.away_team.logo.url }}" alt="" width="30" height=""/>
+                                    {% else %}
+                                    <img src="{% static 'img/soccer.png' %}" alt="" width="30" height=""/>
+                                    {% endif %}
+                                  </figure>
+                                  <div class="game-result-team-name" style="font-size: 10px;">{{ match.away_team }}</div>
+                                  <div class="game-result-team-country" style="font-size: 8px;"></div>
+                                  
+                                </div>
+                                
+                                
+                                
+                              </div>
+
+
+                              <!-- Table Game Info-->
+                              <div class="table-game-info-wrap mt-2"><span class="table-game-info-title" style="font-size: 10px;">Game statistics<span></span></span>
+                                <div class="table-game-info-main table-custom-responsive">
+                                  <table class="table-custom table-game-info">
+                                    <tbody>
+                                      <tr>
+                                        <td class="table-game-info-number">{{ stats_home.possession_percentage_home|default:"0" }}%</td>
+                                        <td class="table-game-info-category">Possession</td>
+                                        <td class="table-game-info-number">{{ stats_away.possession_percentage_away|default:"0" }}%</td>
+                                      </tr>
+                                      <tr>
+                                        <td class="table-game-info-number">{{ stats_home.total_shots_home|default:"0" }}</td>
+                                        <td class="table-game-info-category">Goal Attempts</td>
+                                        <td class="table-game-info-number">{{ stats_away.total_shots_away|default:"0" }}</td>
+                                      </tr>
+                                      <!-- <tr>
+                                        <td class="table-game-info-number">{{ stats_home.shots_on_goal_home|default:"0" }}</td>
+                                        <td class="table-game-info-category">Shots (on target)</td>
+                                        <td class="table-game-info-number">{{ stats_away.shots_on_goal_away|default:"0" }}</td>
+                                      </tr> -->
+                                      <tr>
+                                        <td class="table-game-info-number">{{ stats_home.corners_home|default:"0" }}</td>
+                                        <td class="table-game-info-category">Corner kicks</td>
+                                        <td class="table-game-info-number">{{ stats_away.corners_away|default:"0" }}</td>
+                                      </tr>
+                                      <!-- <tr>
+                                        <td class="table-game-info-number">{{ stats_home.offsides_home|default:"0" }}</td>
+                                        <td class="table-game-info-category">Offsides</td>
+                                        <td class="table-game-info-number">{{ stats_away.offsides_away|default:"0" }}</td>
+                                      </tr> -->
+                                      <tr>
+                                        <td class="table-game-info-number">{{ saves_home_count|default:"0" }}</td>
+                                        <td class="table-game-info-category">Saves</td>
+                                        <td class="table-game-info-number">{{ saves_away_count|default:"0" }}</td>
+                                      </tr>
+                                      <!-- <tr>
+                                        <td class="table-game-info-number">{{ stats_home.fouls_home|default:"0" }}</td>
+                                        <td class="table-game-info-category">Fouls</td>
+                                        <td class="table-game-info-number">{{ stats_away.fouls_away|default:"0" }}</td>
+                                      </tr> -->
+                                      <tr>
+                                        <td class="table-game-info-number">{{ stats_home.yellow_cards_home|default:"0" }}</td>
+                                        <td class="table-game-info-category">Yellow cards</td>
+                                        <td class="table-game-info-number">{{ stats_away.yellow_cards_away|default:"0" }}</td>
+                                      </tr>
+                                      <tr>
+                                        <td class="table-game-info-number">{{ stats_home.red_cards_home|default:"0" }}</td>
+                                        <td class="table-game-info-category">Red cards</td>
+                                        <td class="table-game-info-number">{{ stats_away.red_cards_away|default:"0" }}</td>
+                                      </tr>
+                                      
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+
+                              {% if man_of_the_match %}
+                              <div class="text-center">
+                                <div style="font-size: 12px;">MAN OF THE MATCH</div>
+                                
+                                <div class="mx-auto text-center mt-3">
+                                    <div class="">
+                                        <div class="bg-gray-800 rounded-circle border border-4 border-primary d-flex align-items-center justify-content-center mx-auto" style="width: 60px; height: 60px;">
+                                            {% if man_of_the_match.picture %}
+                                            <img src="{{ man_of_the_match.picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
+                                            {% else %}
+                                            <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                <i class="fas fa-user fa-2x" style="color: #000000;"></i>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                            
+                                    <a href="{% url 'player' player_id=man_of_the_match.id %}" class="list-statictics-counter" style="font-size: 12px;">{{ man_of_the_match }}</a>
+                                </div>
+                              </div>
+                              {% endif %}
+                              
+                            </div>
+                          </article>
+                        </div>
+
+                        {%  if shootout_penalties_home and shootout_penalties_away  %}
+                        <div class="col-12 mt-3" >
+                          <!-- Shootout penalties section -->
+                          <div class="row justify-content-center">
+                              
+              
+                              <article class="game-result game-result-classic p-1" >
+                                <h6>Penalty Shootout</h6> 
+                                
+                                <!-- Score Section -->
+                                <div class="d-flex justify-content-center align-items-center mt-2">
+                                    <!-- Home Team -->
+                                    <div class="game-result-team me-3" style="margin-top: 30px;">
+                                        <div class="game-result-team-name text-end" style="font-size: 10px;">{{ match.home_team.name }}</div>
+                                    </div>
+              
+                                    <!-- Score Section -->
+                                    <div class="game-result-middle text-center">
+                                        <div class="game-result-score-wrap">
+                                            <div class="game-result-score {% if home_team_penalty_score > away_team_penalty_score %}game-result-team-win{% endif %}">
+                                                {{ home_team_penalty_score }}
+                                                {% if home_team_penalty_score > away_team_penalty_score %}
+                                                <span class="game-result-team-label game-result-team-label-top" style="font-size: 8px;">Win</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="game-result-score-divider">
+                                                <!-- Conditionally display "Draw" if scores are equal -->
+                                                {% if home_team_penalty_score == away_team_penalty_score %}
+                                                <span class="game-result-draw game-result-team-label-top">Draw</span>
+                                                {% endif %}
+                                                <div class="game-result-score-divider">
+                                                    <svg x="0px" y="0px" width="7px" height="21px" viewBox="0 0 7 21" enable-background="new 0 0 7 21" xml:space="preserve">
+                                                      <g>
+                                                        <circle cx="3.5" cy="3.5" r="3"></circle>
+                                                        <path d="M3.5,1C4.879,1,6,2.122,6,3.5S4.879,6,3.5,6S1,4.878,1,3.5S2.122,1,3.5,1 M3.5,0C1.567,0,0,1.567,0,3.5S1.567,7,3.5,7 S7,5.433,7,3.5S5.433,0,3.5,0L3.5,0z"></path>
+                                                      </g>
+                                                      <g>
+                                                        <circle cx="3.695" cy="17.5" r="3"></circle>
+                                                        <path d="M3.695,15c1.378,0,2.5,1.122,2.5,2.5S5.073,20,3.695,20s-2.5-1.122-2.5-2.5S2.316,15,3.695,15 M3.695,14 c-1.933,0-3.5,1.567-3.5,3.5s1.567,3.5,3.5,3.5s3.5-1.567,3.5-3.5S5.628,14,3.695,14L3.695,14z"></path>
+                                                      </g>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="game-result-score {% if away_team_penalty_score > home_team_penalty_score %}game-result-team-win{% endif %}">
+                                                {{ away_team_penalty_score }}
+                                                {% if away_team_penalty_score > home_team_penalty_score %}
+                                                <span class="game-result-team-label game-result-team-label-top">Win</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+              
+                                    <!-- Away Team -->
+                                    <div class="game-result-team ms-3" style="margin-top: 30px;">
+                                        <div class="game-result-team-name text-start" style="font-size: 10px;">{{ match.away_team.name }}</div>
+                                    </div>
+                                </div>
+              
+                                <div class="row row-cols-2 w-100 mx-auto text-center align-items-center">
+                                  <!-- Home Team Penalties -->
+                                  <div class="col col-md-4 mb-3 mb-md-0 w-50 text-end">
+                                    <!-- <h5 class="text-start">{{ match.home_team.name }}</h5> -->
+                                    {% for penalty in shootout_penalties_home %}
+                                    <div class="d-flex align-items-center mb-2 ">
+                                      <span class="w-100 text text-end" style="font-size: 8px;">{{ penalty.player }}</span>
+                                        <span class="ms-3 icon icon-xxs 
+                                            {% if penalty.is_missed %}
+                                                icon-red-2
+                                            {% else %}
+                                                icon-primary
+                                            {% endif %} 
+                                            fa fa-futbol-o" style="font-size: 10px;">
+                                        </span>
+                                    </div>
+                                    {% endfor %}
+                                  </div>
+                                  
+              
+                                  <!-- Away Team Penalties -->
+                                  <div class="col mb-3 mb-md-0 w-50 text-start">
+                                    <!-- <h5 class="text-start">{{ match.home_team.name }}</h5> -->
+                                    {% for penalty in shootout_penalties_away %}
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="me-3 icon icon-xxs 
+                                            {% if penalty.is_missed %}
+                                                icon-red-2
+                                            {% else %}
+                                                icon-primary
+                                            {% endif %} 
+                                            fa fa-futbol-o" style="font-size: 10px;">
+                                        </span>
+                                        <span class="w-100 text text-start" style="font-size: 8px;">{{ penalty.player }}</span>
+                                    </div>
+                                    {% endfor %}
+                                  </div>
+                                </div>
+                                
+                              </article>
+              
+                              
+                          </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="col-12 mt-3">
+                          <!-- Heading Component-->
+                          <article class="heading-component">
+                            <div class="heading-component-inner">
+                              <h5 class="heading-component-title" style="font-size: 12px;">LINE-UP</h5>
+                            </div>
+                          </article>
+                          <div class="row row-30 mt-1" >
+                            <div class="col-6 px-1" >
+                              <!-- Table Roster-->
+                              <div class="table-custom-responsive">
+                                <table class="table-custom table-roster" style="font-size: 10px;">
+                                  <thead>
+                                    <tr>
+                                      <th colspan="3" class="text-start" style="font-size: 10px; padding: 10px 10px; ">{{ match.home_team.name }}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <!-- <tr> -->
+                                      <!-- <td>NBR</td> -->
+                                      <!-- <td>Player Name</td> -->
+                                      <!-- <td>Position</td> -->
+                                    <!-- </tr> -->
+                                    {% for registration in home_team_players %}
+                                    <tr class="text-start w-100" style="">
+                                      <!-- <td class="" style="padding-left: 5px;">{{ registration.player_number }}</td> -->
+                                      <td class="w-100 text-start" style="font-size: 8px !important; color: #000000 !important; height: 30px; padding-left: 10px;"><a style="color: #000000 !important;" href="{% url 'player' player_id=registration.player.id %}">{{ registration.player.name.get_full_name }}</a></td>
+                                      <!-- <td>{{ registration.player.position }}</td> -->
+                                    </tr>
+                                    {% endfor %}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+              
+                            <div class="col-6 px-1">
+                              <!-- Table Roster-->
+                              <div class="table-custom-responsive" >
+                                <table class="table-custom table-roster team2-blue" style="font-size: 10px;">
+                                  <thead>
+                                    <tr>
+                                      <th colspan="3" class="text-end" style="font-size: 10px; padding: 10px 10px; ">{{ match.away_team.name }}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <!-- <tr > -->
+                                      <!-- <td>NBR</td> -->
+                                      <!-- <td>Player Name</td> -->
+                                      <!-- <td>Position</td> -->
+                                    <!-- </tr> -->
+                                    {% for registration in away_team_players %}
+                                    <tr class="w-100 text-end">
+                                      <!-- <td>{{ registration.player_number }}</td> -->
+                                      <td class="w-100 text-end" style="font-size: 8px !important; color: #000000 !important; height: 30px; padding-right: 10px;"><a style="color: #000000 !important; width: 100%;" href="{% url 'player' player_id=registration.player.id %}">Fullname {{ registration.player.name.get_full_name }}</a></td>
+                                      <!-- <td>{{ registration.player.position }}</td> -->
+                                    </tr>
+                                    {% endfor %}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>  
+                    </div>
+                    
+                  </div>
+                </div>
+
+
+                <div class="tab-pane fade" id="tabs-1-2">
+                  <div class="tab-content-main" style="padding: 1px 1px;">
+
+                    <div class="row row-50 g-3">
+                      <div class="col-12" style="padding: 2px;">
+                        <!-- Heading Component-->
+                        <article class="heading-component">
+                          <div class="heading-component-inner">
+                            <h5 class="heading-component-title" style="font-size: 12px;">Game highlights
+                            </h5>
+                          </div>
+                        </article>
+
+                        <div class="">
+
+
+
+                        
+
+                          <div class="d-flex mt-3">
+                            <div class="game-info-team game-info-team-first text-center w-100">
+                              
+                              <div class="game-result-team-name" style="font-size: 10px; font-weight: 600;">{{ match.home_team }}</div>
+                              <div class="game-result-team-country" style="font-size: 8px;"></div>
+                            </div>
+                            <div class="game-info-team game-info-team-second text-center w-100">
+                            
+                              <div class="game-result-team-name" style="font-size: 10px; font-weight: 600;">{{ match.away_team }}</div>
+                              <div class="game-result-team-country" style="font-size: 8px;"></div>
+                              
+                            </div>
+                          </div>
+
+                          
+                          {% if game_events_by_minute %}
+                          <!-- Game Highlights-->
+                          <div class="game-highlights mt-2" style="padding: 20px 1px; max-width: 870px;">
+                            <ul class="game-highlights-list text-center mt-0" style="margin: 1px 1px;">
+
+                              <li class="justify-content-center align-items-center" style="min-height: 45px; padding-bottom: 50px;">
+                                <p class="game-highlights-title" style="font-size: 10px; padding-top: 10px; margin-left: -5%; margin-right: 10%; position: absolute; left: 44%; bottom: 48px;">Start of the Match</p>
+                                <span class="game-highlights-minute" style="font-size: 10px; position: absolute; left: 45%;">
+                                  <i class="fas fa-clock fa-2x text-primary" style="margin-top: 4px;"></i>
+                                </span>
+                              </li>
+
+                              {% for minute, events in first_half_events.items %}
+                              <li class="d-flex justify-content-between" style="min-height: 60px; padding-bottom: 20px;">
+
+                                <!-- Home events or placeholder -->
+                                <div class="text-end" style="font-size: 10px; width: 100%; margin-right: 20%; margin-left: -25%;">
+                                  {% if events.home_events %}
+                                    {% for event in events.home_events %}
+                                      {% if event.event == 'Yellow Card' and not event.is_second_yellow %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          <img class="icon" style="margin-left: 5px;" src="{% static 'img/yellow-card.png' %}" alt="Yellow Card" width="9" height="9"/>
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+
+                                      {% elif event.event == 'Second Yellow Card' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          <img class="icon" style="margin-left: 5px;" src="{% static 'img/second-yellow-card.png' %}" alt="Second Yellow Card" width="9" height="9"/>
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+
+                                      {% elif event.event == 'Red Card' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          <img class="icon" style="margin-left: 5px;" src="{% static 'img/red-card.png' %}" alt="Red Card" width="9" height="9"/>
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+
+                                      {% elif event.event == 'Goal' %}
+                                        {% if event.is_own_goal %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            {{ event.player_name }}
+                                            <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-red-2 fa fa-futbol-o"></span>
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+                                        {% else %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            {{ event.player_name }}
+                                            <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-primary fa fa-futbol-o"></span>
+                                          </p>
+                                          {% if event.assist_name %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">Assisted by {{ event.assist_name }}</p>
+                                          {% endif %}
+                                        {% endif %}
+
+                                      {% elif event.event == 'Penalty' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          
+                                          <span class="position-relative d-inline-block" style="font-size: 10px; margin-left: 5px;">
+                                              <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs {% if event.is_missed %}icon-primary{% else %}icon-primary{% endif %} fa fa-futbol-o"></span>
+                                              <!-- <i class="icon icon-xxs fa fa-futbol-o"></i> -->
+                                              {% if event.is_missed %}
+                                              <!-- Center the 'X' over the icon -->
+                                              <span class="position-absolute top-50 start-50 translate-middle text-danger" style="font-size: 8px;">X</span>
+                                              {% endif %}
+                                          </span>
+                                        </p>
+                                    
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+
+                                      {% elif event.event == 'Substitution' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-red-2 fa fa-arrow-down"></span>{{ event.player_out }}
+                                          <br>
+                                          <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-primary fa fa-arrow-up"></span>{{ event.player_in }}
+                                        </p>
+
+                                      {% elif event.event == 'Save' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          <span class="icon icon-xxs icon-primary fas fa-hand-paper" style="margin-left: 5px; font-size: 9px;"></span>
+                                        </p>
+                                        {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+                                      {% endif %}
+                                    {% endfor %}
+                                  {% else %}
+                                    <!-- Placeholder for home event -->
+                                    <p style="visibility:hidden;">Placeholder</p>
+                                  {% endif %}
+                                </div>
+
+                                <div class="">
+                                  {% if minute > 90 %}
+                                    <span class="game-highlights-minute" style="font-size: .5rem; position: absolute; left: 45%;">
+                                      90+{{ minute|add:-90 }}’
+                                    </span>
+                                  {% elif minute > 45 %}
+                                    <span class="game-highlights-minute" style="font-size: .5rem; position: absolute; left: 45%;">
+                                      45+{{ minute|add:-45 }}’
+                                    </span>
+                                  {% else %}
+                                    <span class="game-highlights-minute" style="font-size: 10px; position: absolute; left: 45%;">
+                                      {{ minute }}’
+                                    </span>
+                                  {% endif %}
+                                </div>
+
+
+                                <!-- Away events or placeholder -->
+                                <div class="text-start" style="font-size: 10px; width: 100%; margin-right: -10%;">
+                                  {% if events.away_events %}
+                                    {% for event in events.away_events %}
+                                      {% if event.event == 'Yellow Card' and not event.is_second_yellow %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          <img class="icon" style="margin-right: 5px;" src="{% static 'img/yellow-card.png' %}" alt="Yellow Card" width="9" height="9"/>
+                                          {{ event.player_name }}
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+                                      
+                                      {% elif event.event == 'Second Yellow Card' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          <img class="icon" style="margin-right: 5px;" src="{% static 'img/second-yellow-card.png' %}" alt="Second Yellow Card" width="10" height="9"/>
+                                          {{ event.player_name }}
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+                                      
+                                      {% elif event.event == 'Red Card' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          <img class="icon" style="margin-right: 5px;" src="{% static 'img/red-card.png' %}" alt="Red Card" width="9" height="9"/>
+                                          {{ event.player_name }}
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+
+                                      {% elif event.event == 'Goal' %}
+                                        {% if event.is_own_goal %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            <span style="margin-right: 5px; font-size: 10px;" class="icon icon-xxs icon-red-2 fa fa-futbol-o"></span>
+                                            {{ event.player_name }}
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+                                        {% else %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            <span style="margin-right: 5px; font-size: 10px;" class="icon icon-xxs icon-primary fa fa-futbol-o"></span>
+                                            {{ event.player_name }}
+                                          </p>
+                                          {% if event.assist_name %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">Assisted by {{ event.assist_name }}</p>
+                                          {% endif %}
+                                        {% endif %}
+
+                                      {% elif event.event == 'Penalty' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          
+                                          <span class="position-relative d-inline-block" style="font-size: 10px; margin-left: 5px;">
+                                              <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs {% if event.is_missed %}icon-primary{% else %}icon-primary{% endif %} fa fa-futbol-o"></span>
+                                              <!-- <i class="icon icon-xxs fa fa-futbol-o"></i> -->
+                                              {% if event.is_missed %}
+                                              <!-- Center the 'X' over the icon -->
+                                              <span class="position-absolute top-50 start-50 translate-middle text-danger" style="font-size: 8px;">X</span>
+                                              {% endif %}
+                                          </span>
+                                        </p>
+
+                                        <!-- <p class="game-highlights-title" style="font-size: 8px !important;">
+
+                                          <span style="margin-right: 5px; font-size: 10px;" class="icon icon-xxs {% if event.is_missed %}icon-red-2{% else %}icon-primary{% endif %} fa fa-futbol-o"></span>
+                                          {{ event.player_name }}
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %} -->
+
+                                      {% elif event.event == 'Substitution' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important; margin: 0;">
+                                          <span class="icon icon-xxs icon-red-2 fa fa-arrow-down" style="margin-right: 5px;"></span>{{ event.player_out }}
+                                          <br>
+                                          <span class="icon icon-xxs icon-primary fa fa-arrow-up" style="margin-right: 5px;"></span>{{ event.player_in }}
+                                        </p>
+
+                                      {% elif event.event == 'Save' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          <span class="icon icon-xxs icon-primary fas fa-hand-paper" style="margin-left: 5px; font-size: 9px;"></span>
+                                        </p>
+                                        {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+                                      {% endif %}
+                                    {% endfor %}
+                                  {% else %}
+                                    <!-- Placeholder for away event -->
+                                    <p style="visibility:hidden;">Placeholder</p>
+                                  {% endif %}
+                                </div>
+                              </li>
+                              {% endfor %}
+
+                              {% if halftime_marker_needed %}
+                              <li style="min-height: 60px; padding-bottom: 20px;">
+                                <span class="game-highlights-minute text-primary" style="font-size: .8rem; position: absolute; left: 45%;">HT</span>
+                              </li>
+                              {% endif %}
+
+
+                              {% for minute, events in second_half_events.items %}
+                              <li class="d-flex justify-content-between" style="min-height: 60px; padding-bottom: 20px;">
+
+                                <!-- Home events or placeholder -->
+                                <div class="text-end" style="font-size: 10px; width: 100%; margin-right: 20%; margin-left: -25%;">
+                                  {% if events.home_events %}
+                                    {% if loop.first %} <!-- Show HT marker before the first event of the second half -->
+                                    <p><strong>HT</strong></p>
+                                    {% endif %}
+                                    {% for event in events.home_events %}
+                                      {% if event.event == 'Yellow Card' and not event.is_second_yellow %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          <img class="icon" style="margin-left: 5px;" src="{% static 'img/yellow-card.png' %}" alt="Yellow Card" width="9" height="9"/>
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+
+                                      {% elif event.event == 'Second Yellow Card' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          <img class="icon" style="margin-left: 5px;" src="{% static 'img/second-yellow-card.png' %}" alt="Second Yellow Card" width="9" height="9"/>
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+
+                                      {% elif event.event == 'Red Card' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          <img class="icon" style="margin-left: 5px;" src="{% static 'img/red-card.png' %}" alt="Red Card" width="9" height="9"/>
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+
+                                      {% elif event.event == 'Goal' %}
+                                        {% if event.is_own_goal %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            {{ event.player_name }}
+                                            <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-red-2 fa fa-futbol-o"></span>
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+                                        {% else %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            {{ event.player_name }}
+                                            <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-primary fa fa-futbol-o"></span>
+                                          </p>
+                                          {% if event.assist_name %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">Assisted by {{ event.assist_name }}</p>
+                                          {% endif %}
+                                        {% endif %}
+
+                                      {% elif event.event == 'Penalty' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          
+                                          <span class="position-relative d-inline-block" style="font-size: 10px; margin-left: 5px;">
+                                              <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs {% if event.is_missed %}icon-primary{% else %}icon-primary{% endif %} fa fa-futbol-o"></span>
+                                              <!-- <i class="icon icon-xxs fa fa-futbol-o"></i> -->
+                                              {% if event.is_missed %}
+                                              <!-- Center the 'X' over the icon -->
+                                              <span class="position-absolute top-50 start-50 translate-middle text-danger" style="font-size: 8px;">X</span>
+                                              {% endif %}
+                                          </span>
+                                        </p>
+
+                                      {% elif event.event == 'Substitution' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-red-2 fa fa-arrow-down"></span>{{ event.player_out }}
+                                          <br>
+                                          <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-primary fa fa-arrow-up"></span>{{ event.player_in }}
+                                        </p>
+
+                                      {% elif event.event == 'Save' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          <span class="icon icon-xxs icon-primary fas fa-hand-paper" style="margin-left: 5px; font-size: 9px;"></span>
+                                        </p>
+                                        {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+                                      {% endif %}
+                                    {% endfor %}
+                                  {% else %}
+                                    <!-- Placeholder for home event -->
+                                    <p style="visibility:hidden;">Placeholder</p>
+                                  {% endif %}
+                                </div>
+
+                                <div class="">
+                                  {% if minute > 90 %}
+                                    <span class="game-highlights-minute" style="font-size: .5rem; position: absolute; left: 45%;">
+                                      90+{{ minute|add:-90 }}’
+                                    </span>
+                                  {% else %}
+                                    <span class="game-highlights-minute" style="font-size: 10px; position: absolute; left: 45%;">
+                                      {{ minute }}’
+                                    </span>
+                                  {% endif %}
+                                </div>
+
+                                
+                                <!-- Away events or placeholder -->
+                                <div class="text-start" style="font-size: 10px; width: 100%; margin-right: -10%;">
+                                  {% if events.away_events %}
+                                    {% for event in events.away_events %}
+                                      {% if event.event == 'Yellow Card' and not event.is_second_yellow %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          <img class="icon" style="margin-right: 5px;" src="{% static 'img/yellow-card.png' %}" alt="Yellow Card" width="9" height="9"/>
+                                          {{ event.player_name }}
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+                                      
+                                      {% elif event.event == 'Second Yellow Card' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          <img class="icon" style="margin-right: 5px;" src="{% static 'img/second-yellow-card.png' %}" alt="Second Yellow Card" width="10" height="9"/>
+                                          {{ event.player_name }}
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+                                      
+                                      {% elif event.event == 'Red Card' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          <img class="icon" style="margin-right: 5px;" src="{% static 'img/red-card.png' %}" alt="Red Card" width="9" height="9"/>
+                                          {{ event.player_name }}
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+
+                                      {% elif event.event == 'Goal' %}
+                                        {% if event.is_own_goal %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            <span style="margin-right: 5px; font-size: 10px;" class="icon icon-xxs icon-red-2 fa fa-futbol-o"></span>
+                                            {{ event.player_name }}
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+                                        {% else %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            <span style="margin-right: 5px; font-size: 10px;" class="icon icon-xxs icon-primary fa fa-futbol-o"></span>
+                                            {{ event.player_name }}
+                                          </p>
+                                          {% if event.assist_name %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">Assisted by {{ event.assist_name }}</p>
+                                          {% endif %}
+                                        {% endif %}
+
+                                      {% elif event.event == 'Penalty' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          <span style="margin-right: 5px; font-size: 10px;" class="icon icon-xxs {% if event.is_missed %}icon-red-2{% else %}icon-primary{% endif %} fa fa-futbol-o"></span>
+                                          {{ event.player_name }}
+                                        </p>
+                                        {% if event.detail %}
+                                        <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+
+                                      {% elif event.event == 'Substitution' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important; margin: 0;">
+                                          <span class="icon icon-xxs icon-red-2 fa fa-arrow-down" style="margin-right: 5px;"></span>{{ event.player_out }}
+                                          <br>
+                                          <span class="icon icon-xxs icon-primary fa fa-arrow-up" style="margin-right: 5px;"></span>{{ event.player_in }}
+                                        </p>
+
+                                      {% elif event.event == 'Save' %}
+                                        <p class="game-highlights-title" style="font-size: 8px !important;">
+                                          {{ event.player_name }}
+                                          <span class="icon icon-xxs icon-primary fas fa-hand-paper" style="margin-left: 5px; font-size: 9px;"></span>
+                                        </p>
+                                        {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                        {% endif %}
+                                      {% endif %}
+                                    {% endfor %}
+                                  {% else %}
+                                    <!-- Placeholder for away event -->
+                                    <p style="visibility:hidden;">Placeholder</p>
+                                  {% endif %}
+                                </div>
+                              </li>
+                              {% endfor %}
+
+                              <li class="" style="min-height: 45px;">
+
+                                <span class="game-highlights-minute" style="font-size: 10px; position: absolute; left: 45%;">
+                                  <i class="fas fa-clock fa-2x text-primary" style="margin-top: 4px;"></i>
+                                </span>
+                                <p class="game-highlights-title" style="font-size: 10px; padding-top: 1px; margin-left: -5%; margin-right: 10%; position: absolute; left: 44%; top: 15px;">End of the Match</p>
+
+                              </li>
+
+                            </ul>
+                          </div>
+                          {% else %}
+                          <div>
+                            <h6 class="text-primary">WILL BE AVAILABLE SHORTLY</h6>
+                          </div>
+                          {% endif %}
+                          
+
+                      
+                      
+                      
+
+
+                          {% if game_events_by_minute %}
+                            <!-- Game Highlights-->
+                            <div class="game-highlights mt-2 d-none" style="padding: 20px 1px; max-width: 870px;">
+                              <ul class="game-highlights-list text-center mt-0" style="margin: 1px 1px;">
+
+                                <li class="justify-content-center align-items-center" style="min-height: 45px; padding-bottom: 50px;">
+                                  <p class="game-highlights-title" style="font-size: 10px; padding-top: 1px; margin-left: -5%; margin-right: 10%; position: absolute; left: 44%; bottom: 50px;">Start of the Match</p>
+                                  <span class="game-highlights-minute" style="font-size: 10px; position: absolute; left: 45%;">
+                                    <i class="fas fa-clock fa-2x text-primary" style="margin-top: 4px;"></i>
+                                  </span>
+                                </li>
+
+                                {% for minute, events in game_events_by_minute.items %}
+                                <li class="d-flex justify-content-between" style="min-height: 60px; padding-bottom: 20px;">
+
+                                  <!-- Home events or placeholder -->
+                                  <div class="text-end" style="font-size: 10px; width: 100%; margin-right: 20%; margin-left: -25%;">
+                                    {% if events.home_events %}
+                                      {% for event in events.home_events %}
+                                        {% if event.event == 'Yellow Card' and not event.is_second_yellow %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            {{ event.player_name }}
+                                            <img class="icon" style="margin-left: 5px;" src="{% static 'img/yellow-card.png' %}" alt="Yellow Card" width="9" height="9"/>
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+
+                                        {% elif event.event == 'Second Yellow Card' %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            {{ event.player_name }}
+                                            <img class="icon" style="margin-left: 5px;" src="{% static 'img/second-yellow-card.png' %}" alt="Second Yellow Card" width="9" height="9"/>
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+
+                                        {% elif event.event == 'Red Card' %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            {{ event.player_name }}
+                                            <img class="icon" style="margin-left: 5px;" src="{% static 'img/red-card.png' %}" alt="Red Card" width="9" height="9"/>
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+
+                                        {% elif event.event == 'Goal' %}
+                                          {% if event.is_own_goal %}
+                                            <p class="game-highlights-title" style="font-size: 8px !important;">
+                                              {{ event.player_name }}
+                                              <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-blue-boston fa fa-futbol-o"></span>
+                                            </p>
+                                            {% if event.detail %}
+                                            <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                            {% endif %}
+                                          {% else %}
+                                            <p class="game-highlights-title" style="font-size: 8px !important;">
+                                              {{ event.player_name }}
+                                              <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-primary fa fa-futbol-o"></span>
+                                            </p>
+                                            {% if event.assist_name %}
+                                            <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">Assisted by {{ event.assist_name }}</p>
+                                            {% endif %}
+                                          {% endif %}
+
+                                        {% elif event.event == 'Penalty' %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            {{ event.player_name }}
+                                            <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs {% if event.is_missed %}icon-red-2{% else %}icon-primary{% endif %} fa fa-futbol-o"></span>
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+
+                                        {% elif event.event == 'Substitution' %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-red-2 fa fa-arrow-down"></span>{{ event.player_out }}
+                                            <br>
+                                            <span style="margin-left: 5px; font-size: 10px;" class="icon icon-xxs icon-primary fa fa-arrow-up"></span>{{ event.player_in }}
+                                          </p>
+
+                                        {% elif event.event == 'Save' %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            {{ event.player_name }}
+                                            <span class="icon icon-xxs icon-primary fas fa-hand-paper" style="margin-left: 5px; font-size: 9px;"></span>
+                                          </p>
+                                          {% if event.detail %}
+                                            <p class="game-highlights-description" style="font-size: 7px; margin-right: 25px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+                                        {% endif %}
+                                      {% endfor %}
+                                    {% else %}
+                                      <!-- Placeholder for home event -->
+                                      <p style="visibility:hidden;">Placeholder</p>
+                                    {% endif %}
+                                  </div>
+
+                                  <div class="">
+                                    {% if minute > 90 %}
+                                      <span class="game-highlights-minute" style="font-size: .5rem; position: absolute; left: 45%;">
+                                        90+{{ minute|add:-90 }}’
+                                      </span>
+                                    {% else %}
+                                      <span class="game-highlights-minute" style="font-size: 10px; position: absolute; left: 45%;">
+                                        {{ minute }}’
+                                      </span>
+                                    {% endif %}
+                                  </div>
+
+                                  <div class="half-time">
+                                    
+                                    <span class="game-highlights-minute" style="font-size: 10px; position: absolute; left: 45%;">
+                                      HT
+                                    </span>
+                                  </div>
+                                  
+                                  
+
+                                  <!-- Away events or placeholder -->
+                                  <div class="text-start" style="font-size: 10px; width: 100%; margin-right: -10%;">
+                                    {% if events.away_events %}
+                                      {% for event in events.away_events %}
+                                        {% if event.event == 'Yellow Card' and not event.is_second_yellow %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            <img class="icon" style="margin-right: 5px;" src="{% static 'img/yellow-card.png' %}" alt="Yellow Card" width="9" height="9"/>
+                                            {{ event.player_name }}
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+                                        
+                                        {% elif event.event == 'Second Yellow Card' %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            <img class="icon" style="margin-right: 5px;" src="{% static 'img/second-yellow-card.png' %}" alt="Second Yellow Card" width="10" height="9"/>
+                                            {{ event.player_name }}
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+                                        
+                                        {% elif event.event == 'Red Card' %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            <img class="icon" style="margin-right: 5px;" src="{% static 'img/red-card.png' %}" alt="Red Card" width="9" height="9"/>
+                                            {{ event.player_name }}
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+
+                                        {% elif event.event == 'Goal' %}
+                                          {% if event.is_own_goal %}
+                                            <p class="game-highlights-title" style="font-size: 8px !important;">
+                                              <span style="margin-right: 5px; font-size: 10px;" class="icon icon-xxs icon-blue-boston fa fa-futbol-o"></span>
+                                              {{ event.player_name }}
+                                            </p>
+                                            {% if event.detail %}
+                                            <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                            {% endif %}
+                                          {% else %}
+                                            <p class="game-highlights-title" style="font-size: 8px !important;">
+                                              <span style="margin-right: 5px; font-size: 10px;" class="icon icon-xxs icon-primary fa fa-futbol-o"></span>
+                                              {{ event.player_name }}
+                                            </p>
+                                            {% if event.assist_name %}
+                                            <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">Assisted by {{ event.assist_name }}</p>
+                                            {% endif %}
+                                          {% endif %}
+
+                                        {% elif event.event == 'Penalty' %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            <span style="margin-right: 5px; font-size: 10px;" class="icon icon-xxs {% if event.is_missed %}icon-red-2{% else %}icon-primary{% endif %} fa fa-futbol-o"></span>
+                                            {{ event.player_name }}
+                                          </p>
+                                          {% if event.detail %}
+                                          <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+
+                                        {% elif event.event == 'Substitution' %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important; margin: 0;">
+                                            <span class="icon icon-xxs icon-red-2 fa fa-arrow-down" style="margin-right: 5px;"></span>{{ event.player_out }}
+                                            <br>
+                                            <span class="icon icon-xxs icon-primary fa fa-arrow-up" style="margin-right: 5px;"></span>{{ event.player_in }}
+                                          </p>
+
+                                        {% elif event.event == 'Save' %}
+                                          <p class="game-highlights-title" style="font-size: 8px !important;">
+                                            {{ event.player_name }}
+                                            <span class="icon icon-xxs icon-primary fas fa-hand-paper" style="margin-left: 5px; font-size: 9px;"></span>
+                                          </p>
+                                          {% if event.detail %}
+                                            <p class="game-highlights-description" style="font-size: 7px; margin-left: 20px; margin-top: 3px;">{{ event.detail }}</p>
+                                          {% endif %}
+                                        {% endif %}
+                                      {% endfor %}
+                                    {% else %}
+                                      <!-- Placeholder for away event -->
+                                      <p style="visibility:hidden;">Placeholder</p>
+                                    {% endif %}
+                                  </div>
+                                </li>
+                                {% endfor %}
+
+                                <li class="" style="min-height: 45px;">
+
+                                  <span class="game-highlights-minute" style="font-size: 10px; position: absolute; left: 45%;">
+                                    <i class="fas fa-clock fa-2x text-primary" style="margin-top: 4px;"></i>
+                                  </span>
+                                  <p class="game-highlights-title" style="font-size: 10px; padding-top: 1px; margin-left: -5%; margin-right: 10%; position: absolute; left: 44%; top: 15px;">End of the Match</p>
+
+                                </li>
+
+                              </ul>
+                            </div>
+                          {% endif %}
+
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="tab-pane fade" id="tabs-1-3">
+                  <div class="tab-content-main" style="padding: 5px 15px;">
+                    
+
+                    <div class="">
+                      
+                      {% if user.is_authenticated %}
+
+                      <div class="container w-100 text-center mx-auto mt-1 mb-3">
+                        <h6 class="text-center" >Share your thoughts about this match with others</h6>
+                      </div>
+
+
+                      <!-- Match Likes -->
+                      <!-- <a class="like-btn me-1" type="button" data-match-id="{{ match.id }}">
+                        {% if match.user_has_liked %}
+                            <i class="fas fa-thumbs-up text-danger"></i>
+                        {% else %}
+                            <i class="fas fa-thumbs-up"></i>
+                        {% endif %}
+                      </a>
+                      <span class="ms-1" style="font-size: 12px;" id="like-count-{{ match.id }}">{{ num_likes }}</span> -->
+                      
+
+
+
+
+                      <div class="" id="match-comments-section">
+                        <div class="comment-box">
+                          <div class="comment-box-aside d-flex align-items-center">
+                              <!-- <img class="img-circle" src="images/user-7-69x69.jpg" alt="" width="69" height="69"/> -->
+                              <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                                {% if login_user.picture %}
+                                <img src="{{ login_user.picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                    <i class="fas fa-user fa-1x" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                </div>
+                                {% endif %}
+                              </div>
+                              <h6 class="comment-box-name ms-1" style="font-size: 12px;">{{ login_user.user.username }}</h6>
+
+                            
+                          </div>
+                          <div class="comment-box-main">
+                            <!-- comment form-->
+                            <form method="post" action="{% url 'match_comment' match.id %}">
+                              {% csrf_token %}
+                              <div class="form-wrap">
+                                <label class="form-label" for="comment-message" style="font-size: 12px;">Your comment</label>
+                                <textarea class="form-input" id="comment-message" name="message" style="font-size: 12px;"></textarea>
+                              </div>
+                              <div class="form-button">
+                                <button class="button button-xs button-primary" type="submit">Submit</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                        <article class="heading-component mt-3" style="">
+                          <div class="heading-component-inner">
+                              <h5 class="heading-component-title" style="font-size: 12px;">{{ num_comments }} comments
+                              </h5>
+                              <div class="heading-component-aside">
+                                <a href="#collapseComments-{{ match.id }}" class="text-muted" data-bs-toggle="collapse" role="button" style="font-size: 12px;">View comments</a>
+                              </div>
+                          </div>
+                        </article>
+                        <!-- Comments -->
+                        <div class="collapse" id="collapseComments-{{ match.id }}" >
+                        {% for comment in match.match_comments.all %}
+                          {% if not comment.parent %}
+                          <div class="blog-post-comments mb-2" >
+                              <!-- Post Comment-->
+                              <div class="" >
+                                  
+                                  <div class="">
+
+                                      <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                              <div class="blog-post-author d-flex align-items-center">
+                                                <div class="mx-2">
+                                                  <div class="bg-gray-800 rounded-circle border border-4 border-primary d-flex align-items-center justify-content-center" style="width: 25px; height: 25px;">
+                                                      {% if comment.author.picture %}
+                                                      <img src="{{ comment.author.picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
+                                                      {% else %}
+                                                      <div class="d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                          <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                      </div>
+                                                      {% endif %}
+                                                  </div>
+                                              </div>
+                                          
+                                              <a href="{% url 'userprofile' comment.author.user.username %}">
+                                                  <h6 class="author-name mx-1" style="font-size: 10px;">{{ comment.author.user.username }}</h6>
+                                              </a>
+                                              <time class="post-comment-time mx-2" datetime="2024" style="font-size: 10px;">{{ comment.created_at|date:"F j, Y" }}</time>
+                                          </div>
+                                      </div>
+
+                                      <div class="row justify-content-center d-none">
+                                        <div class="col-md-8">
+                                          <div class="p-3" style="border: 1px solid #ccc; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
+                                            <p class="mb-0" style="font-size: 16px; line-height: 1.5;">
+                                              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. 
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <div class="post-comment-text" style="margin: 5px 15px 5px 15px; width: 100%; text-align: justify; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word;">
+                                        <p style="font-size: .72rem; width: 90%">{{ comment.content }}</p>
+                                      </div>
+                                      <div class="post-comment-footer mt-0">
+                                          <!-- Parent Comment Likes -->
+                                          <div class="comment-like">
+                                            <a class="like-btn" type="button" data-comment-id="{{ comment.id }}">
+                                                {% if comment.user_has_liked %}
+                                                <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                                {% else %}
+                                                <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                                {% endif %}
+                                            </a>
+                                            <span class="ms-1" id="like-count-{{ comment.id }}">{{ comment.num_likes }}</span>
+                                          </div>
+                                        
+
+                                          
+                                          <!-- Comment Reply Button -->
+                                          <div class="comment-reply">
+                                              <a class="ms-1" type="button" onclick="toggleReplyBox('{{ comment.id }}')">
+                                                  Reply
+                                                  <i class="icon fas fa-reply"></i>
+                                              </a>
+                                          </div>
+                                          <!-- Toggle Button for Replies -->
+                                          <a href="#collapseReplyComments-{{ comment.id }}" data-bs-toggle="collapse" role="button">{{ comment.num_replies }} Replies</a>
+                                          {% if request.user == comment.author.user %}
+                                          <a class="ms-3" href="{% url 'delete_match_comment' comment.id %}"><i class="icon fas fa-trash-alt icon-red-2"></i></a>
+                                          {% endif %}
+                                          <!-- Reply box -->
+                                          <div class="comment-box reply-box mb-2" id="reply-box-{{ comment.id }}" style="display: none;">
+                                              
+                                              <div class="comment-box-main">
+                                                  <!-- RD Mailform-->
+                                                  <form method="post" action="{% url 'match_comment' match.id %}">
+                                                      {% csrf_token %}
+                                                      <input type="hidden" name="redirect_to" value="{{ request.path }}">
+                                                      <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                                      <label class="form-label" for="comment-message-{{ comment.id }}"></label>
+                                                      <textarea class="form-input" id="comment-message-{{ comment.id }}" name="message" placeholder="Reply to {{ comment.author.user.username }}" style="font-size: 12px; text-align: justify;"></textarea>
+                                                      <div class="form-button">
+                                                          <button class="button button-xs button-primary" type="submit">Submit</button>
+                                                      </div>
+                                                  </form>
+                                              </div>
+                                          </div>
+
+                                          <!-- Collapsible Replies Section -->
+                                          <div class="collapse" id="collapseReplyComments-{{ comment.id }}">
+                                            {% for reply in comment.match_replies.all %}
+                                            <div class="mt-3" style="margin-left: 15px;">
+                                                <div class="">
+                                                    <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                                        <div class="blog-post-author d-flex align-items-center">
+                                                            <div class="mx-2">
+                                                                <!-- <img class="img-circle" src="images/user-6-69x69.jpg" alt="" width="69" height="69"/> -->
+                                                                <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 25px; height: 25px;">
+                                                                    {% if reply.author.picture %}
+                                                                    <img src="{{ reply.author.picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    {% else %}
+                                                                    <div class="d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                                      <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                                    </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <a href="{% url 'userprofile' reply.author.user.username %}">
+                                                              <h6 class="author-name mx-1" style="font-size: 10px;">{{ reply.author.user.username }}</h6>
+                                                            </a>
+                                                            
+                                                            <time class="post-comment-time mx-1" datetime="2024" style="font-size: 10px;">{{ reply.created_at|date:"F j, Y" }}</time>
+                                                        </div>
+                                                    </div>
+                                                    <div class="post-comment-text" style="margin: 5px 15px 5px 15px; width: 100%; text-align: justify; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word;">
+                                                      <p style="font-size: .72rem; width: 90%">{{ comment.content }}</p>
+                                                    </div>
+                                                    
+                                                    <div class="post-comment-footer mt-1">
+                                                      <!-- Child Comment Likes -->
+                                                      <div class="comment-like">
+                                                        <a class="like-btn" type="button" data-child-comment-id="{{ reply.id }}">
+                                                            {% if reply.user_has_liked %}
+                                                            <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                                            {% else %}
+                                                            <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                                            {% endif %}
+                                                        </a>
+                                                        <span class="ms-2" style="font-size: 12px;" id="like-count-{{ reply.id }}">{{ reply.num_likes }}</span>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                          </div>
+                                      </div>
+                                      
+                                  </div>
+                                  
+                              </div>
+                              
+                          </div>
+                          {% endif %}
+                        {% endfor %}
+                        </div>
+                      </div>
+
+                      {% else %}
+                
+                      <div class="container w-100 text-center mx-auto mt-5" id="competition-comments-section">
+                        <p class="mb-3 text-center">Login to see what people are saying about this competition.</p>
+                        <a class="button button-lg button-primary" href="{% url 'loginform' %}">LOGIN</a>
+                      </div>
+
+                      {% endif %}
+
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade d-none" id="tabs-1-4">
+                  <div class="tab-content-main" style="padding: 30px 2px;">
+                    <div class="container-fluid">
+                      <div class="row">
+                        <h1>COMING SOON</h1>
+                      </div>
+                    </div>
+                  </div>
+                
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+  function toggleReplyBox(commentId) {
+      var replyBox = document.querySelector('#reply-box-' + commentId);
+      if (replyBox.style.display === 'none' || replyBox.style.display === '') {
+          replyBox.style.display = 'block';
+      } else {
+          replyBox.style.display = 'none';
+      }
+  }
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+      function getCSRFToken() {
+          return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      }
+
+      const likeLinks = document.querySelectorAll('.like-btn');
+      likeLinks.forEach(link => {
+          link.addEventListener('click', function(event) {
+              event.preventDefault(); // Prevent default link behavior
+
+              const matchId = this.dataset.matchId;
+              const commentId = this.dataset.commentId;
+              const childCommentId = this.dataset.childCommentId;
+
+              let endpoint = `/toggle_match_like/`;
+
+              if (matchId) {
+                  endpoint += `${matchId}/`;
+              } else if (commentId) {
+                  endpoint += `comment/${commentId}/`;
+              } else if (childCommentId) {
+                  endpoint += `comment/${childCommentId}/`;
+              }
+
+              const headers = new Headers({
+                  'X-CSRFToken': getCSRFToken(),
+                  'Content-Type': 'application/json',
+              });
+
+              fetch(endpoint, {
+                  method: 'POST',
+                  headers: headers,
+                  credentials: 'include',
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      const likeIcon = data.liked ? '<div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>' : '<div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>';
+                      this.innerHTML = likeIcon;
+
+                      // Update the like count based on the response
+                      const likeCountElement = document.getElementById(`like-count-${childCommentId ? childCommentId : (matchId || commentId)}`);
+                      if (likeCountElement) {
+                          likeCountElement.innerText = `${data.num_likes}`;
+                      }
+                  }
+              }).catch(error => console.error('Error:', error));
+          });
+      });
+  });
+
+</script>
+{% endblock %}

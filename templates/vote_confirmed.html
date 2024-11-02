@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="page animated" style="animation-duration: 500ms;">
+
+    <!-- Breadcrumbs -->
+    <section class="section parallax-container breadcrumbs-wrap" data-parallax-img="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}">
+      <div class="material-parallax parallax">
+        <img src="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" alt="">
+      </div>
+      <div class="parallax-content breadcrumbs-custom context-dark">
+        <div class="container">
+          <h3 class="breadcrumbs-custom-title"></h3>
+          <ul class="breadcrumbs-custom-path">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="">Vote Confirmation</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Gallery-->
+    <section class="section section-variant-1 bg-gray-100 text-center">
+      <div class="container" style="max-width: 90%;">
+        <div class="row row-30 justify-content-center">
+          <div class="col-xl-10">
+            <div class="text-center">
+              <img class="text-center" src="{% static 'img/voted-check.png' %}" alt="" width="100" height="144">
+              <h3>Vote Confirmed!</h3>
+            </div>
+
+            <div class="player-voting-item-figure text-center">
+              {% if player %}
+                {% if player.picture %}
+                  <img src="{{ player.picture.url }}" alt="{{ player.name.get_full_name }}" class="rounded-circle" width="100" height="144">
+                {% else %}
+                  <i class="fas fa-user fa-8x" width="100" height="144"></i>
+                {% endif %}
+                <h4><strong>{{ player.name.get_full_name }}</strong></h4>
+              {% endif %}
+    
+              {% if team %}
+                {% if team.logo %}
+                  <img src="{{ team.logo.url }}" alt="{{ team.name }}" class="rounded-circle" width="152" height="144">
+                {% else %}
+                  <img src="{% static 'img/soccer.png' %}" alt="{{ team.name }}" class="rounded-circle" width="152" height="144">
+                {% endif %}
+                <p>You voted for the team: <strong>{{ team.name }}</strong></p>
+              {% endif %}
+            </div>
+          
+            {% if category %}
+              <span class="fw-bold text-muted" style="font-size: 10px;">FOR</span>
+              <h6><strong>{{ category }}</strong></h6>
+            {% endif %}
+    
+            <h2 class="mt-2"><span class="text-primary">{{ num_of_votes }}</span> Votes</h2>
+            <p class="big text-gray-800">Your vote has been successfully received in the digital ballot box.</p>
+            <div class="text-center mt-2">
+              <span>Confirmation ID:<h6 class="text-primary">{{ confirmation_id }}</h6></span>
+            </div>
+            <a class="button button-lg button-primary" href="{% url 'home' %}">Go to home page</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+</div>
+
+{% endblock %}
+
+{% block extra_script %}
+{% endblock %}

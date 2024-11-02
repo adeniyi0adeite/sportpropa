@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_head %}
+    <script src="{% static 'js/search.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="page animated" style="animation-duration: 500ms;">
+    <!-- Section Breadcrumbs-->
+    <section class="section parallax-container breadcrumbs-wrap" data-parallax-img="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}"><div class="material-parallax parallax"><img src="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" alt="" style="display: block; transform: translate3d(-50%, 175px, 0px);"></div>
+      <div class="parallax-content breadcrumbs-custom context-dark">
+        <div class="container">
+          <h3 class="breadcrumbs-custom-title">Search Users</h3>
+          <ul class="breadcrumbs-custom-path">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li class="active">Search Users</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search results-->
+    <section class="section-md bg-gray-100">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-9 col-xl-8">
+                    <!-- RD Search-->
+                    <div class="rd-search-modern">
+                        <form class="rd-form rd-search rd-form-inline" action="{% url 'search_users' %}" method="GET">
+                            <div class="form-wrap">
+                                <label class="form-label" for="rd-search-form-input">Search users</label>
+                                <input class="form-input" id="rd-search-form-input" type="text" name="q" autocomplete="off">
+                            </div>
+                            <button class="rd-search-form-submit fl-budicons-launch-search81" type="submit"></button>
+                        </form>
+                    </div>
+                    <div class="rd-search-results" id="rd-search-results"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    {% if query %}
+    <section class="section-md bg-gray-100">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-9 col-xl-8">
+                    <h2 class="text-center">Search for Users</h2>
+                    <h6 class="text-center">Results for "{{ query }}"</h6>
+                    <br>
+                    <div class="w-100 d-flex flex-column align-items-center">
+                        {% for result in results %}
+                        <div class="container p-3 d-flex justify-content-center">
+                            <div class="d-flex flex-row justify-content-center align-items-center" style="max-width: 900px; width: 100%;">
+                                <div class="mx-2 align-items-center">
+                                    <div class="bg-gray-800 rounded-circle border border-4 border-pry text-center p-2" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                                        {% if result.profile.picture %}
+                                        <div class="player-img" style="background-image: url('{{ result.profile.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                        </div>
+                                        {% else %}
+                                        <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                            <i class="fas fa-user fa-4x" style="color: #000000;"></i>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="mx-2 align-items-center">
+                                    <a href="{% url 'userprofile' result.profile.user.username %}">
+                                        <span class="post-author">{{ result.profile.user.username }}</span>
+                                    </a>
+                                    <span class="small fw-bold">{{ result.profile.user.first_name }} {{ result.profile.user.last_name }}</span>
+                                </div>
+
+                                <div class="w-100 mx-2 align-items-center text-end">
+                                    {% if result.profile.user.username != request.user.username %}
+                                        
+                                        <form action="{% url 'follow_unfollow_user' result.profile.user.username %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-primary btn-sm">{% if result.is_followed %}Unfollow{% else %}Follow{% endif %}</button>
+                                        </form>
+                                        
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>No users found.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+
+
+
+</div>
+
+{% endblock %}

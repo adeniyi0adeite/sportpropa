@@ -1,0 +1,1420 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% load static %}
+
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <script src="{% static 'js/userprofile.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- Page-->
+<div class="page animated mb-0 mt-0 " style="animation-duration: 500ms;">
+  
+  <!-- Swiper-->
+  
+  <section class="section swiper-container swiper-slider swiper-modern bg-gray-2" data-swiper='{"autoplay":{"delay":4000},"simulateTouch":false,"effect":"fade"}' style="height: 50px; margin-top: -30px;">
+    <div class="swiper-wrapper mt-0" >
+      <div class="swiper-slide text-center" data-slide-bg="{% static 'img/slider-1-slide-1-1920x671.jpg' %}">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col">
+              <div class="swiper-slide-caption" style="padding: 20px 0 55px;">
+                <h1 data-caption-animate="fadeInUp" data-caption-delay="100" style="font-size: 20px;">Connect!</h1>
+                <h5 data-caption-animate="fadeInUp" data-caption-delay="200" style="font-size: 12px;">to see friends posts</h5><a class="button button-xs button-primary" data-caption-animate="fadeInUp" data-caption-delay="300" href="{% url 'user_posts' %}">See Posts</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-button swiper-button-prev"></div>
+    <div class="swiper-button swiper-button-next"></div>
+    <!-- <div class="swiper-pagination" style="bottom: 5px"></div> -->
+  </section>
+
+  <div class="container w-100 text-center mx-auto mt-3 d-none">
+    <a class="button button-lg button-primary" href="{% url 'loginform' %}">LOGIN / REGISTER HERE</a>
+  </div>
+  
+
+
+  {% if user.is_authenticated %}
+  <section class="bg-gray-100 d-none">
+    <div class='w-100 mx-auto'>
+      <div class="row row-50">
+
+        
+        
+        <div class="col-12 text-center mb-0">
+          <a class="button button-primary button-sm" href="{% url 'userprofile' request.user.username %}" ><h4>CLICK HERE TO GOTO PROFILE</h4></a>
+        </div>
+      
+        <div class="row text-center mx-auto d-none">
+          {% if posts %}
+          <div class="col-12 text-center mt-2">
+            <!-- Heading Component -->
+            <article class="heading-component d-md-none d-lg-none">
+              <div class="heading-component-inner">
+              <h5 class="heading-component-title">User Post</h5>
+              </div>
+            </article>
+            <article class="post-alice " ><img src="{% static 'img/post-slide-1-769x397.jpg' %}" alt="" width="769" height="397"/>
+              <!-- Swiper -->
+              <div class="swiper-container swiper-slider post-slider" style="width: 90%; margin: auto;" data-swiper='{"autoplay": {"delay": 3000},"loop": true}'>
+                <div class="swiper-wrapper">
+                  {% for post in posts %}
+                  <div class="swiper-slide px-1 py-3">
+                    <div class="card" style="width: 500px; height: 500px; display: flex; flex-direction: column; ">
+                      <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                          <div class="me-2">
+                            <div class="bg-gray-800 rounded-circle border border-4 border-pry text-center p-2" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                              {% if post.author.picture %}
+                              <div class="player-img" style="background-image: url('{{ post.author.picture.url }}'); background-position: center; background-size: cover; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;"></div>
+                              {% else %}
+                              <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                <i class="fas fa-user" style="color: #000000;"></i>
+                              </div>
+                              {% endif %}
+                            </div>
+                          </div>
+          
+                          <a href="{% url 'userprofile' post.author.user.username %}">
+                            <p class="post-author mb-0">{{ post.author.user.username }}</p>
+                          </a>
+                          <time class="ms-2" datetime="{{ post.created_at|date:'Y-m-d' }}"><span style="font-size: 10px;">{{ post.created_at|date:"F j, Y" }}</span></time>
+          
+                        </div>
+                      </div>
+                      <div class="card-body">
+                        {% if post.image %}
+                        <div class="blog-post-content d-flex justify-content-center align-items-center" style="width: 100%; height: 300px; overflow: hidden;">
+                          <img src="{{ post.image.url }}" class="img-fluid" alt="Post image" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                        </div>
+                        {% elif post.video %}
+                        <div class="blog-post-content d-flex justify-content-center align-items-center" style="width: 100%; height: 300px; overflow: hidden;">
+                          <video class="img-fluid" controls style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            <source src="{{ post.video.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                          </video>
+                        </div>
+                        {% endif %}
+
+          
+                        {% if post.caption %}
+                        <div class="">
+                          <p>{{ post.caption }}</p>
+                        </div>
+                        {% endif %}
+          
+                        <div class="d-flex align-items-center mt-3">
+                          <a class="like-btn me-1" type="button" data-post-id="{{ post.id }}">
+                            {% if post.user_has_liked %}
+                            <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                            {% else %}
+                            <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                            {% endif %}
+                          </a>
+                          <span class="ms-1" style="font-size: 12px;" id="like-count-{{ post.id }}">{{ post.num_likes }}</span>
+                          <a class="ms-3" type="button">
+                            <!-- <i class="far fa-comment"></i> -->
+                            <div class="comment-reply"><span class="icon mdi mdi-comment-outline" onclick="toggleCommentBox({{ post.id }})"></span></div>
+                          </a>
+                          <span class="ms-1" style="font-size: 12px;">{{ post.num_comments }}</span>
+                        </div>
+          
+                        <div class="comment-box mt-3" id="comment-box-{{ post.id }}" style="display: none;">
+                          <form class="comment-box-form" method="post" action="{% url 'add_comment' post.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="redirect_to" value="{{ request.path }}">
+                            <input type="hidden" name="post_owner_username" value="{{ post.author.user.username }}">
+                            <div class="form-group">
+                              <label class="" for="commentText-{{ post.id }}"></label>
+                              <textarea class="form-control" id="commentText-{{ post.id }}" name="comment_text" rows="3" required></textarea>
+                            </div>
+                            <div class="form-button mt-2">
+                              <button class="btn btn-primary btn-sm" type="submit">Submit</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <a href="{% url 'user_posts' %}" class="post-alice-title position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center text-center" style="background: rgba(0, 0, 0, 0.4); z-index: 1; color: white;">
+                  <div>
+                    <h1 class="text-white mb-0">See all posts</h1>
+                    <div class="divider mt-2"></div>
+                  </div>
+                </a>
+              </div>
+            </article>
+          </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+
+  {% if competitions %}
+  <div class="col text-center mt-4 d-none">
+    <!-- Heading Component -->
+    <article class="heading-component">
+      <div class="heading-component-inner">
+      <h5 class="heading-component-title">COMPETITIONS</h5>
+      </div>
+    </article>
+    
+    <!-- Swiper-->
+    <div class="swiper-container swiper-slider post-slider" data-swiper='{"autoplay":false,"loop":false,"simulateTouch":false}'>
+      
+      <div class="swiper-wrapper">
+        {% for competition in competitions %}
+        <div class="swiper-slide">
+            <!-- Post Alice -->
+            <article class="post-alice">
+                <img src="{% static 'img/post-slide-1-769x397.jpg' %}" alt="" class="img-fluid"/>
+                <div class="post-alice-main">
+                    
+                    <!-- Badge -->
+                    <div class="badge badge-secondary">{{ competition.competition_type }}</div>
+                    <h3 class="post-alice-title">
+                        <a href="{% url 'competition' competition_id=competition.id %}">{{ competition.name }}</a>
+                    </h3>
+                    <div class="divider"></div>
+                    <div class="post-alice-time">
+                        <span class="icon icon-primary mdi mdi-map-marker"></span>
+                        <span class="ms-2">{{ competition.location|default:""  }}</span>
+                    </div>
+                    <div class="post-alice-time text-white align-items-center text-white" style="position: relative; width: 100%; font-size: 0.8rem; top: 10px;">
+                      <span class="text-lower-case" style="font-size: 0.5rem;">Powered by:</span>
+                      <div class="text-upper-case">{{ competition.organizer }}</div>
+                    </div>
+                </div>
+                
+            </article>
+            
+        </div>
+        {% endfor %}
+        
+      </div>
+      
+      <!-- Swiper Pagination-->
+      <div class="swiper-pagination"></div>
+      <!-- Swiper Navigation-->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+
+      <!-- <div class="position-absolute top-0 start-0 end-0 bottom-0" style="z-index: 1;">
+        <a class="button button-primary button-sm" href="{% url 'competition' %}" >View all Competitions</a>
+      </div> -->
+    </div>
+    
+  </div>
+  {% endif %}
+
+
+  
+  <section class="bg-gray-100 mt-1">
+    
+    <div class="container" style="padding: 2px 2px;">
+
+    
+      <div class="tabs-custom tabs-horizontal tabs-corporate " id="tabs-1" data-nav="true">
+        <div class="nav-wrap">
+          <!-- <button class="button button-nav button-prev" data-nav-prev=""><span class="icon mdi mdi-chevron-left"></span></button> -->
+          <!-- Nav tabs-->
+          <ul class="nav row">
+            <li class="nav-item col" role="presentation"><a class="nav-link active" href="#tabs-1-1" data-bs-toggle="tab"><span>LATEST</span></a></li>
+            <li class="nav-item col" role="presentation"><a class="nav-link" href="#tabs-1-2" data-bs-toggle="tab"><span> STANDINGS</span></a></li>                                 
+            <li class="nav-item col" role="presentation"><a class="nav-link" href="#tabs-1-3" data-bs-toggle="tab"><span> news</span></a></li>                                 
+          </ul>
+          <!-- <button class="button button-nav button-next" data-nav-next=""><span class="icon mdi mdi-chevron-right"></span></button> -->
+        </div>
+        <!-- Tab panels-->
+        <div class="tab-content" style="padding: 15px 10px;">
+
+          <div class="tab-pane fade show active" id="tabs-1-1">
+            <div class="tab-content-main" style="padding: 1px 1px;">
+
+              <section class="mt-0">
+                {% if latest_results %}
+                <div class="row">
+                  
+                  {% if fixtures_today %}
+                  <!-- Game Schedule -->
+                   
+                  <div class="col-12 owl-carousel-outer-navigation-fixture">
+                    <!-- Heading Component-->
+                    <article class="heading-component mb-0">
+                      <div class="heading-component-inner">
+                        <h5 class="heading-component-title" style="font-size: 12px;">Game schedule
+                        </h5>
+                        
+                        
+                        
+                        <div class="owl-carousel-arrows-outline">
+                          <div class="owl-nav">
+                            <button class="owl-arrow owl-arrow-prev"></button>
+                            <button class="owl-arrow owl-arrow-next"></button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </article>
+
+                    <div class="heading-component-aside mt-0">
+                      <select id="group-select" class="select" data-placeholder="{{ competition.name }}" data-container-class="select-minimal-xl" onchange="showCompetitionFixtures(this.value)">
+                        <option label="placeholder"></option>
+                        {% for competition in competitions %}
+                        <option value="{{ competition.id }}" {% if competition == latest_competition %} selected {% endif %}>{{ competition.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+
+                    
+
+
+                    <!-- Fixtures display -->
+                    <div id="fixturesContainer" class="mt-1">
+                      {% for competition in competitions %}
+                      <div id="competition-fixtures-{{ competition.id }}" class="fixtures" {% if competition != latest_competition %}style="display: none;"{% endif %}>
+                        <div class="owl-carousel owl-spacing-fixture" data-items="1" data-dots="false" data-nav="true" data-autoplay="true" data-autoplay-speed="90000" data-stage-padding="0" data-loop="true" data-margin="30" data-mouse-drag="false" data-animation-in="fadeIn" data-animation-out="fadeOut" data-nav-custom=".owl-carousel-outer-navigation-fixture">
+                        {% for fixture in fixtures_today %}
+                          <!-- Game Result Bug-->
+                          {% if fixture.competition.name == competition.name %}
+                          <article class="game-result">
+                            <div class="game-info" >
+                              <p class="game-info-subtitle" style="font-size: 8px;">{{ fixture.competition.location }} - 
+                                <time> {{ fixture.match_date|date:"H:i" }}</time>
+                              </p>
+                              <h6 class="game-info-title">{{ fixture.competition.name }}</h6>
+                              {% if competition.competition_type == 'Cup' and fixture.group %}
+                              <h6 class="text-primary">{{ fixture.group.name }}</h6>
+                              {% elif competition.competition_type == 'Cup' and fixture.match_type %}
+                              <h6 class="text-primary">{{ fixture.match_type }}</h6>
+                              {% endif %}
+                              <div class="game-info-main mt-1">
+                                <div class="game-info-team game-info-team-first">
+                                  <figure class="game-result-team-figure " style="width: 40px; height: 44px;">
+                                    {% if fixture.home_team.logo %}
+                                      <img src="{{ fixture.home_team.logo.url }}" alt="" width="30" height=""/>
+                                      {% else %}
+                                      <img src="{% static 'img/soccer.png' %}" alt="" width="30" height=""/>
+                                      {% endif %}
+                                  </figure>
+                                  <div class="game-result-team-name" style="font-size: 8px;">{{ fixture.home_team }}</div>
+                                  <div class="game-result-team-country" style="font-size: 8px;">{{ fixture.home_team.location|default_if_none:"" }}</div>
+                                </div>
+                                <div class="game-info-middle game-info-middle-vertical">
+                                  <time class="time-big" datetime="2024-04-17" style="font-size: 8px;"><span class="heading-3" style="font-size: 10px;">{{ fixture.match_date|date:"D d" }}</span> {{ fixture.match_date|date:"M Y" }}
+                                  </time>
+                                  <div class="game-result-divider-wrap"><span class="game-info-team-divider" style="font-size: 8px;">VS</span></div>
+                                </div>
+                                <div class="game-info-team game-info-team-second" >
+                                  <figure class="game-result-team-figure " style="width: 40px; height: 44px;">
+                                    {% if fixture.away_team.logo %}
+                                    <img src="{{ fixture.away_team.logo.url }}" alt="" width="30" height=""/>
+                                    {% else %}
+                                    <img src="{% static 'img/soccer.png' %}" alt="" width="30" height=""/>
+                                    {% endif %}
+                                  </figure>
+                                  <div class="game-result-team-name" style="font-size: 8px;">{{ fixture.away_team }}</div>
+                                  <div class="game-result-team-country" style="font-size: 8px;">{{ fixture.away_team.location|default_if_none:"" }}</div>
+                                </div>
+                              </div>
+                  
+                              <div class="group-sm">
+                                <a class="button button-xs button-primary" href="{% url 'competition' competition_id=fixture.competition.id %}">View competition</a>
+                              </div>
+                              
+                            </div>
+                          </article>
+                          {% endif %}
+                        {% endfor %}
+                        </div>
+                        
+                      </div>
+                      {% endfor %}
+                    </div>
+                
+                  </div>
+                  {% endif %}
+
+                  <!-- Latest Results -->
+                  <div class="col-12 mt-3 owl-carousel-outer-navigation-result">
+                    <!-- Heading Component -->
+                    <article class="heading-component mb-0 align-items-center">
+                      <div class="heading-component-inner">
+                        <h5 class="heading-component-title" style="font-size: 12px;">Latest Results</h5>
+                        <div class="owl-carousel-arrows-outline">
+                          <div class="owl-nav">
+                            <button class="owl-arrow owl-arrow-prev"></button>
+                            <button class="owl-arrow owl-arrow-next"></button>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    <!-- Select tag for latest results -->
+                    <div class="heading-component-aside mt-0 mb-0">
+                      <select id="latestResultsSelect" data-container-class="select-minimal-xl" onchange="showLatestResults(this.value)">
+                        {% for competition in competitions %}
+                        <option value="{{ competition.id }}" {% if competition == latest_competition %} selected {% endif %}>{{ competition.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <!-- Owl Carousel for Latest Results -->
+                    <div id="latestResultsContainer" class="mt-1 mb-0">
+                      {% for competition in competitions %}
+                          <div id="competition-results-{{ competition.id }}" class="latest-results" {% if competition != latest_competition %}style="display: none;"{% endif %}>
+                              <div class="owl-carousel owl-spacing-result" data-items="1" data-dots="false" data-nav="true" data-autoplay="false" data-autoplay-speed="90000" data-stage-padding="0" data-loop="true" data-margin="30" data-mouse-drag="false" data-animation-in="fadeIn" data-animation-out="fadeOut" data-nav-custom=".owl-carousel-outer-navigation-result">
+                                  {% for result in latest_results %}
+                                      {% if result.competition.id == competition.id %}
+                                      
+                                          <article class="game-result game-result-classic w-100" style="padding-top: 10px; padding-bottom: 10px;">
+                                            <a href="{% url 'matchresultdetails' match_id=result.id %}" class="game-result-link flex-fill" >
+                                              <h6 style="font-size: 10px;" class="">{{ result.competition.name }}</h6>
+                                              
+                                              {% if result.competition.competition_type == 'Cup' and result.group %}
+                                                  <h6 class="text-primary" style="font-size: 12px;">{{ result.group.name }}</h6>
+                                              {% elif result.competition.competition_type == 'Cup' and result.match_type %}
+                                                  <h6 class="text-primary mb-0" style="font-size: 12px;">{{ result.match_type }}</h6>
+                                              {% endif %}
+                                              <div class="game-result-main" style="padding-top: 1px; padding-bottom: 10px;">
+
+                                                <!-- Home team -->
+                                                <div class="game-result-team game-result-team-first" style="">
+                                                  <figure class="game-result-team-figure game-result-team-figure-big" style="width: 40px; height: 44px;">
+                                                      {% if result.home_team.logo %}
+                                                          <img src="{{ result.home_team.logo.url }}" alt="" width="30" height=""/>
+                                                      {% else %}
+                                                          <img src="{% static 'img/soccer.png' %}" alt="" width="30" height=""/>
+                                                      {% endif %}
+                                                  </figure>
+                                                  <div class="game-result-team-name" style="font-size: 10px;">{{ result.home_team.name }}</div>
+                                                  <div class="game-result-team-country">{{ result.home_team.location|default_if_none:"" }}</div>
+                                                </div>
+
+                                                <!-- Score -->
+                                                <div class="game-result-middle" style="margin-top: 5px; margin-left: -8px;">
+                                                  <div class="justify-content align-items-center ">
+                                                      <div class="game-result-score-wrap ">
+                                                        <div class="game-result-score {% if result.details.home_team_score > result.details.away_team_score %}game-result-team-win{% endif %}">
+                                                          {{ result.details.home_team_score }}
+                                                          {% if result.details.home_team_score > result.details.away_team_score %}
+                                                              <span class="game-result-team-label game-result-team-label-top" style="font-size: 8px; margin-top: 10px;">Win</span>
+                                                          {% endif %}
+                                                        </div>
+                                                        <div class="game-result-score-divider">
+                                                          <svg x="0px" y="0px" width="7px" height="21px" viewBox="0 0 7 21" enable-background="new 0 0 7 21" xml:space="preserve">
+                                                              <g>
+                                                                  <circle cx="3.5" cy="3.5" r="3"></circle>
+                                                                  <path d="M3.5,1C4.879,1,6,2.122,6,3.5S4.879,6,3.5,6S1,4.878,1,3.5S2.122,1,3.5,1 M3.5,0C1.567,0,0,1.567,0,3.5S1.567,7,3.5,7 S7,5.433,7,3.5S5.433,0,3.5,0L3.5,0z"></path>
+                                                              </g>
+                                                              <g>
+                                                                  <circle cx="3.695" cy="17.5" r="3"></circle>
+                                                                  <path d="M3.695,15c1.378,0,2.5,1.122,2.5,2.5S5.073,20,3.695,20s-2.5-1.122-2.5-2.5S2.316,15,3.695,15 M3.695,14 c-1.933,0-3.5,1.567-3.5,3.5s1.567,3.5,3.5,3.5s3.5-1.567,3.5-3.5S5.628,14,3.695,14L3.695,14z"></path>
+                                                              </g>
+                                                          </svg>
+                                                        </div>
+                                                        <div class="game-result-score {% if result.details.away_team_score > result.details.home_team_score %}game-result-team-win{% endif %}">
+                                                          {{ result.details.away_team_score }}
+                                                          {% if result.details.away_team_score > result.details.home_team_score %}
+                                                              <span class="game-result-team-label game-result-team-label-top" style="font-size: 8px; margin-top: 10px;">Win</span>
+                                                          {% endif %}
+                                                        </div>
+                                                      </div>
+                                                      
+                                                      {% if result.penalty_data %}
+                                                      <div class="table-game-info-wrap justify-content-center align-items-center" style="">
+                                                          <div class="game-info-middle text-center">
+                                                              <span class="table-game-info-title text-center" style="font-size: 8px;">PEN</span>
+                                                              <div class="game-result-score-wrap d-flex justify-content-center align-items-center">
+                                                                  <div class="game-info-score {% if result.penalty_data.home_team_score > result.penalty_data.away_team_score %}game-result-team-win{% endif %}" 
+                                                                      style="font-size: 12px; font-weight: 600;">
+                                                                      {{ result.penalty_data.home_team_score }}
+                                                                  </div>
+                                                                  <div class="me-2">-</div>
+                                                                  <div class="game-info-score {% if result.penalty_data.away_team_score > result.penalty_data.home_team_score %}game-result-team-win{% endif %}" 
+                                                                      style="font-size: 12px; font-weight: 600;">
+                                                                      {{ result.penalty_data.away_team_score }}
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                      {% endif %}
+                                                  </div>
+                                                </div>
+
+                                                <!-- Away team -->
+                                                <div class="game-result-team game-result-team-second" style="margin-left: -15px;">
+                                                  <figure class="game-result-team-figure game-result-team-figure-big" style="width: 40px; height: 44px;">
+                                                      {% if result.away_team.logo %}
+                                                          <img src="{{ result.away_team.logo.url }}" alt="" width="30" height=""/>
+                                                      {% else %}
+                                                          <img src="{% static 'img/soccer.png' %}" alt="" width="30" height=""/>
+                                                      {% endif %}
+                                                  </figure>
+                                                  <div class="game-result-team-name" style="font-size: 10px;">{{ result.away_team.name }}</div>
+                                                  <div class="game-result-team-country">{{ result.away_team.location|default_if_none:"" }}</div>
+                                                </div>
+                                              </div>
+                  
+
+                                              <!-- Buttons for Match Stats, Standings, Comments -->
+                                              <div class="container mb-3 d-none" style="margin-top: 1px;">
+                                                  <div class="row cols-2 justify-content-center" >
+                                                      <div class="col-auto">
+                                                          <a class="button button-xs button-primary" href="{% url 'matchresultdetails' match_id=result.id %}" style="font-size: 8px;">Match Stats</a>
+                                                      </div>
+                                                      <div class="col-auto">
+                                                          <a class="button button-xs button-primary" href="{% url 'competition_info' competition_id=result.competition.id %}" style="font-size: 8px;">Standings</a>
+                                                      </div>
+                                                      <div class="col-auto">
+                                                          <a class="button button-xs button-primary" href="{% url 'competition' competition_id=result.competition.id %}#competition-comments-section" style="font-size: 8px;">Comments</a>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                  
+                                              <!-- Footer -->
+                                              <div class="game-result-footer d-none">
+                                                  <ul class="game-result-details">
+                                                      <li style="font-size: 5px;">{{ result.competition.location }}</li>
+                                                      <li>
+                                                          <time datetime="{{ result.match_date|date:'Y-m-d' }}" style="font-size: 8px;">{{ result.match_date|date:"F d, Y" }}</time>
+                                                      </li>
+                                                  </ul>
+                                              </div>
+                                            </a>
+                                          </article>
+                                        
+                                      {% endif %}
+                                  
+                                  {% endfor %}
+                              </div>
+                          </div>
+                      {% endfor %}
+                    </div>
+                  
+                  
+                    
+
+                  </div>
+
+
+                </div>
+                {% endif %}
+              </section>
+            </div>
+          </div>
+
+          <div class="tab-pane fade show active" id="tabs-1-2">
+            <div class="tab-content-main" style="padding: 1px 1px;">
+
+              <section class="mt-0">
+
+              
+                <div class="row">
+                  <!-- Standings -->
+                  <div class="col-12 mt-2">
+                    <article class="heading-component mb-0">
+                        <div class="heading-component-inner">
+                            <h5 class="heading-component-title" style="font-size: 12px;">Standings
+                            </h5>
+
+                            <div class="heading-component-aside">
+                              <ul class="list-inline list-inline-xs list-inline-middle">
+                                <li>
+                                  <select id="select" data-container-class="select-minimal-xl" onchange="showCompetitionStandings(this.value)">
+                                    {% for competition in all_standings.keys %}
+                                    <option value="{{ competition.id }}" {% if competition == latest_competition %} selected {% endif %}>{{ competition.name }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </li>
+                              </ul>
+
+                            </div>
+
+                        </div>
+                    </article>
+                    <div class="row mt-2" id="competitions-container">
+                      {% for competition, standings_data in all_standings.items %}
+                          <div class="standings" id="competition-standings-{{ competition.id }}" {% if competition != latest_competition %} style="display: none;" {% endif %}>
+                              {% if competition.is_group_stage %}
+                                  <div class="col">
+                                      <div class="row">
+                                          <div class="col">
+                                              <select class="select" data-container-class="select-minimal-xl" onchange="showGroup(this.value, {{ competition.id }})">
+                                                  {% for group in standings_data.standings.keys %}
+                                                      <option value="{{ group.id }}" {% if group == standings_data.first_group %} selected {% endif %}>{{ group.name }}</option>
+                                                  {% endfor %}
+                                              </select>
+                                          </div>
+
+                                          {% for group, group_standings in standings_data.standings.items %}
+                                              <div class="groups mt-1" id="group-{{ group.id }}" {% if group != standings_data.first_group %} style="display: none;" {% endif %}>
+                                                  <!-- Group standings table -->
+                                                  <div class="card-standing card-group-custom card-standing-index" id="accordion1" role="tablist" aria-multiselectable="false">
+                                                      <!-- Table Headers -->
+                                                      <div class="card-standing-caption">
+                                                          <div class="card-standing-position " style="font-size: 8px;">Pos</div>
+                                                          <div class="card-standing-caption-aside" style="margin-left: -10px;">
+                                                              <div class="card-standing-team" style="font-size: 8px;">Team</div>
+                                                              <div class="card-standing-number text-center" style="font-size: 8px;">W</div>
+                                                              <div class="card-standing-number text-center" style="font-size: 8px;">L</div>
+                                                              <div class="card-standing-number text-center " style="font-size: 8px;">D</div>
+                                                              <div class="card-standing-diff text-center" style="font-size: 8px;">DIFF</div>
+                                                              <div class="card-standing-points text-center" style="font-size: 8px;">PTS</div>
+                                                          </div>
+                                                      </div>
+
+                                                      <!-- Team standings -->
+                                                      {% for standing in group_standings %}
+                                                          <article class="card card-custom">
+                                                              <div class="card-standing-position card-standing-counter" style="font-size: 8px;"></div>
+                                                              <div class="card-header" role="tab">
+                                                                  <div class="card-standing-team-item">
+                                                                      <a class="rd-nav-link" href="{% url 'team' team_id=standing.team.id %}">
+                                                                        <div class="card-standing-team " style="margin-left: -10px;">
+                                                                          <div class="card-standing-team-figure " >
+                                                                              {% if standing.team.logo %}
+                                                                                  <img src="{{ standing.team.logo.url }}" alt="" width="21" height=""/>
+                                                                              {% else %}
+                                                                                  <img src="{% static 'img/soccer.png' %}" alt="" width="21" height=""/>
+                                                                              {% endif %}
+                                                                          </div>
+                                                                          <div class="card-standing-team-title">
+                                                                              <div class="card-standing-team-name">
+                                                                                  <a class="rd-nav-link" href="{% url 'team' team_id=standing.team.id %}" style="font-size: 10px;">{{ standing.team.name }}</a>
+                                                                              </div>
+                                                                              <div class="card-standing-team-country" style="font-size: 8px;">{{ standing.team.location|default_if_none:"" }}</div>
+                                                                          </div>
+                                                                        </div>
+                                                                      </a>
+                                                                      
+                                                                      <div class="card-standing-number text-center" >{{ standing.wins }}</div>
+                                                                      <div class="card-standing-number">{{ standing.losses }}</div>
+                                                                      <div class="card-standing-number">{{ standing.draws }}</div>
+                                                                      <div class="card-standing-points">{{ standing.goal_difference }}</div>
+                                                                      <div class="card-standing-diff">{{ standing.points }}</div>
+                                                                  </div>
+                                                              </div>
+                                                          </article>
+                                                      {% endfor %}
+                                                  </div>
+                                              </div>
+                                          {% endfor %}
+                                      </div>
+                                  </div>
+                              {% else %}
+                                  <!-- Non-group stage standings (League) -->
+                                  <div class="col">
+                                    <div class="card-standing card-league-custom card-standing-index" id="accordion2" role="tablist" aria-multiselectable="false">
+                                        <!-- Table Headers -->
+                                        <div class="card-standing-caption">
+                                            <div class="card-standing-position" style="font-size: 8px;">Pos</div>
+                                            <div class="card-standing-caption-aside" style="margin-left: -10px;">
+                                                <div class="card-standing-team" style="font-size: 8px;">Team</div>
+                                                <div class="card-standing-number text-center" style="font-size: 8px;">W</div>
+                                                <div class="card-standing-number text-center" style="font-size: 8px;">L</div>
+                                                <div class="card-standing-number text-center" style="font-size: 8px;">D</div>
+                                                <div class="card-standing-diff text-center" style="font-size: 8px;">DIFF</div>
+                                                <div class="card-standing-points text-center" style="font-size: 8px;">PTS</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Team standings for League -->
+                                        {% for standing in standings_data %}
+                                            <article class="card card-custom">
+                                                <div class="card-standing-position card-standing-counter" style="font-size: 8px;">{{ forloop.counter }}</div>
+                                                <div class="card-header" role="tab">
+                                                    <div class="card-standing-team-item">
+                                                        <a class="rd-nav-link" href="{% url 'team' team_id=standing.team.id %}">
+                                                            <div class="card-standing-team" style="margin-left: -10px;">
+                                                                <div class="card-standing-team-figure">
+                                                                    {% if standing.team.logo %}
+                                                                        <img src="{{ standing.team.logo.url }}" alt="" width="21" height=""/>
+                                                                    {% else %}
+                                                                        <img src="{% static 'img/soccer.png' %}" alt="" width="21" height=""/>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="card-standing-team-title">
+                                                                    <div class="card-standing-team-name">
+                                                                        <a class="rd-nav-link" href="{% url 'team' team_id=standing.team.id %}" style="font-size: 8px;">{{ standing.team.name }}</a>
+                                                                    </div>
+                                                                    <div class="card-standing-team-country" style="font-size: 8px;">{{ standing.team.location|default_if_none:"" }}</div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                        <div class="card-standing-number text-center">{{ standing.wins }}</div>
+                                                        <div class="card-standing-number">{{ standing.losses }}</div>
+                                                        <div class="card-standing-number">{{ standing.draws }}</div>
+                                                        <div class="card-standing-diff text-center">{{ standing.goal_difference }}</div>
+                                                        <div class="card-standing-points text-center">{{ standing.points }}</div>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        {% endfor %}
+                                    </div>
+                                  </div>
+                              {% endif %}
+                          </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <div class="tab-pane fade show active" id="tabs-1-3">
+            <div class="tab-content-main" style="padding: 1px 1px;">
+
+              <section class="mt-0">
+
+              
+                <div class="row">
+                  <!-- News -->
+                  <div class="col-12 mt-2">
+                    <h6 class="text-primary text-center" style="">COMING SOON</h6>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+
+      <!-- fanbanter -->
+      <div class="row row-50 justify-content-center">
+
+        {% if fanbanter_posts %}
+        <div class="col">
+              <div class="row justify-content-center text-center">
+                <div class="col-sm-12 owl-carousel-outer-navigation">
+                  <!-- Heading Component-->
+                  <article class="heading-component">
+                    <div class="heading-component-inner">
+                      <h5 class="heading-component-title">Blog Posts
+                      </h5>
+                      <div class="owl-carousel-arrows-outline">
+                        <div class="owl-nav">
+                          <button class="owl-arrow owl-arrow-prev"></button>
+                          <button class="owl-arrow owl-arrow-next"></button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                  
+                  <!-- Blog Carousel-->
+                  <div class="owl-carousel" data-items="1" data-sm-items="1" data-dots="false" data-nav="true" data-stage-padding="0" data-loop="true" data-margin="30" data-mouse-drag="false" data-nav-custom=".owl-carousel-outer-navigation">
+                    {% for post in fanbanter_posts %}
+                    <!-- Post Carmen-->
+                    <article class="post-carmen">
+                      <a href="{% url 'fanbanter' post_id=post.id %}">
+                        {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="{{ post.title|default:'FanBanter Post' }}" width="369" height="343"/>
+                        {% endif %}
+                        <div class="post-carmen-header">
+                          <!-- Badge-->
+                          <div class="badge badge-secondary">{{ post.category }}
+                          </div>
+                        </div>
+                        <div class="post-carmen-main">
+                          <h4 class="post-carmen-title"><a href="{% url 'fanbanter' post_id=post.id %}">{{ post.title|default:"Untitled" }}</a></h4>
+                          <div class="post-carmen-meta">
+                            <div class="post-carmen-time"><span class="icon mdi mdi-clock"></span>
+                              <time datetime="2024">{{ post.created_at|naturaltime }}</time>
+                            </div>
+                            <div class="post-carmen-comment"><i class="fas fa-comment"></i><a href="#" class="ms-2">{{ post.num_comments }}</a>
+                            </div>
+                            <div class="post-carmen-view"><i class="fas fa-thumbs-up"></i><a href="#" class="ms-2">{{ post.num_likes }}</a>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    </article>
+                    {% endfor %}
+                  </div>
+                  
+                </div>
+              </div>
+        </div>
+        {% endif %}
+
+      </div>
+
+      
+
+      <div class="row mt-3 d-none">
+        
+
+        <!-- Fan Voting -->
+        {% if open_categories %}
+          <div class="col mt-1 mb-3 owl-carousel-outer-navigation-vote ">
+            <!-- Heading Component -->
+            <article class="heading-component mb-0">
+              <div class="heading-component-inner">
+                <h5 class="heading-component-title" style="font-size: 12px;">Fan Voting</h5>
+                <!-- <span class="heading-component-title">Fan Voting</span> -->
+                <div class="heading-component-aside">
+                </div>
+                <div class="owl-carousel-arrows-outline">
+                  <div class="owl-nav">
+                    <button class="owl-arrow owl-arrow-prev"></button>
+                    <button class="owl-arrow owl-arrow-next"></button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <div class="heading-component-aside competition-select d-flex mt-0">
+              <select class="select" data-placeholder="All Competitions" data-container-class="select-minimal-xl" onchange="showCompetitionVote(this.value)" style="font-size: 8px !important;">
+                {% for competition in competitions %}
+                  <!-- <option value="newest first" selected="">All Competitions</option> -->
+                  <option style="font-size: 8px !important;" value="{{ competition.id }}" {% if competition == latest_competition %} selected {% endif %}>{{ competition.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            
+            
+
+            {% for competition in competitions %}
+            <div id="competition-vote-{{ competition.id }}" class="vote mt-0" {% if competition != latest_competition %}style="display: none;"{% endif %}>
+                <div class="owl-carousel owl-spacing-vote mb-0 " style="max-height: 200px;" data-items="1" data-dots="false" data-nav="true" data-autoplay="false" data-autoplay-speed="900000" data-stage-padding="0" data-loop="true" data-autoheight="true" data-margin="30" data-mouse-drag="false" data-animation-in="fadeIn" data-animation-out="fadeOut" data-nav-custom=".owl-carousel-outer-navigation-vote">
+                    <!-- Player Categories -->
+                    {% for category_data in player_categories %}
+                        {% if category_data.category.competition.id == competition.id %}
+                            <div class="item">
+                                <div class="category-section">
+                                    <h5 class="text-center mt-2">{{ category_data.category.get_category_display }}</h5>
+
+                                    {% if not category_data.is_voting_active %}
+                                        <div class="block-voting justify-content-center align-items-center">
+                                            {% if category_data.hide_vote_count %}
+                                                <span class="text-uppercase" style="color: #d9534f; font-size: 12px; font-weight: bold;">Vote counts are hidden until final day.</span>
+                                            {% elif category_data.is_closed %}
+                                                <h6>VOTE CLOSED</h6>
+                                            {% else %}
+                                                <span class="text-uppercase" style="color: #d9534f; font-size: 12px; font-weight: bold;">Vote ends - {{ category_data.close_date|date:"d F, Y" }}</span>
+                                            {% endif %}
+                                            
+                                            <div class="group-sm px-1">
+                                                {% for nominee in category_data.nominees %}
+                                                    <div class="player-voting-item text-center" style="font-size: 10px;">
+                                                        <div class="player-voting-item-figure">
+                                                            {% if nominee.picture %}
+                                                                <img src="{{ nominee.picture.url }}" alt="{{ nominee.name.get_full_name }}" width="50" height="">
+                                                            {% else %}
+                                                                <i class="fas fa-user fa-4x"></i>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="player-voting-item-title">
+                                                            <span>{{ nominee.name.get_full_name }}</span><br>
+                                                            <span class="text-muted" style="font-size: 8px;">{{ nominee.team.name }}</span><br>
+                                                            <a href="{% url 'player' player_id=nominee.id %}">See player stats</a><br>
+                                                            <div class="d-flex justify-content-center align-items-center mt-1">
+                                                                {% if category_data.hide_vote_count %}
+                                                                    <i class="fas fa-lock fa-2x" style="color: #d9534f;"></i>
+                                                                {% else %}
+                                                                    <span style="color: #d9534f;">{{ nominee.total_votes }}</span>
+                                                                {% endif %}
+                                                                <span class="ms-2">votes</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <h6>VOTE CLOSED</h6>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Team Categories -->
+                    {% for category_data in team_categories %}
+                        {% if category_data.category.competition.id == competition.id %}
+                            <div class="item">
+                                <div class="category-section">
+                                    <h6 class="text-center mt-2">{{ category_data.category.get_category_display }}</h6>
+
+                                    {% if not category_data.is_voting_active %}
+                                        <div class="block-voting justify-content-center align-items-center">
+                                            {% if category_data.hide_vote_count %}
+                                                <span class="text-uppercase" style="color: #d9534f; font-size: 12px; font-weight: bold;">Vote counts are hidden until final day.</span>
+                                            {% elif category_data.is_closed %}
+                                                <h6>VOTE CLOSED</h6>
+                                            {% else %}
+                                                <span class="text-uppercase" style="color: #d9534f; font-size: 12px; font-weight: bold;">Vote ends - {{ category_data.close_date|date:"d F, Y" }}</span>
+                                            {% endif %}
+                                            
+                                            <div class="group-sm px-1">
+                                                {% for nominee in category_data.teams %}
+                                                    <div class="player-voting-item text-center" style="font-size: 10px;">
+                                                        <div class="player-voting-item-figure">
+                                                            {% if nominee.logo %}
+                                                                <img src="{{ nominee.logo.url }}" alt="{{ nominee.name.get_full_name }}" width="50" height="">
+                                                            {% else %}
+                                                                <i class="fas fa-users fa-4x"></i>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="player-voting-item-title">
+                                                            <span>{{ nominee.name }}</span><br>
+                                                            <span class="text-muted" style="font-size: 8px;">{{ nominee.team.name }}</span><br>
+                                                            <a href="{% url 'team' team_id=nominee.id %}">See team stats</a><br>
+                                                            <div class="d-flex justify-content-center align-items-center mt-1">
+                                                                {% if category_data.hide_vote_count %}
+                                                                    <i class="fas fa-lock fa-2x" style="color: #d9534f;"></i>
+                                                                {% else %}
+                                                                    <span style="color: #d9534f;">{{ nominee.total_votes }}</span>
+                                                                {% endif %}
+                                                                <span class="ms-2">votes</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <h6>VOTE CLOSED</h6>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Coach Categories -->
+                    {% for category_data in coach_categories %}
+                        {% if category_data.category.competition.id == competition.id %}
+                            <div class="item">
+                                <div class="category-section">
+                                    <h6 class="text-center mt-2">{{ category_data.category.get_category_display }}</h6>
+
+                                    {% if not category_data.is_voting_active %}
+                                        <div class="block-voting justify-content-center align-items-center">
+                                            {% if category_data.hide_vote_count %}
+                                                <span class="text-uppercase" style="color: #d9534f; font-size: 12px; font-weight: bold;">Vote counts are hidden until final day.</span>
+                                            {% elif category_data.is_closed %}
+                                                <h6>VOTE CLOSED</h6>
+                                            {% else %}
+                                                <span class="text-uppercase" style="color: #d9534f; font-size: 12px; font-weight: bold;">Vote ends - {{ category_data.close_date|date:"d F, Y" }}</span>
+                                            {% endif %}
+                                            
+                                            <div class="group-sm px-1">
+                                                {% for nominee in category_data.coaches %}
+                                                    <div class="player-voting-item text-center" style="font-size: 10px;">
+                                                        <div class="player-voting-item-figure">
+                                                            {% if nominee.coach.picture %}
+                                                                <img src="{{ nominee.coach.picture.url }}" alt="{{ nominee.coach.name.get_full_name }}" width="50" height="">
+                                                            {% else %}
+                                                                <i class="fas fa-user-tie fa-5x"></i>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="player-voting-item-title">
+                                                            <span>{{ nominee.coach.full_name }}</span><br>
+                                                            <span class="text-muted" style="font-size: 8px;">{{ nominee.team.name }}</span><br>
+                                                            <div class="d-flex justify-content-center align-items-center mt-1">
+                                                                {% if category_data.hide_vote_count %}
+                                                                    <i class="fas fa-lock fa-2x" style="color: #d9534f;"></i>
+                                                                {% else %}
+                                                                    <span style="color: #d9534f;">{{ nominee.total_votes }}</span>
+                                                                {% endif %}
+                                                                <span class="ms-2">votes</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <h6>VOTE CLOSED</h6>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+
+                <div class="w-100 text-center mx-auto mt-4">
+                  <a class="button button-primary w-100 mt-4" href="{% url 'vote_home' %}" style="font-size: 10px; padding: 8px 10px; z-index: 9999;">VOTE HERE</a>
+                </div>
+            </div>
+            {% endfor %}
+
+          </div>
+        {% else %}
+          <!-- Awards -->
+          <div class="col mt-1 mb-3 owl-carousel-outer-navigation-award">
+            <!-- Heading Component -->
+            <article class="heading-component mb-0">
+                <div class="heading-component-inner">
+                    <h5 class="heading-component-title" style="font-size: 12px;">Awards</h5>
+                    <div class="heading-component-aside"></div>
+                    <div class="owl-carousel-arrows-outline">
+                        <div class="owl-nav">
+                            <button class="owl-arrow owl-arrow-prev"></button>
+                            <button class="owl-arrow owl-arrow-next"></button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            
+  
+            
+            <div class="competition-select d-flex mt-0" style="font-size: 10px;">
+                <select id="competitionSelect" class="select" onchange="showCompetitionAward(this.value)" style="font-size: 10px;">
+                    {% for competition in competitions %}
+                        <option style="font-size: 10px;" value="{{ competition.id }}" {% if competition == latest_competition %} selected {% endif %}>{{ competition.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+  
+            {% for competition in competitions %}
+                <div id="competition-award-{{ competition.id }}" class="award mt-3" {% if competition != latest_competition %}style="display: none;"{% endif %}>
+                    <div  class="owl-carousel owl-carousel-dots-modern awards-carousel mb-0" data-items="1" data-dots="false" data-nav="true" data-autoplay="false" data-autoplay-speed="900000" data-stage-padding="0" data-loop="true" data-autoheight="true" data-margin="30" data-mouse-drag="false" data-animation-in="fadeIn" data-animation-out="fadeOut" data-nav-custom=".owl-carousel-outer-navigation-award">
+                        <!-- Player Categories -->
+                        {% for category_data in player_categories %}
+                            {% if category_data.category.competition.id == competition.id %}
+                                <div class="item">
+                                    <div class="category-section">
+  
+                                        {% if category_data.winner %}
+                                            <!-- Display player winner here -->
+                                            <div class="winner-section text-center">
+                                                <div class="col">
+                                                    <!-- Awards Item-->
+                                                    <div class="">
+                                                        <div class="awards-item" style="height: 150px;"> 
+                                                            <div class="awards-item-main">
+                                                                <h4 class="awards-item-title"><span class="text-accent" style="font-size: 15px;">{{ category_data.category.get_category_display }}</span></h4>
+  
+                                                                <div class="divider mb-0"></div>
+  
+                                                                <h4 class="awards-item-title mt-0"><a href="{% url 'player' player_id=category_data.winner.id %}" style="font-size: 12px;">{{ category_data.winner.name.get_full_name }}</a></h4>
+                                                               
+                                                                
+                                                                
+                                                                <div class="divider mt-0"></div>
+  
+                                                                <div class="awards-item-title">
+                                                                    <h5 class="text-accent" style="font-size: 15px; ">{{category_data.category.competition.name }}</h5>
+                                                                    <h6 class="awards-item-time">{{ category_data.close_date|date:"F, Y" }}</h6>
+                                                                </div>
+                                                            </div>
+  
+                                                            {% if category_data.winner.picture %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <img src="{{ category_data.winner.picture.url }}" alt="" width="10" height="" style="width: 100px;"/>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <i class="fas fa-user fa-5x"></i>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="col">
+                                                <!-- Awards Item-->
+                                                <div class="">
+                                                    <div class="awards-item" style="height: 150px;"> 
+                                                        <div class="awards-item-main">
+                                                            <h4 class="awards-item-title"><span class="text-accent" style="font-size: 15px;">{{ category_data.category.get_category_display }}</span></h4>
+  
+                                                            <div class="divider mb-0"></div>
+  
+                                                            <h4 class="awards-item-title mt-0"><span style="font-size: 12px;">No winner determined yet.</span></h4>
+                                                            
+                                                            <div class="divider mt-0"></div>
+  
+                                                            
+                                                        </div>
+  
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+  
+                        <!-- Team Categories -->
+                        {% for category_data in team_categories %}
+                            {% if category_data.category.competition.id == competition.id %}
+                                <div class="item">
+                                    <div class="category-section">
+                                      
+  
+                                        {% if category_data.winner %}
+                                            <!-- Display team winner here -->
+                                            <div class="winner-section text-center">
+                                                <div class="col">
+                                                    <!-- Awards Item-->
+                                                    <div class="">
+                                                        <div class="awards-item" style="height: 150px;"> 
+                                                            <div class="awards-item-main">
+                                                                <h4 class="awards-item-title"><span class="text-accent" style="font-size: 15px;">{{ category_data.category.get_category_display }}</span></h4>
+  
+                                                                <div class="divider mb-0"></div>
+  
+                                                                <h4 class="awards-item-title mt-0"><span style="font-size: 12px;">{{ category_data.winner.name }}</span></h4>
+                                                                
+                                                                <div class="divider mt-0"></div>
+  
+                                                                <div class="awards-item-title">
+                                                                    <h5 class="text-accent" style="font-size: 15px; ">{{category_data.category.competition.name }}</h5>
+                                                                    <h6 class="awards-item-time">{{ category_data.close_date|date:"F, Y" }}</h6>
+                                                                </div>
+                                                            </div>
+  
+                                                            {% if category_data.winner.logo %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <img src="{{ category_data.winner.logo.url }}" alt="" width="67" height="147" style="width: 100px;"/>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <i class="fas fa-flag fa-5x"></i>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="col">
+                                                <!-- Awards Item-->
+                                                <div class="">
+                                                    <div class="awards-item" style="height: 150px;"> 
+                                                        <div class="awards-item-main">
+                                                            <h4 class="awards-item-title"><span class="text-accent" style="font-size: 15px;">{{ category_data.category.get_category_display }}</span></h4>
+  
+                                                            <div class="divider mb-0"></div>
+  
+                                                            <h4 class="awards-item-title mt-0"><span style="font-size: 12px;">No winner determined yet.</span></h4>
+                                                            
+                                                            <div class="divider mb-0"></div>
+  
+                                                            
+                                                        </div>
+  
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+  
+                        <!-- Coach Categories -->
+                        {% for category_data in coach_categories %}
+                            {% if category_data.category.competition.id == competition.id %}
+                                <div class="item">
+                                    <div class="category-section">
+                                        
+                                        {% if category_data.winner %}
+                                            <!-- Display coach winner here -->
+                                            <div class="winner-section text-center">
+                                                <div class="col">
+                                                    <!-- Awards Item-->
+                                                    <div class="">
+                                                        <div class="awards-item" style="height: 150px;"> 
+                                                            <div class="awards-item-main">
+                                                                <h4 class="awards-item-title"><span class="text-accent" style="font-size: 15px;">{{ category_data.category.get_category_display }}</span></h4>
+  
+                                                                <div class="divider mb-0"></div>
+  
+                                                                <h4 class="awards-item-title mt-0"><span style="font-size: 12px;">{{ category_data.winner.full_name }}</span></h4>
+                                                                
+                                                                <div class="divider mt-0"></div>
+  
+                                                                <div class="awards-item-title">
+                                                                    <h5 class="text-accent" style="font-size: 15px; ">{{category_data.category.competition.name }}</h5>
+                                                                    <h6 class="awards-item-time">{{ category_data.close_date|date:"F, Y" }}</h6>
+                                                                </div>
+                                                            </div>
+  
+                                                            {% if category_data.winner.picture %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <img src="{{ category_data.winner.picture.url }}" alt="" width="67" height="147" style="width: 100px;"/>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <i class="fas fa-user fa-5x"></i>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="col">
+                                                <!-- Awards Item-->
+                                                <div class="">
+                                                    <div class="awards-item" style="height: 150px;"> 
+                                                        <div class="awards-item-main">
+                                                            <h4 class="awards-item-title"><span class="text-accent" style="font-size: 15px;">{{ category_data.category.get_category_display }}</span></h4>
+  
+                                                            <div class="divider"></div>
+  
+                                                            <h4 class="awards-item-title"><span style="font-size: 20px;">No winner determined yet.</span></h4>
+                                                            
+                                                            <div class="divider"></div>
+  
+                                                            
+                                                        </div>
+  
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+  
+                    </div>
+                </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      {% if user_profiles %}
+      <div class="row mt-5">
+        <!-- Profiles -->
+        <div class="col profiles owl-carousel-outer-navigation-profile">
+          <!-- Heading Component-->
+          <article class="heading-component mb-0">
+            <div class="heading-component-inner">
+              <h5 class="heading-component-title" style="font-size: 12px;">Profiles
+                <span class="ms-5" style="color: #35ad79; font-size: 15px; font-weight:400;">{{ user_profiles.count  }}</span>
+              </h5>
+              <div class="owl-carousel-arrows-outline">
+                <div class="owl-nav">
+                  <button class="owl-arrow owl-arrow-prev"></button>
+                  <button class="owl-arrow owl-arrow-next"></button>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="game-result game-result-classic w-100 mt-0">
+            <div class="profile-list d-flex mx-auto text-center owl-carousel owl-spacing-1" data-items="3" data-dots="false" data-nav="true" data-autoplay="true" data-autoplay-speed="50000" data-stage-padding="0" data-loop="true" data-margin="30" data-mouse-drag="false" data-animation-in="fadeIn" data-animation-out="fadeOut" data-nav-custom=".owl-carousel-outer-navigation-profile">
+              {% for profile in user_profiles %}
+              <a href="{% url 'userprofile' profile.user.username %}" class="p-2">
+                <div class="w-100 d-flex align-items-center justify-content-between">
+                  <div class="d-flex flex-column align-items-center mx-auto">
+                    
+                      <div class="">
+                          <div class="bg-gray-800 rounded-circle border border-4 border-pry text-center p-2" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                              {% if profile.picture %}
+                              <div class="player-img" style="background-image: url('{{ profile.picture.url }}'); background-position: center; background-size: cover; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;"></div>
+                              {% else %}
+                              <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                  <i class="fas fa-user fs-1" style="color: #000000;"></i>
+                              </div>
+                              {% endif %}
+                          </div>
+                      </div>
+                      <p class="post-author-home mb-0 mt-2" style="font-size: 8px;">{{ profile.user.get_full_name }}</p>
+
+                  </div>
+                </div>
+              </a>
+              {% endfor %}
+            </div>
+            <!-- <p class="text-center">Total profiles: {{ user_profiles.count }}</p> -->
+          </article>
+        </div>
+      </div>
+      {% endif %}
+
+  </section>
+  
+  <section class="bg-image mt-1" style="background-image: url({% static 'img/soccer-tips-2.png' %}); width: 100%; height: 150px;">
+    <div class="container tips-container">
+      <i class="fas fa-quote-left fa-1x"></i>
+      <div class="text-container" >
+        <h6 class="text-center mt-1">Master the Basics</h6>
+        <p class="quote-text mt-0" style="font-size: .8rem; line-height: 15px;">
+          Solid fundamentals are the foundation of great soccer players. Practice dribbling, passing, shooting, and controlling the ball with both feet.
+          <br>
+          Focus on developing your technique until it becomes second nature.
+        </p>
+      </div>
+      <i class="fas fa-quote-right fa-1x"></i>
+    </div>
+  </section>
+
+
+{% endblock %}
+
+{% block extra_script %}
+<script>
+
+
+  // Function to handle latest results display
+  function showLatestResults(competitionId) {
+    // Hide all results
+    document.querySelectorAll('.latest-results').forEach(function(result) {
+      result.style.display = 'none';
+    });
+
+    // Show selected competition results
+    const resultsSection = document.getElementById('competition-results-' + competitionId);
+    if (resultsSection) {
+      resultsSection.style.display = 'block';
+    }
+  }
+
+  // Initialize the sections with the latest competition
+  document.addEventListener("DOMContentLoaded", function() {
+    const latestCompetitionId = "{{ latest_competition.id }}";
+    if (latestCompetitionId) {
+      // Set the select element to the latest competition
+      document.getElementById('latestResultsSelect').value = latestCompetitionId;
+      
+      // Show relevant sections for the latest competition
+      showLatestResults(latestCompetitionId);
+    }
+  });
+
+
+
+
+
+  // Function to handle fan voting display
+  function showCompetitionVote(competitionId) {
+    // Hide all fan voting sections
+    document.querySelectorAll('.vote').forEach(function(vote) {
+      vote.style.display = 'none';
+    });
+
+    // Show selected competition's fan voting section
+    const voteSection = document.getElementById('competition-vote-' + competitionId);
+    if (voteSection) {
+      voteSection.style.display = 'block';
+    }
+  }
+
+  // Function to handle fixtures display
+  function showCompetitionFixtures(competitionId) {
+    // Hide all competition fixtures
+    document.querySelectorAll('.fixtures').forEach(function(fixture) {
+      fixture.style.display = 'none';
+    });
+
+    // Show selected competition fixtures
+    const fixtureSection = document.getElementById('competition-fixtures-' + competitionId);
+    if (fixtureSection) {
+      fixtureSection.style.display = 'block';
+    }
+  }
+
+  // Function to handle standings display
+  function showCompetitionStandings(competitionId) {
+    // Hide all competitions
+    document.querySelectorAll('.standings').forEach(function(competition) {
+      competition.style.display = 'none';
+    });
+
+    // Show selected competition standings
+    const standingsSection = document.getElementById('competition-standings-' + competitionId);
+    if (standingsSection) {
+      standingsSection.style.display = 'block';
+    }
+  }
+
+  // Function to handle group display within standings
+  function showGroup(groupId, competitionId) {
+    // Hide all groups in the selected competition
+    document.querySelectorAll('#competition-standings-' + competitionId + ' .groups').forEach(function(group) {
+      group.style.display = 'none';
+    });
+
+    // Show selected group
+    const groupSection = document.getElementById('group-' + groupId);
+    if (groupSection) {
+      groupSection.style.display = 'block';
+    }
+
+    // Update the select dropdown to reflect the currently selected group
+    const groupSelect = document.querySelector('#competition-standings-' + competitionId + ' select');
+    if (groupSelect) {
+      groupSelect.querySelector('option[value="' + groupId + '"]').selected = true;
+    }
+  }
+
+  // Initialize the sections with the latest competition
+  document.addEventListener("DOMContentLoaded", function() {
+    const latestCompetitionId = "{{ latest_competition.id }}";
+    if (latestCompetitionId) {
+      // Set the select element to the latest competition
+      document.getElementById('competitionSelect').value = latestCompetitionId;
+      
+      // Show relevant sections for the latest competition
+      showCompetitionVote(latestCompetitionId);
+      showCompetitionFixtures(latestCompetitionId);
+      showCompetitionStandings(latestCompetitionId);
+    }
+  });
+
+
+  // Function to handle award display
+  function showCompetitionAward(competitionId) {
+        // Hide all award sections
+        document.querySelectorAll('.award').forEach(function(award) {
+            award.style.display = 'none';
+        });
+
+        // Show selected competition's award section
+        const awardSection = document.getElementById('competition-award-' + competitionId);
+        if (awardSection) {
+            awardSection.style.display = 'block';
+        }
+    }
+
+    // Initialize the sections with the latest competition
+    document.addEventListener("DOMContentLoaded", function() {
+        const latestCompetitionId = "{{ latest_competition.id }}";
+        if (latestCompetitionId) {
+            // Set the select element to the latest competition
+            document.getElementById('competitionSelect').value = latestCompetitionId;
+            
+            // Show relevant sections for the latest competition
+            showCompetitionAward(latestCompetitionId);
+        }
+    });
+</script>
+
+
+{% endblock %}

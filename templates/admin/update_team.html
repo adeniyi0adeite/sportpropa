@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if team %}Update Team{% else %}Create Team{% endif %}</title>
+</head>
+<body>
+    <h1>{% if team %}Update Team{% else %}Create Team{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{% if team %}{{ team.name }}{% endif %}"><br>
+        <label for="logo">Logo:</label>
+        <input type="file" id="logo" name="logo"><br>
+        <label for="coach">Coach:</label>
+        <select id="coach" name="coach">
+            {% for coach in coaches %}
+                <option value="{{ coach.id }}"
+                {% if team and team.coach_id == coach.id %}selected{% endif %}>
+                    {{ coach.name }}
+                </option>
+            {% endfor %}
+        </select><br>
+        <label for="founded_year">Founded Year:</label>
+        <input type="text" id="founded_year" name="founded_year" value="{% if team %}{{ team.founded_year }}{% endif %}"><br>
+        <!-- Add more fields as needed -->
+        <input type="submit" value="Save">
+    </form>
+</body>
+</html>

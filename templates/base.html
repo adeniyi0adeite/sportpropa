@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="" lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D0NETB1VKW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-D0NETB1VKW');
+    </script>
+    <!-- Site Title-->
+    <title>{% block title %}{% endblock %}</title>
+    <!-- <title>Sport elements</title> -->
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <!-- <link rel="icon" href="images/favicon.ico" type="image/x-icon"> -->
+    
+    
+    <!-- Stylesheets-->
+    
+    <link href="https://cdn.materialdesignicons.com/6.4.95/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/3b947e47dd.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Kanit:300,400,500,500i,600,900%7CRoboto:400,900">
+    
+    
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" id="main-styles-link">
+
+    
+    
+    {% block extra_head %} {% endblock %}
+</head>
+<body>
+    <div class="preloader">
+        <div class="preloader-body">
+          <div class="preloader-item"></div>
+        </div>
+    </div>
+    <header class="section section-xs page-header rd-navbar-dark">
+      <!-- RD Navbar-->
+      <div class="rd-navbar-wrap">
+        <nav class="rd-navbar rd-navbar-classic" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed" data-md-layout="rd-navbar-fixed" data-md-device-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-fixed" data-lg-device-layout="rd-navbar-fixed" data-xl-layout="rd-navbar-static" data-xl-device-layout="rd-navbar-static" data-xxl-layout="rd-navbar-static" data-xxl-device-layout="rd-navbar-static" data-lg-stick-up-offset="166px" data-xl-stick-up-offset="166px" data-xxl-stick-up-offset="166px" data-lg-stick-up="true" data-xl-stick-up="true" data-xxl-stick-up="true">
+          <div class="rd-navbar-panel">
+          <!-- RD Navbar Toggle-->
+          <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-main"><span></span></button>
+          <!-- RD Navbar Panel-->
+          <div class="rd-navbar-panel-inner container">
+              
+              <!-- RD Navbar Brand (Logo) -->
+              <div class="rd-navbar-brand d-lg-none">
+                <a class="brand" href="{% url 'home' %}">
+                  <img src="{% static 'img/sportpropa-logo.png' %}" class="img-fluid" alt="Sport Propa Logo" style="max-width: 80%; height: auto;" />
+                </a>
+              </div>
+              
+              <div class="rd-navbar-panel-item rd-navbar-panel-item-right">
+                <ul class="list-inline list-inline-bordered">
+                  <li>
+                    <!-- Select 2-->
+                    <select class="select" name="lang" data-container-class="select-inline" data-dropdown-class="select-inline-dropdown">
+                        <option label="placeholder"></option>
+                        <option selected>en</option>
+                        <option>fr</option>
+                        <option>es</option>
+                    </select>
+                  </li>
+                </ul>
+              
+              </div>
+              <div class="rd-navbar-collapse-toggle rd-navbar-fixed-element-1" data-rd-navbar-toggle=".rd-navbar-collapse"><span></span></div>
+          </div>
+          </div>
+          <div class="rd-navbar-main">
+          <div class="rd-navbar-main-top">
+              <div class="rd-navbar-main-container container">
+                
+                <div class="w-25 mx-5">
+
+                </div>
+                <!-- RD Navbar Brand (Logo) -->
+                <div class="rd-navbar-brand text-center d-none d-md-block d-lg-block">
+                  <a class="brand" href="{% url 'home' %}">
+                    <img src="{% static 'img/sportpropa-logo.png' %}" style="width: 160px;" alt="Sport Propa Logo" />
+                  </a>
+                </div>
+
+                <!-- RD Navbar Search-->
+                <div class="rd-navbar-search">
+                  <button class="rd-navbar-search-toggle" data-rd-navbar-toggle=".rd-navbar-search"><span></span></button>
+                  <form class="rd-search" action="{% url 'search_users' %}" data-search-live="rd-search-results-live" method="GET">
+                    <div class="form-wrap">
+                      <label class="form-label" for="rd-navbar-search-form-input">Search users</label>
+                      <!-- Change the name attribute to `q` to match the view's expected parameter -->
+                      <input class="rd-navbar-search-form-input form-input" id="rd-navbar-search-form-input" type="text" name="q" autocomplete="off">
+                      <div class="rd-search-results-live" id="rd-search-results-live"></div>
+                    </div>
+                    <button class="rd-search-form-submit fl-budicons-launch-search81" type="submit"></button>
+                  </form>
+                </div>
+
+                
+
+              
+              </div>
+          </div>
+          <div class="rd-navbar-main-bottom rd-navbar-darker">
+              <div class="rd-navbar-main-container container">
+              <!-- RD Navbar Nav-->
+                                  <ul class="rd-navbar-nav">
+                                    <li class="rd-nav-item active"><a class="rd-nav-link" href="{% url 'home' %}">Home</a></li>
+                                    
+                                    
+                                    <!-- Competition -->
+                                    {% if competitions %}
+                                    <li class="rd-nav-item"><a class="rd-nav-link" href="#">Competitions</a>
+                                      <ul class="rd-menu rd-navbar-dropdown">
+                                        {% for competition in competitions %}
+                                          <li class="rd-dropdown-item">
+                                            <a class="rd-dropdown-link" href="{% url 'competition' competition_id=competition.id %}">{{ competition.name }}</a>
+                                          </li>
+                                        {% endfor %}
+                                      </ul>
+                                    </li>
+                                    {% endif %}
+
+                                    
+
+                                    <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'about_us' %}">About Us</a></li>
+                                    
+                                    <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'contact' %}">Contact</a></li>
+                                  </ul>
+                <div class="rd-navbar-main-element">
+                    <ul class="list-inline list-inline-sm">
+                      <li><a class="icon icon-xs icon-light fa fa-facebook" href="https://www.facebook.com"></a></li>
+                      <li><a class="icon icon-xs icon-light fa fa-twitter" href="https://www.twitter.com"></a></li>
+                      <li><a class="icon icon-xs icon-light fa fa-google-plus" href="https://www.google.com"></a></li>
+                      <li><a class="icon icon-xs icon-light fa fa-instagram" href="https://www.instagram.com"></a></li>
+                    </ul>
+                </div>
+
+                <ul class="rd-navbar-main-element d-flex">
+                  {% if user.is_authenticated %}
+                  <li>
+                    <a class="link link-icon link-icon-left link-classic" href="{% url 'userprofile' request.user.username %}">
+                      <i class="icon fas fa-user"></i>
+                      <span class="">MY PROFILE</span>
+                    </a>
+                    
+                  </li>
+
+                  <li class="mx-4">
+                    <a class="link link-icon link-icon-left link-classic" href="{% url 'logout' %}">
+                      <i class="icon fas fa-sign-in-alt"></i>
+                      <span class="">LOGOUT</span>
+                    </a>
+                    
+                  </li>
+
+                  {% else %}
+
+                  <li>
+                    <a class="link link-icon link-icon-left link-classic" href="{% url 'loginform' %}">
+                      <i class="icon fas fa-sign-in-alt"></i>
+                      <span class="link-icon-text">LOGIN</span>
+                    </a>
+                  </li>
+
+                  {% endif %}
+                </ul>
+
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+    
+    <section class=" bg-gray-100">
+      
+      {% block content %}
+
+      {% endblock %}
+      
+    </section>
+    
+       
+
+    <script src="{% static 'js/core.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    {% block extra_script %} {% endblock %}
+</body>
+</html>

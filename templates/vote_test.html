@@ -1,0 +1,165 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Page</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Display messages -->
+        {% if messages %}
+            <div class="alert-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Render player categories -->
+        {% for category in player_categories %}
+        <div class="category-section">
+            <h3>{{ category.get_category_display }}</h3>
+            <div class="block-voting">
+                <div class="group-md">
+                    {% with category.nominees.all as nominees %}
+                        {% for nominee in nominees %}
+                        <div class="player-voting-item">
+                            <div class="player-voting-item-figure">
+                                <img src="{% static 'img/player-4-152x144.jpg' %}" alt="{{ nominee.name.get_full_name }}" width="152" height="144"/>
+                            </div>
+                            <div class="player-voting-item-title">
+                                <p>{{ nominee.name.get_full_name }}</p>
+                            </div>
+                            <button class="btn btn-primary custom-toggle" 
+                                    type="button" 
+                                    data-custom-toggle="#voteModal"
+                                    data-id="{{ nominee.id }}"
+                                    data-type="player"
+                                    data-name="{{ nominee.name.get_full_name }}"
+                                    data-category-id="{{ category.id }}">
+                                Vote for {{ nominee.name.get_full_name }}
+                            </button>
+                        </div>
+                        {% endfor %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+
+        <!-- Render team categories -->
+        {% for category in team_categories %}
+        <div class="category-section">
+            <h3>{{ category.get_category_display }}</h3>
+            <div class="block-voting">
+                <div class="group-md">
+                    {% with category.teams.all as teams %}
+                        {% for team in teams %}
+                        <div class="team-voting-item">
+                            <div class="team-voting-item-figure">
+                                <img src="{% static 'img/team-4-152x144.jpg' %}" alt="{{ team.name }}" width="152" height="144"/>
+                            </div>
+                            <div class="team-voting-item-title">
+                                <p>{{ team.name }}</p>
+                            </div>
+
+                            <button class="btn btn-primary custom-toggle" 
+                                    type="button" 
+                                    data-custom-toggle="#voteModal"
+                                    data-id="{{ team.id }}"
+                                    data-type="team"
+                                    data-name="{{ team.name }}"
+                                    data-category-id="{{ category.id }}">
+                                Vote for {{ team.name }}
+                            </button>
+                        </div>
+                        {% endfor %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Single Modal for Voting -->
+    <div class="modal fade" id="voteModal" tabindex="-1" role="dialog" aria-labelledby="voteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="voteModalLabel">Vote</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="modal-category"></p>
+                    <form method="post" action="{% url 'initialize_payment' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="category_id" id="modal-category-id-field">
+                        <input type="hidden" name="nominee_id" id="modal-id-field">
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="num_of_votes">Number of Votes:</label>
+                            <input type="number" class="form-control num-votes" name="num_of_votes" min="1" value="1" required 
+                                   data-price="100" onchange="calculateTotal(this)">
+                        </div>
+                        <div class="form-group">
+                            <label for="total_amount">Total Amount:</label>
+                            <p id="modal-total-amount" class="total-amount">100</p> <!-- This will show the total price -->
+                        </div>
+                        <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to calculate total amount
+        function calculateTotal(inputElement) {
+            const pricePerVote = inputElement.getAttribute('data-price');
+            const numVotes = inputElement.value;
+            const totalAmount = numVotes * pricePerVote;
+            const totalAmountElement = document.getElementById('modal-total-amount');
+            totalAmountElement.innerText = totalAmount + ' Naira';
+        }
+    
+        // Use the event binding based on your base.js custom-toggle functionality
+        $('.custom-toggle').on('click', function (event) {
+            var button = $(this); // Button that triggered the modal
+            var id = button.data('id'); // Extract info from data-* attributes
+            var type = button.data('type');
+            var name = button.data('name');
+            var categoryId = button.data('category-id');
+    
+            // Update the modal content with the button data
+            var modal = $('#voteModal');
+            modal.find('.modal-title').text('Vote for ' + name);
+            modal.find('#modal-category').text('Category ID: ' + categoryId);
+            modal.find('#modal-id-field').val(id);
+            modal.find('#modal-category-id-field').val(categoryId);
+    
+            // Open the modal
+            modal.modal('show');
+        });
+    </script>
+</body>
+</html>

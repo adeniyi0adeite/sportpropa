@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+<div class="page animated mb-0" style="animation-duration: 500ms;">
+    <h2 class="text-center">Winners</h2>
+    <div class="row">
+        <div class="col mt-5 mb-3 owl-carousel-outer-navigation-award">
+            <!-- Heading Component -->
+            <article class="heading-component mb-0">
+                <div class="heading-component-inner">
+                    <h5 class="heading-component-title" style="font-size: 12px;">Awards</h5>
+                    <div class="heading-component-aside"></div>
+                    <div class="owl-carousel-arrows-outline">
+                        <div class="owl-nav">
+                            <button class="owl-arrow owl-arrow-prev"></button>
+                            <button class="owl-arrow owl-arrow-next"></button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <div class="competition-select d-flex mt-0" style="font-size: 10px;">
+                <select id="competitionSelect" class="form-select" onchange="showCompetitionAward(this.value)" style="font-size: 10px;">
+                    {% for competition in competitions %}
+                        <option style="font-size: 10px;" value="{{ competition.id }}" {% if competition == latest_competition %} selected {% endif %}>{{ competition.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% for competition in competitions %}
+                <div id="competition-award-{{ competition.id }}" class="award mt-0" {% if competition != latest_competition %}style="display: none;"{% endif %}>
+                    <div class="owl-carousel owl-carousel-dots-modern awards-carousel mb-0" data-items="1" data-dots="false" data-nav="true" data-autoplay="false" data-autoplay-speed="900000" data-stage-padding="0" data-loop="true" data-autoheight="true" data-margin="30" data-mouse-drag="false" data-animation-in="fadeIn" data-animation-out="fadeOut" data-nav-custom=".owl-carousel-outer-navigation-award">
+                        <!-- Player Categories -->
+                        {% for category_data in player_categories %}
+                            {% if category_data.category.competition.id == competition.id %}
+                                <div class="item">
+                                    <div class="category-section">
+
+                                        {% if category_data.winner %}
+                                            <!-- Display player winner here -->
+                                            <div class="winner-section text-center">
+                                                <div class="col">
+                                                    <!-- Awards Item-->
+                                                    <div class="">
+                                                        <div class="awards-item"> 
+                                                            <div class="awards-item-main">
+                                                                <h4 class="awards-item-title"><span class="text-accent">{{ category_data.category.get_category_display }}</span></h4>
+
+                                                                <div class="divider"></div>
+
+                                                                <h4 class="awards-item-title"><span style="font-size: 20px;">{{ category_data.winner.name.get_full_name }}</span></h4>
+                                                                
+                                                                <div class="divider"></div>
+
+                                                                <div class="awards-item-title">
+                                                                    <h5 class="text-accent" style="font-size: 15px; ">{{category_data.category.competition.name }}</h5>
+                                                                    <h6 class="awards-item-time">{{ category_data.close_date|date:"F, Y" }}</h6>
+                                                                </div>
+                                                            </div>
+
+                                                            {% if category_data.winner.picture %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <img src="{{ category_data.winner.picture.url }}" alt="" width="67" height="147"/>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <i class="fas fa-user fa-5x"></i>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="col">
+                                                <!-- Awards Item-->
+                                                <div class="">
+                                                    <div class="awards-item"> 
+                                                        <div class="awards-item-main">
+                                                            <h4 class="awards-item-title"><span class="text-accent">{{ category_data.category.get_category_display }}</span></h4>
+
+                                                            <div class="divider"></div>
+
+                                                            <h4 class="awards-item-title"><span style="font-size: 20px;">No winner determined yet.</span></h4>
+                                                            
+                                                            <div class="divider"></div>
+
+                                                            
+                                                        </div>
+
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Team Categories -->
+                        {% for category_data in team_categories %}
+                            {% if category_data.category.competition.id == competition.id %}
+                                <div class="item">
+                                    <div class="category-section">
+                                       
+
+                                        {% if category_data.winner %}
+                                            <!-- Display team winner here -->
+                                            <div class="winner-section text-center">
+                                                <div class="col">
+                                                    <!-- Awards Item-->
+                                                    <div class="">
+                                                        <div class="awards-item"> 
+                                                            <div class="awards-item-main">
+                                                                <h4 class="awards-item-title"><span class="text-accent">{{ category_data.category.get_category_display }}</span></h4>
+
+                                                                <div class="divider"></div>
+
+                                                                <h4 class="awards-item-title"><span style="font-size: 20px;">{{ category_data.winner.name.get_team_name }}</span></h4>
+                                                                
+                                                                <div class="divider"></div>
+
+                                                                <div class="awards-item-title">
+                                                                    <h5 class="text-accent" style="font-size: 15px; ">{{category_data.category.competition.name }}</h5>
+                                                                    <h6 class="awards-item-time">{{ category_data.close_date|date:"F, Y" }}</h6>
+                                                                </div>
+                                                            </div>
+
+                                                            {% if category_data.winner.logo %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <img src="{{ category_data.winner.logo.url }}" alt="" width="67" height="147"/>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <i class="fas fa-flag fa-5x"></i>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="col">
+                                                <!-- Awards Item-->
+                                                <div class="">
+                                                    <div class="awards-item"> 
+                                                        <div class="awards-item-main">
+                                                            <h4 class="awards-item-title"><span class="text-accent">{{ category_data.category.get_category_display }}</span></h4>
+
+                                                            <div class="divider"></div>
+
+                                                            <h4 class="awards-item-title"><span style="font-size: 20px;">No winner determined yet.</span></h4>
+                                                            
+                                                            <div class="divider"></div>
+
+                                                            
+                                                        </div>
+
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Coach Categories -->
+                        {% for category_data in coach_categories %}
+                            {% if category_data.category.competition.id == competition.id %}
+                                <div class="item">
+                                    <div class="category-section">
+                                        
+                                        {% if category_data.winner %}
+                                            <!-- Display coach winner here -->
+                                            <div class="winner-section text-center">
+                                                <div class="col">
+                                                    <!-- Awards Item-->
+                                                    <div class="">
+                                                        <div class="awards-item"> 
+                                                            <div class="awards-item-main">
+                                                                <h4 class="awards-item-title"><span class="text-accent">{{ category_data.category.get_category_display }}</span></h4>
+
+                                                                <div class="divider"></div>
+
+                                                                <h4 class="awards-item-title"><span style="font-size: 20px;">{{ category_data.winner.name.get_full_name }}</span></h4>
+                                                                
+                                                                <div class="divider"></div>
+
+                                                                <div class="awards-item-title">
+                                                                    <h5 class="text-accent" style="font-size: 15px; ">{{category_data.category.competition.name }}</h5>
+                                                                    <h6 class="awards-item-time">{{ category_data.close_date|date:"F, Y" }}</h6>
+                                                                </div>
+                                                            </div>
+
+                                                            {% if category_data.winner.picture %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <img src="{{ category_data.winner.picture.url }}" alt="" width="67" height="147"/>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="awards-item-aside"> 
+                                                                    <i class="fas fa-user fa-5x"></i>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="col">
+                                                <!-- Awards Item-->
+                                                <div class="">
+                                                    <div class="awards-item"> 
+                                                        <div class="awards-item-main">
+                                                            <h4 class="awards-item-title"><span class="text-accent">{{ category_data.category.get_category_display }}</span></h4>
+
+                                                            <div class="divider"></div>
+
+                                                            <h4 class="awards-item-title"><span style="font-size: 20px;">No winner determined yet.</span></h4>
+                                                            
+                                                            <div class="divider"></div>
+
+                                                            
+                                                        </div>
+
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    // Function to handle award display
+    function showCompetitionAward(competitionId) {
+        // Hide all award sections
+        document.querySelectorAll('.award').forEach(function(award) {
+            award.style.display = 'none';
+        });
+
+        // Show selected competition's award section
+        const awardSection = document.getElementById('competition-award-' + competitionId);
+        if (awardSection) {
+            awardSection.style.display = 'block';
+        }
+    }
+
+    // Initialize the sections with the latest competition
+    document.addEventListener("DOMContentLoaded", function() {
+        const latestCompetitionId = "{{ latest_competition.id }}";
+        if (latestCompetitionId) {
+            // Set the select element to the latest competition
+            document.getElementById('competitionSelect').value = latestCompetitionId;
+            
+            // Show relevant sections for the latest competition
+            showCompetitionAward(latestCompetitionId);
+        }
+    });
+</script>
+{% endblock %}

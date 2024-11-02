@@ -1,0 +1,56 @@
+.post-container {
+    display: none;
+    /* margin: 10px; */
+    padding: 15px;
+    /* border: 2px solid #ccc; */
+    /* border-radius: 20px; */
+}
+.active {
+    display: block;
+}
+
+
+.bg-image {
+   
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+.tips-container {
+    display: flex; /* Use flexbox for layout */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
+    text-align: center; /* Ensure text is centered within its container */
+}
+  
+.text-container {
+    max-width: 600px; /* Set a maximum width for the text container */
+    margin: 0 20px; /* Adds horizontal space around the text container */
+    background-color: rgba(255, 255, 255, 0.8); /* Optional: improves readability */
+}
+  
+.quote-text {
+    font-size: 15px;
+    color: rgb(0, 0, 0);
+    padding: 20px;
+    overflow-wrap: break-word; /* Allows words to break and wrap onto the next line */
+}
+  
+.quote-icon {
+    font-size: 26px;
+    color: rgb(0, 0, 0);
+    padding: 0 10px; /* Adds space around the icons */
+}
+  
+  
+.fa-quote-left {
+    margin-left: 15px !important;
+}
+
+.fa-quote-right {
+    margin-right: 15px !important;
+}

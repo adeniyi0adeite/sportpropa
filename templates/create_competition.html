@@ -1,0 +1,82 @@
+
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+<div class="page animated" style="animation-duration: 500ms;">
+
+    <h1>COMPETITION</h1>
+    <button>Creat Competition</button>
+
+
+    <h2 class="mt-5">Sport Competition Registration</h2>
+    <form action="submit_competition" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Competition Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" class="form-control" id="date" name="date" required>
+        </div>
+        <div class="form-group">
+            <label for="sport">Type of Sport:</label>
+            <select class="form-control" id="sport" name="sport" required>
+                <option value="Football">Football</option>
+                <option value="Basketball">Basketball</option>
+                <option value="Tennis">Tennis</option>
+                <!-- Add more sports as needed -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="participants">Number of Participants:</label>
+            <input type="number" class="form-control" id="participants" name="participants" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+
+
+    <h4>CREATE TEAM</h4>
+    <form action="create_team" method="post">
+        {% csrf_token %}
+        <label for="team_name">Team Name:</label>
+        <input type="text" id="team_name" name="team_name" required><br><br>
+    
+        <label for="coach_name">Coach Name:</label>
+        <input type="text" id="coach_name" name="coach_name" required><br><br>
+    
+        <label for="founded_year">Year Founded:</label>
+        <input type="number" id="founded_year" name="founded_year" required><br><br>
+    
+        <input type="submit" value="Submit">
+    </form>
+    
+    <br>
+    
+    <h4>REGISTER PLAYERS</h4>
+    <form action="register_player" method="post">
+        {% csrf_token %}
+    
+        <label for="player_name">Name:</label>
+        <input type="text" id="player_name" name="player_name" required><br><br>
+    
+        <label for="player_position">Position:</label>
+        <input type="text" id="player_position" name="player_position" required><br><br>
+    
+        <label for="player1_number">Jersey Number:</label>
+        <input type="number" id="player_number" name="player_number" required><br><br>
+    
+    
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+
+{% endblock %}
+
+
+    

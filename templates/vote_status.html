@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Vote Status</h2>
+
+    {% if vote.confirmed %}
+    <div class="alert alert-success">
+        <strong>Confirmed!</strong> Your vote has been successfully confirmed.
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <strong>Pending!</strong> Your vote is still pending confirmation.
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Vote Details</h5>
+            <p><strong>Confirmation ID:</strong> {{ vote.confirmation_id }}</p>
+            <p><strong>Email:</strong> {{ vote.email }}</p>
+            <p><strong>Category:</strong> {{ category_name }}</p>
+            <p><strong>Number of Votes:</strong> {{ vote.num_of_votes }}</p>
+            
+            {% if vote.player %}
+            <p><strong>Nominee:</strong> {{ vote.player.name }} (Player)</p>
+            {% elif vote.team %}
+            <p><strong>Nominee:</strong> {{ vote.team.name }} (Team)</p>
+            {% elif vote.coach %}
+            <p><strong>Nominee:</strong> {{ vote.coach.name }} (Coach)</p>
+            {% endif %}
+            
+            <p><strong>Amount Paid:</strong> &#8358;{{ vote.amount_paid }}</p>
+            <p><strong>Payment Status:</strong> {{ vote.payment_status|yesno:"Paid,Not Paid" }}</p>
+            <p><strong>Timestamp:</strong> {{ vote.timestamp }}</p>
+        </div>
+    </div>
+
+    <a href="{% url 'vote_home' %}" class="btn btn-primary mt-3">Return to Voting</a>
+</div>
+{% endblock %}

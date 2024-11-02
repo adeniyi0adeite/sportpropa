@@ -1,0 +1,62 @@
+
+{% extends 'admin/admin_base.html' %}
+
+{% load humanize %}
+
+{% load static %}
+
+
+{% block content %}
+
+<div class="page animated" style="animation-duration: 500ms;">
+
+    <section class="section section-md bg-gray-100">
+        <div class="container">
+
+
+            <h2>All Competitions</h2>
+            <hr>
+            <br>
+            <div>
+                {% for competition in competitions %}
+                <div>{{ competition.name }} - <a href="{% url 'competition_detail' competition.pk %}">Details</a> - <a href="{% url 'register_competition_teams' competition.id %}">Edit</a> - <a href="{% url 'register_competition_teams' competition.pk %}">Register Team into competition</a></div>
+                {% endfor %}
+            </div>
+
+            <br>
+            <!-- Form to create a new competition -->
+            <h2>Create New Competition</h2>
+            <form method="post" enctype="multipart/form-data" action="{% url 'competition_create' %}">
+                {% csrf_token %}
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name"><br>
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date"><br>
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date"><br>
+                <label for="organizer">Organizer:</label>
+                <input type="text" id="organizer" name="organizer"><br>
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location"><br>
+                <label for="description">Description:</label><br>
+                <textarea id="description" name="description"></textarea><br>
+                <label for="prize">Prize:</label>
+                <input type="text" id="prize" name="prize"><br>
+                <label for="registration_open">Registration Open:</label>
+                <input type="checkbox" id="registration_open" name="registration_open"><br>
+                <label for="logo">Logo:</label>
+                <input type="file" id="logo" name="logo"><br>
+                <input type="submit" value="Create Competition">
+            </form>
+
+
+            <br>
+            
+
+
+        </div>
+    </section>
+    
+</div>
+
+{% endblock %}

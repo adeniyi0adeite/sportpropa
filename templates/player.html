@@ -1,0 +1,684 @@
+
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_head %}
+    <!-- Include your external JavaScript file -->
+    <script src="{% static 'js/player.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- Page-->
+<div class="page animated" style="animation-duration: 500ms;">
+      
+    <!-- Section Breadcrumbs-->
+    <section class="section parallax-container breadcrumbs-wrap" data-parallax-img="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}"><div class="material-parallax parallax"><img src="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" alt="" style="display: block; transform: translate3d(-50%, 175px, 0px);"></div>
+      <div class="parallax-content breadcrumbs-custom context-dark">
+        <div class="container">
+          <h3 class="breadcrumbs-custom-title">Player</h3>
+          <ul class="breadcrumbs-custom-path">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li class="active">Player</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!-- Privacy Policy-->
+    <section class="section section-md bg-gray-100">
+      <div class="container">
+
+        <div class="row row-30">
+
+          <div class="col-md-8">
+            <!-- Heading Component-->
+            <article class="heading-component">
+              <div class="heading-component-inner">
+                <h5 class="heading-component-title">Player overview
+                </h5>
+              </div>
+            </article>
+            <!-- Player Info Corporate-->
+            
+            <div class="player-info-corporate">
+
+              <div class="player-info-figure">
+                
+                <div class="player-img">
+
+                  <label for="new_picture" style="width: 100%; height: 100%; cursor: pointer;">
+                    {% if player.picture %}
+                    <img src="{{ player.picture.url }}" alt="Player Profile Picture" width="368" height="286">
+                    {% else %}
+                    <!-- Use Font Awesome user icon as profile picture -->
+                    <i class="fas fa-user fa-10x"></i> <!-- Adjust size as needed -->
+                    {% endif %}
+                  </label>
+                  
+                </div>
+                <!-- <div class="team-logo-img"><img src="{% static 'img/logo-team-1-237x312.png' %}" alt="" width="237" height="312">
+                </div> -->
+                <!-- <div class="block-number"><span>{{ player.number }}11</span></div> -->
+
+                
+                {% if user.is_authenticated and  request.user.is_superuser %}
+                <div class="w-100 text-center" style="display: none;">
+                    <form class="" action="{% url 'change_player_picture' player.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <!-- This input is hidden -->
+                        <input class="form-control" type="file" id="new_picture" name="new_picture" required style="display: none;">
+                        <button class="btn btn-sm btn-primary btn-sm" type="submit">Upload</button>
+                    </form>
+                </div>
+                {% endif %}
+              </div>
+
+              <div class="player-info-main">
+                <h4 class="player-info-title mb-3">{{ player.name.first_name }} {{ player.name.last_name }}</h4>
+                <p class="player-info-subtitle">{{ player.get_position_display }}</p>
+                <hr>
+                <div class="player-info-table">
+                  {% for registration in registrations %}
+                  <div class="justify-content-center align-items-center">
+                    <div class="card-standing-team-figure">
+                      {% if registration.team.logo %}
+                        <img src="{{ registration.team.logo.url }}" alt="" width="31" height="41"/>
+                      {% else %}
+                        <img src="{% static 'img/soccer.png' %}" alt="" width="31" height="41"/>
+                      {% endif %}
+                    </div>
+                    <div class="card-standing-team-name text-center"><a class="rd-nav-link text-center" href="{% url 'team' team_id=registration.team.id %}" style="color: #000000 !important;">{{ registration.team.name }}</a></div>
+                  </div>    
+                  {% empty %}        
+                  <li>No current registrations.</li>
+                  {% endfor %}
+                  <div class="table-custom-wrap d-none">
+                    <table class="table-custom">
+                      <tbody>
+                        <tr>
+                          <th>Age</th>
+                          <th>{{ player.age }}</th>
+                          <th>Height</th>
+                          <th>{{ player.height }} (meters)</th>
+                        </tr>
+                        <tr>
+                          <td>Weight</td>
+                          <td>{{ player.weight }} (kg)</td>
+                          <td>Total games</td>
+                          <td>{{ player.total_games }}</td>
+                        </tr>
+                        <tr>
+                          <td>Foot</td>
+                          <td>{{ player.foot }}</td>
+                          <td>Location</td>
+                          <td>{{ player.nationality }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <hr>
+                
+              </div>
+
+            </div>
+
+            
+
+            
+            {% if  is_owner %}
+            <!-- Button to trigger modal -->
+            <button type="button" class="btn btn-primary w-100 text-center d-none" data-bs-toggle="modal" data-bs-target="#editPlayerInfoModal">
+              Edit Player Info
+            </button>
+            {% endif %}
+            
+
+            <!--  Block Player Info-->
+            
+            {% if is_owner %}
+            <div class="text-center mt-2 d-none">
+              <a class="link link-icon link-icon-left link-classic" href="{% url 'userprofile' username=player.name.username %}">
+                <span class="link-icon-text">View my userprofile</span>
+              </a>
+            </div>
+            {% endif %}
+
+
+            <!-- Section Gallery-->
+            <section class="section section-variant-1 bg-gray-100 text-center d-none">
+              <div class="container">
+
+                {% if is_owner %}
+                <div class="row w-50 mx-auto">
+                  <!-- Upload  -->
+                  <button type="button" class="col btn btn-primary text-center" data-bs-toggle="modal" data-bs-target="#uploadPlayerPostModal">
+                    UPLOAD
+                  </button>
+                </div>
+                {% endif %}
+
+                <div class="row row-30" data-lightgallery="group">
+                  {% if messages %}
+                  <ul>
+                    {% for message in messages %}
+                      {% if 'error' in message.tags %}
+                      <li class="text-danger">{{ message }}</li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                  {% endif %}
+
+                  <div class="row g-3" id="media-gallery">
+                    {% for post in page_obj %}
+                    <div class="col-xs-12 col-sm-6 col-lg-4">
+                      <article class="thumbnail-classic">
+                        {% if post.image %}
+                        <a class="thumbnail-classic-figure" href="{{ post.image.url }}" data-lightgallery="item">
+                          <img class="thumbnail-classic-image" src="{{ post.image.url }}" alt=""/>
+                        </a>
+                        {% elif post.video %}
+                        <a class="thumbnail-classic-figure" href="{{ post.video.url }}" data-lightgallery="item">
+                          <video class="thumbnail-classic-image" controls>
+                            <source src="{{ post.video.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                          </video>
+                        </a>
+                        {% endif %}
+                        <div class="thumbnail-classic-caption">
+                          <div class="thumbnail-classic-panel-right">
+                            <span class="thumbnail-classic-panel-toggle"><i class="fa-solid fa-share"></i></span>
+                            <ul class="thumbnail-classic-list list-inline list-inline-xs">
+                              <li><a class="fa fa-facebook" href="#"></a></li>
+                              <li><a class="fa fa-twitter" href="#"></a></li>
+                              <li><a class="fa fa-instagram" href="#"></a></li>
+                              <li><a class="fa fa-pinterest-p" href="#"></a></li>
+                            </ul>
+                          </div>
+                          <div class="thumbnail-classic-panel-left">
+                            {% if post.image %}
+                            <span class="thumbnail-classic-subtitle" style="font-size: 0.5rem;">Share Photo</span>
+                            {% elif post.video %}
+                            <span class="thumbnail-classic-subtitle" style="font-size: 0.5rem;">Share Video</span>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                    {% endfor %}
+                  </div>
+
+                  <!-- Pagination -->
+                  <div class="row pagination mt-3">
+                    <div class="col text-start">
+                      {% if page_obj.has_previous %}
+                      <a class="button button-xs button-primary" href="?page={{ page_obj.previous_page_number }}">Load Previous</a>
+                      {% endif %}
+                    </div>
+                    <div class="col text-end">
+                      {% if page_obj.has_next %}
+                      <a class="button button-xs button-primary" href="?page={{ page_obj.next_page_number }}">Load More</a>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </section>
+
+
+          </div>
+
+          
+
+          
+
+          <div id="player-stats-section" class="col-md-4">
+            <div class="col">
+              <!-- Heading Component-->
+              <article class="row heading-component">
+                <div class="heading-component-inner">
+                  <h5 class="heading-component-title">Statistics
+                  </h5>
+                </div>
+              </article>
+  
+  
+              
+              
+              <!-- List Statistics-->
+              <ul class="list-statictics">
+                {% if player.position == player.GOALKEEPER %}
+                <li><a href="#">Saves</a><span class="list-statictics-counter">{{ total_saves }}</span></li>
+                <li><a href="#">Clean Sheets</a><span class="list-statictics-counter">{{ clean_sheets }}</span></li>
+                {% endif %}
+
+                <li><a href="#">Goals scored</a><span class="list-statictics-counter">{{ total_goals }}</span></li>
+                <li><a href="#">Assists</a><span class="list-statictics-counter">{{ total_assists }}</span></li>
+                <li><a href="#">Own Goals</a><span class="list-statictics-counter">{{ total_own_goals  }}</span></li>
+                <li><a href="#">Yellow Cards</a><span class="list-statictics-counter">{{ total_yellow_cards }}</span></li>
+                <li><a href="#">Red Cards</a><span class="list-statictics-counter">{{ total_red_cards }}</span></li>
+
+
+                <li><a href="#">MAN OF THE MATCH</a><span class="list-statictics-counter">{{ total_man_of_the_match_awards }}</span></li>
+              </ul>
+            </div>
+            <br>
+
+            {% if player_awards %}
+            <div class="col">
+              <div class="aside-component">
+                <!-- Heading Component-->
+                <article class="heading-component">
+                  <div class="heading-component-inner">
+                    <h5 class="heading-component-title">Awards
+                    </h5>
+                    <div class="heading-component-aside">
+                      <h6>Total: <span class="text-primary ms-3">{{ total_awards_won }}</span></h6>
+                    </div>
+                  </div>
+                  
+
+                </article>
+                <!-- Owl Carousel-->
+                <div class="owl-carousel owl-carousel-dots-modern awards-carousel" data-items="1" data-autoplay="true" data-autoplay-speed="4000" data-dots="true" data-nav="false" data-stage-padding="0" data-loop="true" data-margin="0" data-mouse-drag="true">
+                  <!-- Awards Item-->
+                  {% for award in player_awards %}
+                  <div class="awards-item">
+                      <span class="awards-item-head">{{ award.competition.name }}</span>
+                      <div class="awards-item-main">
+                          {% if award.category == 'best_goalkeeper' %}
+                              <h4 class="awards-item-title"><span class="text-accent">Best</span> Goalkeeper</h4>
+                          {% elif award.category == 'best_player' %}
+                              <h4 class="awards-item-title"><span class="text-accent">Best</span> Player</h4>
+                          {% elif award.category == 'top_scorer' %}
+                              <h4 class="awards-item-title"><span class="text-accent">Top</span> Scorer</h4>
+                          {% elif award.category == 'top_assist' %}
+                              <h4 class="awards-item-title"><span class="text-accent">Top</span> Assist</h4>
+                          {% elif award.category == 'man_of_the_match' %}
+                              <h4 class="awards-item-title"><span class="text-accent">Man of the</span> Match</h4>
+                          {% elif award.category == 'most_valuable_player' %}
+                              <h4 class="awards-item-title"><span class="text-accent">Most Valuable</span> Player</h4>
+                          {% endif %}
+                          <div class="divider"></div>
+                          <h5 class="awards-item-time">{{ award.close_date|date:"F Y" }}</h5>
+                      </div>
+                      <!-- <div class="awards-item-aside">
+                          <img src="{% static 'img/thumbnail-minimal-1-67x147.png' %}" alt="" width="67" height="147"/>
+                      </div> -->
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+        </div>
+
+        <hr>
+
+
+        {% if user.is_authenticated %}
+
+        <div class="container w-100 text-center mx-auto mt-5">
+          <h6 class="mb-1 text-center">Share your thoughts about this player with others</h6>
+        </div>
+
+        
+        <!-- Player Likes -->
+        <!-- <a class="like-btn me-1" type="button" data-player-id="{{ player.id }}">
+          {% if player.user_has_liked %}
+              <i class="fas fa-thumbs-up text-danger"></i>
+          {% else %}
+              <i class="fas fa-thumbs-up"></i>
+          {% endif %}
+        </a>
+        <span class="ms-1" style="font-size: 12px;" id="like-count-{{ player.id }}">{{ num_likes }}</span> -->
+        
+
+
+
+
+        <div class="row">
+          <div class="comment-box mt-5">
+            <div class="comment-box-aside">
+                <!-- <img class="img-circle" src="images/user-7-69x69.jpg" alt="" width="69" height="69"/> -->
+                <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    {% if login_user.picture %}
+                    <div class="player-img" style="background-image: url('{{ login_user.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                    </div>
+                    {% else %}
+                    <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                        <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="comment-box-main">
+              <h5 class="comment-box-name mb-2">{{ login_user.user.username }}</h5>
+              <!-- comment form-->
+              <form method="post" action="{% url 'player_comment' player.id %}">
+                {% csrf_token %}
+                <div class="form-wrap">
+                  <label class="form-label" for="comment-message">Your comment</label>
+                  <textarea class="form-input" id="comment-message" name="message"></textarea>
+                </div>
+                <div class="form-button">
+                  <button class="button button-primary" type="submit">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <article class="heading-component mt-3">
+            <div class="heading-component-inner">
+                <h5 class="heading-component-title">{{ num_comments }} comments
+                </h5>
+            </div>
+          </article>
+          <a href="#collapseComments-{{ player.id }}" class="text-muted my-1" data-bs-toggle="collapse" role="button" style="font-size: 16px;">View comments</a>
+          <!-- Comments -->
+          <div class="collapse" id="collapseComments-{{ player.id }}">
+                
+            <div class="row">
+                <div class="col-sm-12">
+                    
+                    {% for comment in player.player_comments.all %}
+                        {% if not comment.parent %}
+                        <div class="blog-post-comments mb-2">
+                            <!-- Post Comment-->
+                            <div class="post-comment post-comment-parent">
+                                
+                                <div class="post-comment-main">
+
+                                    <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                        <div class="blog-post-author d-flex align-items-center">
+                                            <div class="mx-2">
+                                                <!-- <img class="img-circle" src="images/user-6-69x69.jpg" alt="" width="69" height="69"/> -->
+                                                <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    {% if comment.author.picture %}
+                                                    <div class="player-img" style="background-image: url('{{ comment.author.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                        <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <a href="{% url 'userprofile' comment.author.user.username %}">
+                                                <h5 class="author-name mx-1">{{ comment.author.user.username }}</h5>
+                                            </a>
+                                            <time class="post-comment-time mx-2" datetime="2024">{{ comment.created_at|date:"F j, Y" }}</time>
+                                        </div>
+                                    </div>
+
+                                    <div class="post-comment-text">
+                                        <p>{{ comment.content }}</p>
+                                    </div>
+                                    <div class="post-comment-footer">
+                                        <!-- Parent Comment Likes -->
+                                        <div class="comment-like">
+                                          <a class="like-btn" type="button" data-comment-id="{{ comment.id }}">
+                                              {% if comment.user_has_liked %}
+                                              <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                              <!-- <i class="fas fa-thumbs-up text-danger"></i> -->
+                                              {% else %}
+                                              <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                              {% endif %}
+                                          </a>
+                                          <span class="ms-1" id="like-count-{{ comment.id }}">{{ comment.num_likes }}</span>
+                                        </div>
+                                      
+
+                                        
+                                        <!-- Comment Reply Button -->
+                                        <div class="comment-reply">
+                                            <a class="ms-1" type="button" onclick="toggleReplyBox('{{ comment.id }}')">
+                                                Reply
+                                                <!-- <i class="icon fas fa-reply"></i> -->
+                                            </a>
+                                        </div>
+                                        <!-- Toggle Button for Replies -->
+                                        <a href="#collapseReplyComments-{{ comment.id }}" data-bs-toggle="collapse" role="button"><span class="" ></i>{{ comment.num_replies }} Replies</span></a>
+                                        {% if request.user == comment.author.user %}
+                                        <a class="ms-3" href="{% url 'delete_player_comment' comment.id %}"><i class="icon fas fa-trash-alt"></i></a>
+                                        {% endif %}
+                                        <!-- Reply box -->
+                                        <div class="comment-box reply-box" id="reply-box-{{ comment.id }}" style="display: none;">
+                                            <div class="comment-box-main">
+                                                <!-- RD Mailform-->
+                                                <form class="comment-box-form" method="post" action="{% url 'player_comment' player.id %}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="redirect_to" value="{{ request.path }}">
+                                                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                                    <label class="form-label" for="comment-message-{{ comment.id }}"></label>
+                                                    <textarea class="form-input" id="comment-message-{{ comment.id }}" name="message" placeholder="Reply to {{ comment.author.user.username }}"></textarea>
+                                                    <div class="form-button">
+                                                        <button class="button button-primary button-xs" type="submit">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    <!-- Collapsible Replies Section -->
+                                    <div class="collapse" id="collapseReplyComments-{{ comment.id }}">
+                                        {% for reply in comment.player_replies.all %}
+                                        <div class="post-comment post-comment-child mt-3">
+                                            <div class="post-comment-main">
+                                                <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                                    <div class="blog-post-author d-flex align-items-center">
+                                                        <div class="mx-2">
+                                                            <!-- <img class="img-circle" src="images/user-6-69x69.jpg" alt="" width="69" height="69"/> -->
+                                                            <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                                {% if reply.author.picture %}
+                                                                <div class="player-img" style="background-image: url('{{ reply.author.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                                                </div>
+                                                                {% else %}
+                                                                <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                                    <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                                </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <a href="{% url 'userprofile' reply.author.user.username %}">
+                                                            <h5 class="author-name">{{ reply.author.user.username }}</h5>
+                                                        </a>
+                                                        
+                                                        <time class="post-comment-time mx-1" datetime="2024">{{ reply.created_at|date:"F j, Y" }}</time>
+                                                    </div>
+                                                </div>
+                                                <div class="post-comment-text">
+                                                    <p>{{ reply.content }}</p>
+                                                </div>
+                                                <div class="post-comment-footer">
+                                                  <!-- Child Comment Likes -->
+                                                  <div class="comment-like">
+                                                    <a class="like-btn" type="button" data-child-comment-id="{{ reply.id }}">
+                                                        {% if reply.user_has_liked %}
+                                                        <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                                        <!-- <i class="fas fa-thumbs-up text-danger"></i> -->
+                                                        {% else %}
+                                                        <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                                        {% endif %}
+                                                    </a>
+                                                    <span class="ms-2" style="font-size: 12px;" id="like-count-{{ reply.id }}">{{ reply.num_likes }}</span>
+                                                  </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+          </div>
+        </div>
+
+        {% else %}
+  
+        <div class="container w-100 text-center mx-auto mt-5">
+          <p class="mb-3 text-center">Login to see what people are saying about this competition.</p>
+          <a class="button button-lg button-primary" href="{% url 'loginform' %}">LOGIN</a>
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- Edit Player Information Modal -->
+        <div class="modal fade" id="editPlayerInfoModal" tabindex="-1" aria-labelledby="editPlayerInfoLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editPlayerInfoLabel">Edit Player Info</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="{% url 'edit_player_info' player.id %}">
+                  {% csrf_token %}
+                  
+                  <!-- First Name and Last Name -->
+                  <div class="mb-3">
+                    <label for="first_name" class="form-data">First Name:</label>
+                    <input type="text" name="first_name" id="first_name" class="form-input" value="{{ player.name.first_name }}">
+                  </div>
+                  <div class="mb-3">
+                    <label for="last_name" class="form-data">Last Name:</label>
+                    <input type="text" name="last_name" id="last_name" class="form-input" value="{{ player.name.last_name }}">
+                  </div>
+                  
+                  <!-- Nationality -->
+                  <div class="mb-3">
+                    <label for="nationality" class="form-data">Nationality:</label>
+                    <input type="text" name="nationality" id="nationality" class="form-input" value="{{ player.nationality }}">
+                  </div>
+        
+                  <!-- Position -->
+                  <div class="mb-3">
+                    <label for="position" class="form-data">Position:</label>
+                    <select name="position" id="position" class="form-select">
+                      {% for code, name in player.PLAYER_POSITIONS %}
+                      <option value="{{ code }}" {% if player.position == code %}selected{% endif %}>{{ name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  
+                  <!-- Age -->
+                  <div class="mb-3">
+                    <label for="age" class="form-data">Age:</label>
+                    <input type="number" name="age" id="age" class="form-input" value="{{ player.age }}">
+                  </div>
+        
+                  <!-- Height -->
+                  <div class="mb-3">
+                    <label for="height" class="form-data">Height (meters):</label>
+                    <input type="number" name="height" id="height" class="form-input" value="{{ player.height }}">
+                  </div>
+        
+                  <!-- Weight -->
+                  <div class="mb-3">
+                    <label for="weight" class="form-data">Weight (kg):</label>
+                    <input type="number" name="weight" id="weight" class="form-input" value="{{ player.weight }}">
+                  </div>
+        
+                  <!-- Foot -->
+                  <div class="mb-3">
+                    <label for="foot" class="form-data">Preferred Foot:</label>
+                    <select name="foot" id="foot" class="form-select">
+                      <option value="Left" {% if player.foot == 'Left' %}selected{% endif %}>Left</option>
+                      <option value="Right" {% if player.foot == 'Right' %}selected{% endif %}>Right</option>
+                      <option value="Both" {% if player.foot == 'Both' %}selected{% endif %}>Both</option>
+                    </select>
+                  </div>
+        
+                  <!-- Biography -->
+                  <div class="mb-3">
+                    <label for="biography" class="form-data">Biography:</label>
+                    <textarea name="biography" id="biography" class="form-input">{{ player.biography }}</textarea>
+                  </div>
+        
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Create Player Post Modal -->
+        <div class="modal fade" id="uploadPlayerPostModal" tabindex="-1" aria-labelledby="uploadPlayerPostLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="uploadPlayerPostLabel">Create New Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="{% url 'upload_player_post' player_id=player.id %}" method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-wrap">
+                    <label class="form" for="media">Upload Image or Video</label>
+                    <input class="form-input" type="file" id="media" name="media" accept="image/*,video/*">
+                  </div>
+                  <br>
+                  <!-- <div class="form-wrap mb-3">
+                    <label class="form-label" for="postCaption">Caption</label>
+                    <textarea class="form-input" id="postCaption" name="caption" rows="3"></textarea>
+                  </div> -->
+                  <button type="submit" class="btn btn-primary btn-sm">Post</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+    </section>
+
+</div>
+
+{% endblock %}
+
+{% block extra_script %}
+
+  
+
+<script>
+  var newPictureInput = document.getElementById('new_picture');
+  if (newPictureInput) {
+    newPictureInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          // If a file is selected, submit the form
+          var form = this.closest('form');
+          if (form) {
+            form.submit();
+          }
+        }
+    });
+  }
+  
+</script>
+
+
+{% endblock %}
+
+
+    

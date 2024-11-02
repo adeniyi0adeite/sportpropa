@@ -1,0 +1,23 @@
+{% extends 'base.html' %}  <!-- Extend your base template -->
+
+{% block content %}
+<div class="container mt-4">
+    <div class="post-detail">
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.content }}</p>
+        <hr>
+        <h4>Comments:</h4>
+        <div class="comments">
+            {% for comment in comments %}
+            <div class="comment">
+                <strong>{{ comment.author.user.username }}:</strong> <!-- Adjust according to your User-Profile relation -->
+                <p>{{ comment.content }}</p>
+            </div>
+            {% empty %}
+            <p>No comments yet.</p>
+            {% endfor %}
+        </div>
+        <!-- Add a section for likes if you have implemented a Like model -->
+    </div>
+</div>
+{% endblock %}

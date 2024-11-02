@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="page animated" style="animation-duration: 500ms;">
+    <div class="container mt-5">
+        <h2>Feedback Form</h2>
+
+        <form id="feedback-form" class="rd-form form-elements" action="/feedback/" method="post">
+            <div id="feedback-message"></div>
+            {% csrf_token %}
+            <div class="form-wrap">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-wrap">
+                <label for="userEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="userEmail" name="email" required>
+            </div>
+
+            <div class="form-wrap">
+                <label for="feedbackType" class="form-label">Feedback Type</label>
+                <br>
+                <select class="form-select" id="feedbackType" name="feedbackType">
+                    <option selected>Choose...</option>
+                    <option value="website">Website Navigation</option>
+                    <option value="content">Content Quality</option>
+                    <option value="feature">Feature Request</option>
+                    <option value="bug">Bug Report</option>
+                </select>
+            </div>
+
+            <div class="form-wrap">
+                <label for="messageText" class="form-label">Message</label>
+                <textarea class="form-control" id="messageText" name="message" rows="3" required></textarea>
+            </div>
+            <div class="form-wrap">
+                <label>Experience Rating</label>
+                <div>
+                    <label class="form-check-label me-2" for="rating1">1</label>
+                    <input type="radio" class="form-check-input" name="experienceRating" id="rating1" value="1">
+                    <br>
+                    <label class="form-check-label me-2" for="rating2">2</label>
+                    <input type="radio" class="form-check-input" name="experienceRating" id="rating2" value="2">
+                    <br>
+                    <label class="form-check-label me-2" for="rating3">3</label>
+                    <input type="radio" class="form-check-input" name="experienceRating" id="rating3" value="3">
+                    <br>
+                    <label class="form-check-label me-2" for="rating4">4</label>
+                    <input type="radio" class="form-check-input" name="experienceRating" id="rating4" value="4">
+                    <br>
+                    <label class="form-check-label me-2" for="rating5">5</label>
+                    <input type="radio" class="form-check-input" name="experienceRating" id="rating5" value="5">
+                </div>
+            </div>
+            <div class="form-wrap">
+                <label for="suggestionsText" class="form-label">Any Suggestions?</label>
+                <textarea class="form-control" id="suggestionsText" name="suggestions" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+</div>
+
+
+{% endblock %}

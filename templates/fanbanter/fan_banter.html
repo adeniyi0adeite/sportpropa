@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% load static %}
+
+
+{% block extra_head %}
+    <!-- Include your external JavaScript file -->
+    <script src="{% static 'js/fanbanter.js' %}"></script>
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="page animated" style="animation-duration: 500ms;">
+
+
+    <section class="section section-sm bg-gray-100">
+        
+        <div class="container">
+          <div class="row row-30">
+            {% for post in fanbanter_posts %}
+            <div class="col">
+              <div class="blog-post">
+                <!-- Badge-->
+                <div class="badge badge-secondary">{{ post.category }}
+                </div>
+                <h3 class="blog-post-title">{{ post.title|default:"Untitled" }}</h3>
+                <div class="blog-post-header">
+                  <div class="blog-post-meta">
+                    <time class="blog-post-time" datetime="2024"><span class="icon mdi mdi-clock"></span>{{ post.created_at|naturaltime }}</time>
+                    <!-- <div class="blog-post-comment"><span class="icon mdi mdi-comment-outline"></span>345</div> -->
+                    <!-- <div class="blog-post-view"><span class="icon fl-justicons-visible6"></span>234</div> -->
+                    
+                    <a class="like-btn me-1" type="button" data-post-id="{{ post.id }}">
+                        {% if post.user_has_liked %}
+                        <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                        <!-- <i class="icon fas fa-thumbs-up text-danger"></i> -->
+                        {% else %}
+                        <!-- <i class="fas fa-thumbs-up"></i> -->
+                        <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                        {% endif %}
+                    </a>
+                    <span class="ms-1" style="font-size: 12px;" id="like-count-{{ post.id }}">{{ post.num_likes }}</span>
+                    <div class="post-carmen-comment"><span class="icon mdi mdi-comment-outline"></span><a href="#">{{ post.num_comments }}</a></div>
+                    <div class="post-carmen-view"><span class="icon fl-justicons-visible6"></span>234
+                  </div>
+                </div>
+                {% if post.caption %}
+                <div class="blog-post-author-quote">
+                  <p>{{ post.caption }}</p>
+                </div>
+                {% endif %}
+                <div class="blog-post-share">
+                  <p>Share this post</p>
+                  <ul class="group">
+                    <li><a class="icon fa-facebook" href="#"></a></li>
+                    <li><a class="icon fa-twitter" href="#"></a></li>
+                    <li><a class="icon fa-google-plus" href="#"></a></li>
+                    <li><a class="icon fa-instagram" href="#"></a></li>
+                  </ul>
+                </div>
+                <div>
+                    {% if post.image %}
+                        <!-- Centering the image by wrapping it in a div with text-align -->
+                        <div style="text-align: center;">
+                            <img src="{{ post.image.url }}" alt="{{ post.title|default:'FanBanter Post' }}" style="width: 100%; height: auto;">
+                        </div>
+                    {% endif %}
+                    {% if post.details %}
+                        <p>{{ post.details }}</p>
+                    {% endif %}
+                </div>
+                <div class="comment-box mt-5">
+                    <div class="comment-box-aside">
+                        <!-- <img class="img-circle" src="images/user-7-69x69.jpg" alt="" width="69" height="69"/> -->
+                        <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            {% if login_user.picture %}
+                            <div class="player-img" style="background-image: url('{{ login_user.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                            </div>
+                            {% else %}
+                            <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="comment-box-main">
+                      <h5 class="comment-box-name mb-2">{{ login_user.user.username }}</h5>
+                      <!-- comment form-->
+                      <form method="post" action="{% url 'fanbanter_comment' post.id %}">
+                        {% csrf_token %}
+                        <div class="form-wrap">
+                          <label class="form-label" for="comment-message">Your comment</label>
+                          <textarea class="form-input" id="comment-message" name="message"></textarea>
+                        </div>
+                        <div class="form-button">
+                          <button class="button button-primary" type="submit">Submit</button>
+                        </div>
+                      </form>
+                    </div>
+                </div>
+              </div>
+              <br>
+                
+              <a href="#collapseComments-{{ post.id }}" class="text-muted my-5" data-bs-toggle="collapse" role="button" style="font-size: 16px;">View comments
+                
+              </a>
+              <br>
+              
+              <!-- Comments -->
+              <div class="collapse" id="collapseComments-{{ post.id }}">
+                
+                <div class="row">
+                    
+                    <div class="col-sm-12">
+                        
+                        {% for comment in post.fanbanter_comments.all %}
+                            {% if not comment.parent %}
+                            <div class="blog-post-comments mb-2">
+                                <!-- Post Comment-->
+                                <div class="post-comment post-comment-parent">
+                                    
+                                    <div class="post-comment-main">
+
+                                        <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                            <div class="blog-post-author d-flex align-items-center">
+                                                <div class="mx-2">
+                                                    <!-- <img class="img-circle" src="images/user-6-69x69.jpg" alt="" width="69" height="69"/> -->
+                                                    <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                        {% if comment.author.picture %}
+                                                        <div class="player-img" style="background-image: url('{{ comment.author.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                                        </div>
+                                                        {% else %}
+                                                        <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                            <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <a href="{% url 'userprofile' comment.author.user.username %}">
+                                                    <h5 class="author-name mx-1">{{ comment.author.user.username }}</h5>
+                                                </a>
+                                                <time class="post-comment-time mx-2" datetime="2024">{{ comment.created_at|date:"F j, Y" }}</time>
+                                            </div>
+                                        </div>
+
+                                        <div class="post-comment-text">
+                                            <p>{{ comment.content }}</p>
+                                        </div>
+                                        <div class="post-comment-footer">
+                                            <!-- Parent Comment Likes -->
+                                            <div class="comment-like">
+                                                <a class="like-btn" type="button" data-comment-id="{{ comment.id }}">
+                                                    {% if comment.user_has_liked %}
+                                                    <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                                    <!-- <i class="icon fas fa-thumbs-up text-danger"></i> -->
+                                                    {% else %}
+                                                    <!-- <i class="fas fa-thumbs-up"></i> -->
+                                                    <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                                    {% endif %}
+                                                </a>
+                                                <span class="ms-1"  id="like-count-{{ comment.id }}">{{ comment.num_likes }}</span>
+                                            </div>
+                                            <!-- Comment Reply Button -->
+                                            <div class="comment-reply">
+                                                <a class="ms-1" type="button" onclick="toggleReplyBox('{{ comment.id }}')">
+                                                    Reply
+                                                    <i class="icon fas fa-reply"></i>
+                                                </a>
+                                            </div>
+                                            <!-- Toggle Button for Replies -->
+                                            <a href="#collapseReplyComments-{{ comment.id }}" data-bs-toggle="collapse" role="button"><span class="" ></i>View Replies</span></a>
+                                            {% if request.user == comment.author.user %}
+                                            <a class="ms-3" href="{% url 'delete_fanbanter_comment' comment.id %}"><i class="icon fas fa-trash-alt"></i></a>
+                                            {% endif %}
+                                            <!-- Reply box -->
+                                            <div class="comment-box reply-box" id="reply-box-{{ comment.id }}" style="display: none;">
+                                                <div class="comment-box-main">
+                                                    <!-- RD Mailform-->
+                                                    <form class="comment-box-form" method="post" action="{% url 'fanbanter_comment' post.id %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="redirect_to" value="{{ request.path }}">
+                                                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                                        <label class="form-label" for="comment-message-{{ comment.id }}"></label>
+                                                        <textarea class="form-input" id="comment-message-{{ comment.id }}" name="message" placeholder="Reply to {{ comment.author.user.username }}"></textarea>
+                                                        <div class="form-button">
+                                                            <button class="btn btn-primary btn-sm" type="submit">Submit</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                        <!-- Collapsible Replies Section -->
+                                        <div class="collapse" id="collapseReplyComments-{{ comment.id }}">
+                                            {% for reply in comment.fanbanter_replies.all %}
+                                            <div class="post-comment post-comment-child mt-3">
+                                                <div class="post-comment-main">
+                                                    <div class="post-comment-header d-flex align-items-center justify-content-between">
+                                                        <div class="blog-post-author d-flex align-items-center">
+                                                            <div class="mx-2">
+                                                                <!-- <img class="img-circle" src="images/user-6-69x69.jpg" alt="" width="69" height="69"/> -->
+                                                                <div class="bg-gray-800 rounded-circle border border-4 border-primary text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                                    {% if reply.author.picture %}
+                                                                    <div class="player-img" style="background-image: url('{{ reply.author.picture.url }}'); background-position: center; background-size: contain; background-repeat: no-repeat; width: 100%; height: 100%; border-radius: 50%;">
+                                                                    </div>
+                                                                    {% else %}
+                                                                    <div class="player-img d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; border-radius: 50%;">
+                                                                        <i class="fas fa-user" style="color: #000000;"></i> <!-- Adjust the size and color as needed -->
+                                                                    </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <a href="{% url 'userprofile' reply.author.user.username %}">
+                                                                <h5 class="author-name">{{ reply.author.user.username }}</h5>
+                                                            </a>
+                                                            
+                                                            <time class="post-comment-time mx-1" datetime="2024">{{ reply.created_at|date:"F j, Y" }}</time>
+                                                        </div>
+                                                    </div>
+                                                    <div class="post-comment-text">
+                                                        <p>{{ reply.content }}</p>
+                                                    </div>
+                                                    <div class="post-comment-footer">
+                                                        <!-- Child Comment Likes -->
+                                                        <div class="comment-like">
+                                                            <a class="like-btn" type="button" data-child-comment-id="{{ reply.id }}">
+                                                                {% if reply.user_has_liked %}
+                                                                <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline text-danger"></span></div>
+                                                                <!-- <i class="icon fas fa-thumbs-up text-danger"></i> -->
+                                                                {% else %}
+                                                                <!-- <i class="fas fa-thumbs-up"></i> -->
+                                                                <div class="comment-like"><span class="icon mdi mdi-thumb-up-outline"></span></div>
+                                                                {% endif %}
+                                                            </a>
+                                                            <span class="ms-2" style="font-size: 12px;" id="like-count-{{ reply.id }}">{{ reply.num_likes }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                
+              </div> 
+            </div>
+            {% empty %}
+            <p>No posts to display.</p>
+            {% endfor %}
+            
+
+          </div>
+        </div>
+        
+    </section>
+
+
+</div>
+
+
+
+{% endblock %}
+
+
+    

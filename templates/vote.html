@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="page animated" style="animation-duration: 500ms;">
+    <!-- Breadcrumbs -->
+    <section class="section parallax-container breadcrumbs-wrap" data-parallax-img="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}">
+        <div class="material-parallax parallax">
+            <img src="{% static 'img/bg-breadcrumbs-1-1920x726.jpg' %}" alt="">
+        </div>
+        <div class="parallax-content breadcrumbs-custom context-dark">
+            <div class="container">
+                <h3 class="breadcrumbs-custom-title"></h3>
+                <ul class="breadcrumbs-custom-path">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="#">Vote</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="container col mt-3">
+        <h6 class="text-primary text-center">To Vote For your favourite nominee,<br> click on <span class="icon material-icons-thumb_up ms-2 me-2" style="font-size: 25px;"></span> icon</h6>
+    
+        <!-- Display messages -->
+        {% if messages %}
+            <div class="container text-center mt-2">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show alert-info" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    
+        <!-- Competition Selection -->
+        <div class="container text-center mt-3">
+            <label for="competitionSelect">Select Competition:</label>
+            <select id="competitionSelect" class="form-select" onchange="showCompetitionVote(this.value)">
+                <option value="">-- Choose a competition --</option>
+                {% for competition in competitions %}
+                    <option value="{{ competition.id }}" {% if competition == latest_competition %}selected{% endif %}>{{ competition.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    
+        <!-- Voting Sections -->
+        <div id="voting-sections">
+            {% for competition in competitions %}
+            <!-- Voting Sections for each competition -->
+            <div id="competition-vote-{{ competition.id }}" class="vote mt-0" {% if competition != latest_competition %}style="display: none;"{% endif %}>
+                <!-- Player Categories -->
+                <div class="block-voting mt-2 competition-section" data-competition-id="{{ competition.id }}">
+                    {% for category_data in player_categories %}
+                        {% if category_data.category.competition.id == competition.id %}
+                        <div class="category-section">
+                            <h3 class="text-center mt-1">{{ category_data.category.get_category_display }}</h3>
+                            
+                            <div class="block-voting">
+                                <div class="mt-1">
+                                    {% if category_data.hide_vote_count %}
+                                        <span class="text-uppercase" style="color: #d9534f; font-weight: bold;">Vote counts are now hidden until final day.</span>
+                                    {% endif %}
+                                </div>
+                                <div class="group-sm">
+                                    {% if category_data.players|length == 0 %}
+                                        <p class="text-center">No nominees for this category.</p> <!-- Add this line -->
+                                    {% else %}
+                                        {% for player in category_data.players %}
+                                        <div class="player-voting-item" style="width: 100px;">
+                                            <div class="player-voting-item-figure text-center">
+                                                {% if player.picture %}
+                                                    <img src="{{ player.picture.url }}" alt="{{ player.name.get_full_name }}" width="152" height="144">
+                                                {% else %}
+                                                    <i class="fas fa-user fa-5x" width="152" height="144"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div class="player-voting-item-title text-center">
+                                                <div>
+                                                    <span class="mb-0">{{ player.name.get_full_name }}</span>
+                                                    <br>
+                                                    <span class="player-voting-item-title text-center text-muted mt-0" style="font-size: 10px;">{{ player.team.name }}</span>
+                                                </div>
+                                                <div class="mt-1">
+                                                    <a href="{% url 'player' player_id=player.id %}">See player stats</a>
+                                                </div>
+                                                <div class="d-flex justify-content-center align-items-center mt-1">
+                                                    {% if category_data.hide_vote_count %}
+                                                        <i class="fas fa-lock fs-5" style="color: #d9534f; font-weight: 600;"></i>
+                                                    {% else %}
+                                                        <span style="color: #d9534f; font-weight: 600;">{{ player.total_votes }}</span>
+                                                    {% endif %}
+                                                    <span class="ms-2">votes</span> 
+                                                </div>
+                                            </div>
+                                            <button class="button button-sm button-icon button-icon-left button-primary custom-toggle" 
+                                                    type="button" 
+                                                    data-custom-toggle="#voteModal"
+                                                    data-id="{{ player.id }}"
+                                                    data-type="player"
+                                                    data-name="{{ player.name.get_full_name }}"
+                                                    data-category-id="{{ category_data.category.id }}"
+                                                    data-category-name="{{ category_data.category.get_category_display }}">
+                                                <span class="icon material-icons-thumb_up"></span>
+                                            </button>
+                                        </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                
+    
+                <!-- Team Categories -->
+                <div class="block-voting mt-2 competition-section" data-competition-id="{{ competition.id }}">
+                    {% for category_data in team_categories %}
+                        {% if category_data.category.competition.id == competition.id %}
+                        <div class="category-section">
+                            <h3 class="text-center mt-1">{{ category_data.category.get_category_display }}</h3>
+                            <div class="block-voting">
+                                <div class="group-md">
+                                    {% for team in category_data.teams %}
+                                    <div class="team-voting-item" style="width: 100px;">
+                                        <div class="team-voting-item-figure text-center">
+                                            {% if team.logo %}
+                                            <img src="{{ team.logo.url }}" alt="{{ team.name }}" width="152" height="144"/>
+                                            {% else %}
+                                            <img src="{% static 'img/soccer.png' %}" alt="{{ team.name }}" width="31" height="41"/>
+                                            {% endif %}
+                                        </div>
+                                        <div class="player-voting-item-title text-center">
+                                            <p>{{ team.name }}</p>
+                                            <div class="mt-1">
+                                                <a class="" href="{% url 'team' team_id=team.id %}#team-stats-section">See team stats</a>
+                                            </div>
+                                            <div class="d-flex justify-content-center align-items-center mt-1">
+                                                {% if category_data.hide_vote_count %}
+                                                    <i class="fas fa-lock fs-5" style="color: #d9534f; font-weight: 600;"></i>
+                                                {% else %}
+                                                    <span style="color: #d9534f; font-weight: 600;">{{ team.total_votes }}</span>
+                                                {% endif %}
+                                                <span class="ms-2">votes</span> <!-- Add some margin to the left of the "votes" text -->
+                                            </div>
+                                        </div>
+                                        <button class="button button-block button-icon button-icon-left button-primary custom-toggle" 
+                                                type="button" 
+                                                data-custom-toggle="#voteModal"
+                                                data-id="{{ team.id }}"
+                                                data-type="team"
+                                                data-name="{{ team.name }}"
+                                                data-category-id="{{ category_data.category.id }}"
+                                                data-category-name="{{ category_data.category.get_category_display }}">
+                                            <span class="icon material-icons-thumb_up"></span>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+    
+                <!-- Coach Categories -->
+                <div class="block-voting mt-2 competition-section" data-competition-id="{{ competition.id }}">
+                    {% for category_data in coach_categories %}
+                        {% if category_data.category.competition.id == competition.id %}
+                        <div class="category-section">
+                            <h3 class="text-center mt-1">{{ category_data.category.get_category_display }}</h3>
+                            <div class="block-voting">
+                                <div class="group-md">
+                                    {% for coach_info in category_data.coaches %}
+                                    <div class="coach-voting-item" style="width: 100px;">
+                                        <div class="coach-voting-item-figure text-center">
+                                            {% if coach_info.coach.picture %}
+                                            <img src="{{ coach_info.coach.picture.url }}" alt="{{ coach_info.coach.full_name }}" width="152" height="144"/>
+                                            {% else %}
+                                            <i class="fas fa-user-tie fa-5x" width="152" height="144"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div class="player-voting-item-title text-center">
+                                            <span class="mb-0" style="font-size: 12px;">{{ coach_info.coach.full_name }}</span>
+                                            <!-- Display the team the coach represents -->
+                                            {% if coach_info.team %}
+                                            <p class="text-muted" style="font-size: 8px;">{{ coach_info.team.name }}</p>
+                                            {% else %}
+                                            <p class="text-muted mt-4" style="font-size: 8px;"></p>
+                                            {% endif %}
+
+                                            <div class="d-flex justify-content-center align-items-center mt-1">
+                                                {% if category_data.hide_vote_count %}
+                                                    <i class="fas fa-lock fs-5" style="color: #d9534f; font-weight: 600;"></i>
+                                                {% else %}
+                                                    <span style="color: #d9534f; font-weight: 600;">{{ coach_info.total_votes }}</span>
+                                                {% endif %}
+                                                <span class="ms-2">votes</span> <!-- Add some margin to the left of the "votes" text -->
+                                            </div>
+                                            
+                                        </div>
+                                        <button class="button button-block button-icon button-icon-left button-primary custom-toggle" 
+                                                type="button" 
+                                                data-custom-toggle="#voteModal"
+                                                data-id="{{ coach_info.coach.id }}"
+                                                data-type="coach"
+                                                data-name="{{ coach_info.coach.name }}"
+                                                data-category-id="{{ category_data.category.id }}"
+                                                data-category-name="{{ category_data.category.get_category_display }}">
+                                            <span class="icon material-icons-thumb_up"></span>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Single Modal for Voting -->
+    <div class="modal fade" id="voteModal" tabindex="-1" role="dialog" aria-labelledby="voteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="voteModalLabel">Vote for</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6 id="modal-category" class="mb-2"></h6>
+                    <form method="post" action="{% url 'initialize_payment' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="category_id" id="modal-category-id-field">
+                        <input type="hidden" name="nominee_id" id="modal-id-field">
+                        
+                        <div class="form-group mt-2">
+                            <label for="num_of_votes">Number of Votes:</label>
+                            <input type="number" class="form-control num-votes" name="num_of_votes" min="1" value="1" required 
+                                   data-price="100" onchange="calculateTotal(this)">
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="form-group mt-2">
+                            <span for="total_amount">Total Amount:</span>
+                            <span id="modal-total-amount" class="total-amount">100</span> <!-- This will show the total price -->
+                        </div>
+                        <button type="submit" class="button button-primary button-sm mt-2">Proceed to Vote</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    // Function to calculate total amount
+    function calculateTotal(inputElement) {
+        const pricePerVote = inputElement.getAttribute('data-price');
+        const numVotes = inputElement.value;
+        const totalAmount = numVotes * pricePerVote;
+        const totalAmountElement = document.getElementById('modal-total-amount');
+        totalAmountElement.innerText = totalAmount + ' Naira';
+    }
+
+    // Show/hide voting sections based on selected competition
+    function showCompetitionVote(competitionId) {
+        document.querySelectorAll('.vote').forEach(function(section) {
+            if (!competitionId || section.id === 'competition-vote-' + competitionId) {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        });
+    }
+
+    // Modal trigger functionality
+    document.querySelectorAll('.custom-toggle').forEach(function(button) {
+        button.addEventListener('click', function () {
+            var id = button.getAttribute('data-id');
+            var type = button.getAttribute('data-type');
+            var name = button.getAttribute('data-name');
+            var categoryId = button.getAttribute('data-category-id');
+            var categoryName = button.getAttribute('data-category-name');
+
+            // Update modal with dynamic data
+            var modal = document.getElementById('voteModal');
+            modal.querySelector('.modal-title').textContent = 'Vote for ' + name;
+            modal.querySelector('#modal-category').textContent = 'Category: ' + categoryName;
+            modal.querySelector('#modal-id-field').value = id;
+            modal.querySelector('#modal-category-id-field').value = categoryId;
+
+            // Show the modal
+            var bootstrapModal = new bootstrap.Modal(modal);
+            bootstrapModal.show();
+        });
+    });
+
+    // Initial trigger to display voting sections for the latest competition
+    document.addEventListener('DOMContentLoaded', function() {
+        var latestCompetitionId = "{{ latest_competition.id }}";
+        document.getElementById('competitionSelect').value = latestCompetitionId;
+        showCompetitionVote(latestCompetitionId);
+    });
+</script>
+{% endblock %}
